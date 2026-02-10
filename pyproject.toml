@@ -19,10 +19,22 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 dependencies = [
-    "build>=1.2.2.post1",
-    "twine>=6.1.0",
+    "requests>=2.28",
+    "numpy>=1.21",
+    "tqdm>=4.64",
 ]
+
+[project.optional-dependencies]
+nlp = ["transformers>=4.30", "sentencepiece>=0.1.99", "torch>=2.0"]
+speech = ["transformers>=4.30", "torch>=2.0", "librosa>=0.10"]
+all = ["naijaml[nlp]", "naijaml[speech]"]
+dev = ["pytest>=7.0", "pytest-cov", "ruff", "mypy", "build", "twine"]
 
 [project.urls]
 Homepage = "https://github.com/naijaml/naijaml"
 Repository = "https://github.com/naijaml/naijaml"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5",
+]
