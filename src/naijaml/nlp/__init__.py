@@ -23,6 +23,11 @@ from naijaml.nlp.langdetect import (
     train_and_save_model,
     train_and_save_profiles,  # backwards compatibility alias
 )
+from naijaml.nlp.diacritizer import (
+    diacritize,
+    syllabify,
+    train_and_save_model as train_diacritizer,
+)
 
 __all__ = [
     # Unicode
@@ -46,4 +51,8 @@ __all__ = [
     "SUPPORTED_LANGUAGES",
     "train_and_save_model",
     "train_and_save_profiles",  # backwards compatibility alias
+    # Diacritization
+    "diacritize",
+    "syllabify",
+    "train_diacritizer",
 ]
