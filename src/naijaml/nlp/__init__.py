@@ -26,10 +26,17 @@ from naijaml.nlp.langdetect import (
 from naijaml.nlp.diacritizer import (
     diacritize,
     diacritize as diacritize_yoruba,  # explicit alias
+    diacritize_dot_below,
+    diacritize_dot_below as diacritize_yoruba_dot_below,  # explicit alias
     syllabify,
     syllabify as syllabify_yoruba,  # explicit alias
     train_and_save_model as train_diacritizer,
     train_and_save_model as train_yoruba_diacritizer,  # explicit alias
+    train_and_save_dot_below_model,
+    evaluate_dot_below_accuracy,
+    evaluate_full_diacritization_accuracy,
+    compare_diacritization_methods,
+    strip_diacritics as strip_yoruba_diacritics,  # expose tones_only option
 )
 from naijaml.nlp.igbo_diacritizer import (
     diacritize_igbo,
@@ -67,10 +74,18 @@ __all__ = [
     # Yorùbá diacritization
     "diacritize",
     "diacritize_yoruba",
+    "diacritize_dot_below",
+    "diacritize_yoruba_dot_below",
     "syllabify",
     "syllabify_yoruba",
     "train_diacritizer",
     "train_yoruba_diacritizer",
+    "train_and_save_dot_below_model",
+    "strip_yoruba_diacritics",
+    # Diacritizer evaluation
+    "evaluate_dot_below_accuracy",
+    "evaluate_full_diacritization_accuracy",
+    "compare_diacritization_methods",
     # Igbo diacritization
     "diacritize_igbo",
     "syllabify_igbo",
