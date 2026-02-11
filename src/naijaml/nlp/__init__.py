@@ -36,6 +36,11 @@ from naijaml.nlp.igbo_diacritizer import (
     syllabify as syllabify_igbo,
     train_and_save_model as train_igbo_diacritizer,
 )
+from naijaml.nlp.evaluation import (
+    evaluate_diacritizer,
+    DiacritizerMetrics,
+    run_all_evaluations,
+)
 
 __all__ = [
     # Unicode
@@ -70,4 +75,8 @@ __all__ = [
     "diacritize_igbo",
     "syllabify_igbo",
     "train_igbo_diacritizer",
+    # Evaluation
+    "evaluate_diacritizer",
+    "DiacritizerMetrics",
+    "run_all_evaluations",
 ]

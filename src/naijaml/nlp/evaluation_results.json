@@ -1,0 +1,638 @@
+{
+  "evaluations": [
+    {
+      "language": "yoruba",
+      "model_version": "v1",
+      "test_size": 5,
+      "date": "2026-02-11",
+      "word_accuracy": 0.4,
+      "sentence_accuracy": 0.0,
+      "character_accuracy": 0.5849056603773585,
+      "diacritic_precision": 0.5555555555555556,
+      "diacritic_recall": 0.38461538461538464,
+      "diacritic_f1": 0.4545454545454546,
+      "total_words": 15,
+      "correct_words": 6,
+      "total_sentences": 5,
+      "correct_sentences": 0,
+      "sample_errors": [
+        {
+          "input": "Ojo dara pupo",
+          "predicted": "Ọjọ dara púpọ",
+          "expected": "Ọjọ́ dára púpọ̀"
+        },
+        {
+          "input": "E ku aaro",
+          "predicted": "Ẹ kù àarò",
+          "expected": "Ẹ kú àárọ̀"
+        },
+        {
+          "input": "Mo feran re",
+          "predicted": "Mo féràn rẹ",
+          "expected": "Mo fẹ́ràn rẹ"
+        },
+        {
+          "input": "Omo mi dara",
+          "predicted": "Ọmọ mi dàra",
+          "expected": "Ọmọ mi dára"
+        },
+        {
+          "input": "E se pupo",
+          "predicted": "E ṣé púpọ",
+          "expected": "Ẹ ṣé púpọ̀"
+        }
+      ]
+    },
+    {
+      "language": "igbo",
+      "model_version": "v1",
+      "test_size": 500,
+      "date": "2026-02-11",
+      "word_accuracy": 0.9524100061012812,
+      "sentence_accuracy": 0.43,
+      "character_accuracy": 0.9183866112202465,
+      "diacritic_precision": 0.8943448917849662,
+      "diacritic_recall": 0.8690637720488467,
+      "diacritic_f1": 0.8815231104484459,
+      "total_words": 9834,
+      "correct_words": 9366,
+      "total_sentences": 500,
+      "correct_sentences": 215,
+      "sample_errors": [
+        {
+          "input": "3 , 4 . ( a ) Olee otu obi na - adi anyi maka akwukwo anyi di iche iche ?",
+          "predicted": "3 , 4 . ( a ) Olee otu obi na - adị anyị maka akwụkwọ anyị dị iche iche ?",
+          "expected": "3 , 4 . ( a ) Olee otú obi na - adị anyị maka akwụkwọ anyị dị́ iche iche ?"
+        },
+        {
+          "input": "Ozi oma ahu bu na Alaeze Chineke , nke bu ochichi di n’eluigwe , ga - eme ka ajo omume niile kwusi n’oge na - adighi anya , meekwa ka uwa ghoo paradais .",
+          "predicted": "Ozi ọma ahụ bụ na Alaeze Chineke , nke bụ ọchịchị dị n’eluigwe , ga - eme ka ajọ omume niile kwụsị n’oge na - adịghị anya , meekwa ka ụwa ghọọ paradaịs .",
+          "expected": "Ozi ọma ahụ bụ na Alaeze Chineke , nke bụ́ ọchịchị dị́ n’eluigwe , ga - eme ka ajọ omume niile kwụsị n’oge na - adịghị anya , meekwa ka ụwa ghọọ paradaịs ."
+        },
+        {
+          "input": "Cheta ihe di na Ndi Galeshia 6 : 5 .",
+          "predicted": "Cheta ihe dị na Ndị Galeshia 6 : 5 .",
+          "expected": "Cheta ihe dị ná Ndị Galeshia 6 : 5 ."
+        },
+        {
+          "input": "Ilu 3 : 13 - 15 siri : “ Obi uto na - adiri onye chotaworo amamihe , na onye nwetara nghota , n’ihi na o di mma inweta ya di ka uru karia inweta olaocha di ka uru , inweta ya di ka ihe mmadu ruputara dikwa mma karia inweta olaedo .",
+          "predicted": "Ilu 3 : 13 - 15 sirị : “ Obi ụtọ na - adịrị onye chọtaworo ámamihe , na onye nwetara nghọta , n’ihi na ọ dị mma inweta ya dị ka uru karịa inweta ọlaọcha dị ka uru , inweta ya dị ka ihe mmadụ rụpụtara dịkwa mma karịa inweta ọlaedo .",
+          "expected": "Ilu 3 : 13 - 15 sịrị : “ Obi ụtọ na - adịrị onye chọtaworo amamihe , na onye nwetara nghọta , n’ihi na ọ dị mma inweta ya dị ka uru karịa inweta ọlaọcha dị ka uru , inweta ya dị ka ihe mmadụ rụpụtara dịkwa mma karịa inweta ọlaedo ."
+        },
+        {
+          "input": "Otu nwoke aha ya bu Etienne , onye di afo iri asato na ano , kwuru , si : “ N’agbanyeghi na o kariala afo iri na asato nwunye oma m nwuru , aguu ihu ya na - agu m , m ka na - erukwara ya uju .",
+          "predicted": "Otu nwoke aha ya bụ Etienne , onye dị afọ iri asatọ na anọ , kwuru , sị : “ N’agbanyeghị na ọ karịala afọ iri na asatọ nwunye ọma m nwụrụ , agụụ ịhu ya na - agụ m , m ka na - erukwara ya uju .",
+          "expected": "Otu nwoke aha ya bụ Etienne , onye dị́ afọ iri asatọ na anọ , kwuru , sị : “ N’agbanyeghị na ọ karịala afọ iri na asatọ nwunye ọma m nwụrụ , agụụ ịhụ ya na - agụ m , m ka na - erukwara ya uju ."
+        },
+        {
+          "input": "Gini mere obi ji kwesi isi gi ike na adim na mma gi na Jehova ga - eme ka i di ike ?",
+          "predicted": "Gịnị mere obi ji kwesị ísi gị ike na adịm na mma gị na Jehova ga - eme ka ị dị ike ?",
+          "expected": "Gịnị mere obi ji kwesị isi gị ike na adịm ná mma gị na Jehova ga - eme ka ị dị ike ?"
+        },
+        {
+          "input": "N’eziokwu , “ Chineke huru uwa n’anya nke ukwuu nke na o nyere Okpara o muru naani ya , ka e wee ghara ibibi onye o bula nke nwere okwukwe na ya , kama ka o nwee ndu ebighi ebi . ”",
+          "predicted": "N’eziokwu , “ Chineke hụrụ ụwa n’anya nke ukwuu nke na o nyere Ọkpara ọ mụrụ naanị ya , ka e wee ghara ịbibi onye ọ bụla nke nwere okwukwe na ya , kama ka o nwee ndụ ebighị ebi . ”",
+          "expected": "N’eziokwu , “ Chineke hụrụ ụwa n’anya nke ukwuu nke na o nyere Ọkpara ọ mụrụ naanị ya , ka e wee ghara ibibi onye ọ bụla nke nwere okwukwe na ya , kama ka o nwee ndụ ebighị ebi . ”"
+        },
+        {
+          "input": "O gwara m , si : “ Gaa ulo akwukwo ka i muta otutu ihe , i lota , gi akuziere anyi . ”",
+          "predicted": "Ọ gwara m , sị : “ Gaa ụlọ akwụkwọ ka ị mụta otụtụ ihe , i lọta , gị akụziere anyị . ”",
+          "expected": "Ọ gwara m , sị : “ Gaa ụlọ akwụkwọ ka ị mụta ọtụtụ ihe , ị lọta , gị akụziere anyị . ”"
+        },
+        {
+          "input": "Olee otu inwe uche nke Kraist ga - esi enyere gi aka n’ihe ndi i na - eme kwa ubochi ?",
+          "predicted": "Olee otu inwe uche nke Kraịst ga - esi enyere gị aka n’ihe ndị ị na - eme kwa ụbọchị ?",
+          "expected": "Olee otú inwe uche nke Kraịst ga - esi enyere gị aka n’ihe ndị ị na - eme kwa ụbọchị ?"
+        },
+        {
+          "input": "Ihe ahu m kpebiri mgbe m bu nwata emeela ka obi na - adi m uto otu m na - atudighi anya ya . ”",
+          "predicted": "Ihe ahụ m kpebiri mgbe m bụ nwata emeela ka obi na - adị m ụtọ otu m na - atụdịghị anya ya . ”",
+          "expected": "Ihe ahụ m kpebiri mgbe m bụ nwata emeela ka obi na - adị m ụtọ otú m na - atụdịghị anya ya . ”"
+        },
+        {
+          "input": "( a ) O diiri Jefta na ada ya mfe imezu nkwa o kwere Chineke ?",
+          "predicted": "( a ) Ọ dịịrị Jefta na ada ya mfe imezu nkwa o kwere Chineke ?",
+          "expected": "( a ) Ọ̀ dịịrị Jefta na ada ya mfe imezu nkwa o kwere Chineke ?"
+        },
+        {
+          "input": "O bu naani m bu okenye n’otu igwe na - eji asusu Vietnamiiz amu ihe .",
+          "predicted": "Ọ bụ naanị m bụ okenye n’otu ìgwe na - eji asụsụ Vietnamiiz amụ ihe .",
+          "expected": "Ọ bụ naanị m bụ okenye n’otu ìgwè na - eji asụsụ Vietnamiiz amụ ihe ."
+        },
+        {
+          "input": "Uzo nke ato anyi ga - esi gosi na anyi anaghi etinye aka na ndoro ndoro ochichi bu itukwasi Jehova obi .",
+          "predicted": "Ụzọ nke atọ anyị ga - esi gosi na anyị anaghị etinye aka ná ndọrọ ndọrọ ọchịchị bụ ịtụkwasị Jehova obi .",
+          "expected": "Ụzọ nke atọ anyị ga - esi gosi na anyị anaghị etinye aka na ndọrọ ndọrọ ọchịchị bụ ịtụkwasị Jehova obi ."
+        },
+        {
+          "input": "1 - 3 . ( a ) Olee otu Ndi Kraist sirila gosi na o na - agusi ha aguu ike iga omumu ihe ?",
+          "predicted": "1 - 3 . ( a ) Olee otu Ndị Kraịst sirila gosi na ọ na - agụsi ha agụụ ike ịga ọmụmụ ihe ?",
+          "expected": "1 - 3 . ( a ) Olee otú Ndị Kraịst sirila gosi na ọ na - agụsi ha agụụ ike ịga ọmụmụ ihe ?"
+        },
+        {
+          "input": "( b ) Olee otu Nwanna George Gangas si were iga omumu ihe ?",
+          "predicted": "( b ) Ọlee otu Nwanna George Gangas si were ịga ọmụmụ ihe ?",
+          "expected": "( b ) Olee otú Nwanna George Gangas si were ịga ọmụmụ ihe ?"
+        },
+        {
+          "input": "O na - akpokari umu mgbei na umu nwaanyi di ha nwuru ka ha bia n’ulo ha , ha esoro ha kparita uka , rikookwa nri .",
+          "predicted": "O na - akpọkarị ụmụ mgbeị na ụmụ nwaanyị di ha nwụrụ ka ha bịa n’ụlọ ha , ha esoro ha kparịta ụka , rịkọọkwa nri .",
+          "expected": "Ọ na - akpọkarị ụmụ mgbei na ụmụ nwaanyị di ha nwụrụ ka ha bịa n’ụlọ ha , ha esoro ha kparịta ụka , rikọọkwa nri ."
+        },
+        {
+          "input": "O kwuru , si : “ M na - echetara onwe m na m na - aza aha Jehova , nakwa na onwunwa ndi na - abiara m bu uzo Setan si aluso m ogu .",
+          "predicted": "O kwuru , si : “ M na - echetara onwe m na m na - aza aha Jehova , nakwa na ọnwụnwa ndị na - abịara m bụ ụzọ Setan sị alụso m ọgụ .",
+          "expected": "O kwuru , sị : “ M na - echetara onwe m na m na - aza aha Jehova , nakwa na ọnwụnwa ndị na - abịara m bụ ụzọ Setan si alụso m ọgụ ."
+        },
+        {
+          "input": "E nwee umuaka e kwesiri iji asusu abuo na - akuziri ihe , olee otu nne ha na nna ha ga - esi na - enyere ha aka ?",
+          "predicted": "E nwee ụmụaka e kwesịrị iji asụsụ abụọ na - akụziri ihe , olee otu nne ha na nna ha ga - esi na - enyere ha aka ?",
+          "expected": "E nwee ụmụaka e kwesịrị iji asụsụ abụọ na - akụziri ihe , olee otú nne ha na nna ha ga - esi na - enyere ha aka ?"
+        },
+        {
+          "input": "1 , 2 . ( a ) Olee otu ndu gaara adi ma a si na e nweghi Baibul ?",
+          "predicted": "1 , 2 . ( a ) Olee otu ndụ gaara adị ma a sị na e nweghị Baịbụl ?",
+          "expected": "1 , 2 . ( a ) Olee otú ndụ gaara adị ma à sị na e nweghị Baịbụl ?"
+        },
+        {
+          "input": "Di ka ihe atu , o kporo aka aha otutu ugboro .",
+          "predicted": "Dị ka ihe atụ , o kporọ aka aha otụtụ ugboro .",
+          "expected": "Dị ka ihe atụ , ọ kpọrọ aka aha ọtụtụ ugboro ."
+        }
+      ]
+    },
+    {
+      "language": "yoruba",
+      "model_version": "v1",
+      "test_size": 500,
+      "date": "2026-02-11",
+      "word_accuracy": 0.590421729807005,
+      "sentence_accuracy": 0.012,
+      "character_accuracy": 0.2166414716715992,
+      "diacritic_precision": 0.19226314570303452,
+      "diacritic_recall": 0.14999096439973494,
+      "diacritic_f1": 0.16851651326475364,
+      "total_words": 9793,
+      "correct_words": 5782,
+      "total_sentences": 500,
+      "correct_sentences": 6,
+      "sample_errors": [
+        {
+          "input": "Ile Ejo Zheleznodorozhniy niluu Oryol ni Rosia, to n gbo ejo Dennis, ti seto igbejo naa si aarin osu December.",
+          "predicted": "Ilé Ẹjọ Zheleznodorozhniy nilùu Oryol ní Ròsia, tó ń gbo ẹjọ Dénnis, ti ṣètò ìgbẹjó náa si aàrìn oṣù December.",
+          "expected": "Ilé Ẹjọ́ Zheleznodorozhniy nílùú Oryol ní Rọ́ṣíà, tó ń gbọ́ ẹjọ́ Dennis, ti ṣètò ìgbẹ́jọ́ náà sí àárín oṣù December."
+        },
+        {
+          "input": "Koda, Gbongan Ijoba marun-un lo ba je, ikan si wo lule patapata.",
+          "predicted": "Kódà, Gbọngàn Ìjọba márùn-un ló bà jẹ, ìkan sì wó lulẹ patápátà.",
+          "expected": "Kódà, Gbọ̀ngàn Ìjọba márùn-ún ló bà jẹ́, ìkan sì wó lulẹ̀ pátápátá."
+        },
+        {
+          "input": "Awon foto to te le e yii maa je ke e ri ibi ti ise naa de. Aworan bi eka ofiisi naa se maa ri tise ba pari.",
+          "predicted": "Àwọn fotó tó tẹ le è yíi maa jẹ kẹ è rí ibi tí ìṣẹ náà de. Àwòrán bí ẹka ofiíṣì naà ṣe máa rí tiṣe bá parí.",
+          "expected": "Àwọn fọ́tò tó tẹ̀ lé e yìí máa jẹ́ kẹ́ ẹ rí ibi tí iṣẹ́ náà dé. Àwòrán bí ẹ̀ka ọ́fíìsì náà ṣe máa rí tíṣẹ́ bá parí."
+        },
+        {
+          "input": "Se ko saa disturb yin sa?",
+          "predicted": "Ṣe kó ṣàà disturb yín ṣà?",
+          "expected": "Ṣé kò ṣáà disturb yín ṣá?"
+        },
+        {
+          "input": "Ma bere o",
+          "predicted": "Má bẹrè ò",
+          "expected": "Má bẹ̀rẹ̀ o"
+        },
+        {
+          "input": "Fayegba awon akekoo lati sayipada oro-asina won nigba ti won forukosilewole",
+          "predicted": "Fàyègbà àwọn akẹkọó láti ṣàyípadà orọ-aṣínà wọn nígbà tí wọn forúkọsíléwọlé",
+          "expected": "Fàyègba àwọn akẹ́kọ̀ọ́ láti ṣàyípadà ọ̀rọ̀-aṣínà wọn nígbà tí wọ́n forúkọsílẹ̀wọlé"
+        },
+        {
+          "input": "Nje o fe ki ibi ti o wa je pinpinka funra re?",
+          "predicted": "Ǹjẹ ọ fẹ ki ibi tí ó wá jẹ pinpínká fúnra rẹ?",
+          "expected": "Ǹjẹ́ o fẹ́ kí ibi tí o wà jẹ́ pínpínká fúnra rẹ̀?"
+        },
+        {
+          "input": "Ibaje isu nibaje obe; eni to se ibaje eeyan-an se ibaje ara e.",
+          "predicted": "Ìbàjẹ iṣu nìbàjẹ ọbẹ; èni tó ṣe ìbàjẹ èeyàn-ań ṣe ìbàjẹ ara ẹ.",
+          "expected": "Ìbàjẹ́ iṣu nìbàjẹ́ ọ̀bẹ; ẹni tó ṣe ìbàjẹ́ èèyàn-án ṣe ìbàjẹ́ ara ẹ̀."
+        },
+        {
+          "input": "Ile ise to n soju mi sese pe mi tan pe ileese Sony Nigeria fe ra okan lara awon iwe mi",
+          "predicted": "Ilé iṣè tó ń ṣojú mi ṣeṣẹ pẹ mí tán pé iléeṣẹ Sọny Nigeria fẹ rà ọkàn lára àwọn ìwé mi",
+          "expected": "Ilé iṣẹ́ tó ń ṣojú mi ṣẹ̀ṣẹ̀ pè mí tán pé iléesẹ́ Sony Nigeria fẹ́ ra ọ̀kan lára àwọn ìwé mi"
+        },
+        {
+          "input": "Iwe naa ka bayii pe” Latari ikowefiposile igbakeji aare akoko, Ogbeni Kwesi Nyantakyi ati oke tente ti Ajo to n moju to boolu afesegba lorile-ede Naijiiria wa Aare Ajo CAF, leyin ti o fi oro lo awon omo igbimo isele pajawiri, yan Ogbeni Amaju Melvin Pinnick gege bi igbakeji aare akoko.",
+          "predicted": "Ìwé nàà ka báyíi pè” Látàrí ìkọwéfipòsílé ìgbákejì aare àkókó, Ọgbéní Kwesi Nyantakyi àti òké ténte tí Àjọ tó ń mójú tó bóolù àfẹsègbà lórílé-èdè Naijìiríà wa Aare Àjọ CAF, leyìn tí ó fi oro ló àwọn ọmọ ìgbìmo iṣẹlẹ pàjáwìrì, yàn Ògbéní Amaju Melvin Pínnick gẹge bí ìgbákejì aare àkókó.",
+          "expected": "Ìwé náà kà báyìí pé” Látàrí ìkọ̀wéfipòsílẹ̀ igbákejì ààrẹ àkọ́kọ́, Ọ̀gbẹ́ni Kwesi Nyantakyi àti òkè téńté tí Àjọ tó ń mójú tó bọ́ọ̀lù àfẹsẹ̀gbá lórílẹ̀-èdè Nàìjííríà wà Ààrẹ Àjọ CAF, lẹ́yìn tí ó fi ọ̀rọ̀ lọ àwọn ọmọ ìgbìmọ̀ ìṣẹ̀lẹ̀ pàjáwìrì, yan Ọ̀gbẹ́ni Amaju Melvin Pinnick gẹ́gẹ́ bí igbákejì ààrẹ àkọ́kọ́."
+        },
+        {
+          "input": "Odo to ba toju eni kun ki i gbeni lo.",
+          "predicted": "Òdó tó bá toju ẹní kùn kì í gbéni ló.",
+          "expected": "Odó tó bá tojú ẹni kún kì í gbéni lọ."
+        },
+        {
+          "input": "Laipe, o maa dara po mo awon arakunrin mesan-an ti won fi sewon ni ago iseninisee to wa niluu Seydi ninu asale kan lagbegbe Lebap.",
+          "predicted": "Laìpé, ó máa dára pọ mọ àwọn arákùnrin mẹsan-an tí wọn fi ṣewọn ní àgo iṣeniníṣẹè tò wà nílùu Seydi nínú àṣálẹ kan lágbègbé Lebap.",
+          "expected": "Láìpẹ́, ó máa dara pọ̀ mọ́ àwọn arákùnrin mẹ́sàn-an tí wọ́n fi sẹ́wọ̀n ní àgọ́ ìṣẹ́niníṣẹ̀ẹ́ tó wà nílùú Seydi nínú aṣálẹ̀ kan lágbègbè Lebap."
+        },
+        {
+          "input": "A ti mu Bibeli Itumo Aye Tuntun jade lodindi tabi lapa kan ni ede merinlelogosan-an (184), meeedogbon (25) lara re si je odindi Bibeli ta a tun se latinu eda to jade lede Geesi lodun 2013.",
+          "predicted": "A ti mú Bíbélì Ìtumọ Ayé Tuntun jáde lódindi tàbí lápá kan ní èdè mérinlélógósán-an (184), mẹẹedogbọń (25) lára rẹ sí jẹ ódindi Bíbélì tá a tún ṣe látinú ẹdá tó jáde lédè Geẹsì lọdún 2013.",
+          "expected": "A ti mú Bíbélì Ìtumọ̀ Ayé Tuntun jáde lódindi tàbí lápá kan ní èdè mẹ́rìnlélọ́gọ́sàn-án (184), mẹ́ẹ̀ẹ́dọ́gbọ̀n (25) lára rẹ̀ sì jẹ́ odindi Bíbélì tá a tún ṣe látinú ẹ̀dà tó jáde lédè Gẹ̀ẹ́sì lọ́dún 2013."
+        },
+        {
+          "input": "Yato siyen, o tun ba Gbongan Ijoba kan je.",
+          "predicted": "Yàtó sìyẹn, ò tún bá Gbọngàn Ìjọba kan jẹ.",
+          "expected": "Yàtọ̀ síyẹn, ó tún ba Gbọ̀ngàn Ìjọba kan jẹ́."
+        },
+        {
+          "input": "Boya ifesewonse Super Eagles ohun temilorun tabi ko temilorun, temi ni pe, mo ni igboya fun iko naa.",
+          "predicted": "Bóyá ìfẹsèwọnse Ṣuper Eagles òhun tèmilọrùn tàbí kò témilọrùn, tèmi ni pé, mo ní ìgboyá fún ikọ nàà.",
+          "expected": "Bóyá ìfẹsẹ̀wọnsẹ̀ Super Eagles ọ̀hún tẹ́milọ́rùn tàbí kò tẹ́milọ́rùn, tèmi ni pé, mo ní ìgboyà fún ikọ̀ náà."
+        },
+        {
+          "input": "O tun je ibugbe fun awon eranko igbe, o mu ko rorun lati so omi lo, ibe tun je ibi to daa lati da awon igi nlanla ati keekeeke si, eyi si mu ki awon eweko to po wa nibe, ko si tubo mu ki adugbo naa rewa fun awon to n gbe ibe.",
+          "predicted": "Ó tún jẹ ìbùgbé fún àwọn ẹrankó ìgbé, ọ mú kó rọrùn láti sọ omi lọ, ibẹ tún jẹ ìbi tó dáa láti dá àwọn igi ńlàńlá àti kẹekẹeké sí, èyí sì mú kí àwọn ewéko tó pọ wà níbẹ, kọ sì túbọ mù kí àdúgbó náa rewà fún àwọn tó ń gbé ibẹ.",
+          "expected": "Ó tún jẹ́ ibùgbé fún àwọn ẹranko ìgbẹ́, ó mú kó rọrùn láti ṣọ́ omi lò, ibẹ̀ tún jẹ ibi tó dáa láti dá àwọn igi ńláńlá àti kéékèèké sí, èyí sì mú kí àwọn ewéko tó pọ̀ wà níbẹ̀, kó sì túbọ̀ mú kí àdúgbò náà rẹwà fún àwọn tó ń gbé ibẹ̀."
+        },
+        {
+          "input": "Arakunrin Charles Rutaganira to je ara eya Tutsi mori bo nigba ipeyarun to waye lodun marundinlogbon (25) seyin, o so pe oun ranti aaro ojo Sunday kan toun ti gba pe won maa pa oun, amo awon arakunrin re gba emi re la tori pe won ni ife ifara-eni-rubo.",
+          "predicted": "Arákùnrin Charles Rutaganira tó jé ara ẹyà Tutsi mọrí bó nígba ìpeyarun tó wáyé lódún márùndínlọgbọn (25) séyìn, ó sọ pé òun rántí aarọ òjọ Sùnday kan tóun ti gbà pé wọn máa pá òun, amò àwọn arákùnrin rẹ gbà èmi rẹ là torí pé wọn ní ìfẹ ìfara-ẹní-rúbo.",
+          "expected": "Arákùnrin Charles Rutaganira tó jẹ́ ara ẹ̀yà Tutsi mórí bọ́ nígbà ìpẹ̀yàrun tó wáyé lọ́dún márùndínlọ́gbọ̀n (25) sẹ́yìn, ó sọ pé òun rántí àárọ̀ ọjọ́ Sunday kan tóun ti gbà pé wọ́n máa pa òun, àmọ́ àwọn arákùnrin rẹ̀ gba ẹ̀mí rẹ̀ là torí pé wọ́n ní ìfẹ́ ìfara-ẹni-rúbọ."
+        },
+        {
+          "input": "Owo eni ni yo yooni.",
+          "predicted": "Owó ẹni ni yo yọoní.",
+          "expected": "Ọwọ́ ẹni ni yó yòóni."
+        },
+        {
+          "input": "Bi ise ba n se odo laseeju, ko lo sigbo erin; bo ba pa erin isee re a tan; bi erin ba pa a, isee re a tan.",
+          "predicted": "Bí iṣẹ bá ń ṣe odọ láṣẹẹjú, kọ lọ sìgbo erin; bó bá pa erin iṣee rẹ à tán; bí erin bá pa à, iṣee rẹ à tán.",
+          "expected": "Bí ìṣẹ́ bá ń ṣẹ́ ọ̀dọ́ láṣẹ̀ẹ́jù, kó lọ sígbó erin; bó bá pa erin ìṣẹ́ẹ rẹ̀ a tán; bí erín bá pá a, ìṣẹ́ẹ rẹ̀ a tán."
+        },
+        {
+          "input": "Toju tiye laparoo fi n riran.",
+          "predicted": "Tójú tìyẹ láparòò fi ń ríran.",
+          "expected": "Tojú tìyẹ́ làparòó fi ń ríran."
+        }
+      ]
+    },
+    {
+      "language": "igbo",
+      "model_version": "v1",
+      "test_size": 500,
+      "date": "2026-02-11",
+      "word_accuracy": 0.9524100061012812,
+      "sentence_accuracy": 0.43,
+      "character_accuracy": 0.9183866112202465,
+      "diacritic_precision": 0.8943448917849662,
+      "diacritic_recall": 0.8690637720488467,
+      "diacritic_f1": 0.8815231104484459,
+      "total_words": 9834,
+      "correct_words": 9366,
+      "total_sentences": 500,
+      "correct_sentences": 215,
+      "sample_errors": [
+        {
+          "input": "3 , 4 . ( a ) Olee otu obi na - adi anyi maka akwukwo anyi di iche iche ?",
+          "predicted": "3 , 4 . ( a ) Olee otu obi na - adị anyị maka akwụkwọ anyị dị iche iche ?",
+          "expected": "3 , 4 . ( a ) Olee otú obi na - adị anyị maka akwụkwọ anyị dị́ iche iche ?"
+        },
+        {
+          "input": "Ozi oma ahu bu na Alaeze Chineke , nke bu ochichi di n’eluigwe , ga - eme ka ajo omume niile kwusi n’oge na - adighi anya , meekwa ka uwa ghoo paradais .",
+          "predicted": "Ozi ọma ahụ bụ na Alaeze Chineke , nke bụ ọchịchị dị n’eluigwe , ga - eme ka ajọ omume niile kwụsị n’oge na - adịghị anya , meekwa ka ụwa ghọọ paradaịs .",
+          "expected": "Ozi ọma ahụ bụ na Alaeze Chineke , nke bụ́ ọchịchị dị́ n’eluigwe , ga - eme ka ajọ omume niile kwụsị n’oge na - adịghị anya , meekwa ka ụwa ghọọ paradaịs ."
+        },
+        {
+          "input": "Cheta ihe di na Ndi Galeshia 6 : 5 .",
+          "predicted": "Cheta ihe dị na Ndị Galeshia 6 : 5 .",
+          "expected": "Cheta ihe dị ná Ndị Galeshia 6 : 5 ."
+        },
+        {
+          "input": "Ilu 3 : 13 - 15 siri : “ Obi uto na - adiri onye chotaworo amamihe , na onye nwetara nghota , n’ihi na o di mma inweta ya di ka uru karia inweta olaocha di ka uru , inweta ya di ka ihe mmadu ruputara dikwa mma karia inweta olaedo .",
+          "predicted": "Ilu 3 : 13 - 15 sirị : “ Obi ụtọ na - adịrị onye chọtaworo ámamihe , na onye nwetara nghọta , n’ihi na ọ dị mma inweta ya dị ka uru karịa inweta ọlaọcha dị ka uru , inweta ya dị ka ihe mmadụ rụpụtara dịkwa mma karịa inweta ọlaedo .",
+          "expected": "Ilu 3 : 13 - 15 sịrị : “ Obi ụtọ na - adịrị onye chọtaworo amamihe , na onye nwetara nghọta , n’ihi na ọ dị mma inweta ya dị ka uru karịa inweta ọlaọcha dị ka uru , inweta ya dị ka ihe mmadụ rụpụtara dịkwa mma karịa inweta ọlaedo ."
+        },
+        {
+          "input": "Otu nwoke aha ya bu Etienne , onye di afo iri asato na ano , kwuru , si : “ N’agbanyeghi na o kariala afo iri na asato nwunye oma m nwuru , aguu ihu ya na - agu m , m ka na - erukwara ya uju .",
+          "predicted": "Otu nwoke aha ya bụ Etienne , onye dị afọ iri asatọ na anọ , kwuru , sị : “ N’agbanyeghị na ọ karịala afọ iri na asatọ nwunye ọma m nwụrụ , agụụ ịhu ya na - agụ m , m ka na - erukwara ya uju .",
+          "expected": "Otu nwoke aha ya bụ Etienne , onye dị́ afọ iri asatọ na anọ , kwuru , sị : “ N’agbanyeghị na ọ karịala afọ iri na asatọ nwunye ọma m nwụrụ , agụụ ịhụ ya na - agụ m , m ka na - erukwara ya uju ."
+        },
+        {
+          "input": "Gini mere obi ji kwesi isi gi ike na adim na mma gi na Jehova ga - eme ka i di ike ?",
+          "predicted": "Gịnị mere obi ji kwesị ísi gị ike na adịm na mma gị na Jehova ga - eme ka ị dị ike ?",
+          "expected": "Gịnị mere obi ji kwesị isi gị ike na adịm ná mma gị na Jehova ga - eme ka ị dị ike ?"
+        },
+        {
+          "input": "N’eziokwu , “ Chineke huru uwa n’anya nke ukwuu nke na o nyere Okpara o muru naani ya , ka e wee ghara ibibi onye o bula nke nwere okwukwe na ya , kama ka o nwee ndu ebighi ebi . ”",
+          "predicted": "N’eziokwu , “ Chineke hụrụ ụwa n’anya nke ukwuu nke na o nyere Ọkpara ọ mụrụ naanị ya , ka e wee ghara ịbibi onye ọ bụla nke nwere okwukwe na ya , kama ka o nwee ndụ ebighị ebi . ”",
+          "expected": "N’eziokwu , “ Chineke hụrụ ụwa n’anya nke ukwuu nke na o nyere Ọkpara ọ mụrụ naanị ya , ka e wee ghara ibibi onye ọ bụla nke nwere okwukwe na ya , kama ka o nwee ndụ ebighị ebi . ”"
+        },
+        {
+          "input": "O gwara m , si : “ Gaa ulo akwukwo ka i muta otutu ihe , i lota , gi akuziere anyi . ”",
+          "predicted": "Ọ gwara m , sị : “ Gaa ụlọ akwụkwọ ka ị mụta otụtụ ihe , i lọta , gị akụziere anyị . ”",
+          "expected": "Ọ gwara m , sị : “ Gaa ụlọ akwụkwọ ka ị mụta ọtụtụ ihe , ị lọta , gị akụziere anyị . ”"
+        },
+        {
+          "input": "Olee otu inwe uche nke Kraist ga - esi enyere gi aka n’ihe ndi i na - eme kwa ubochi ?",
+          "predicted": "Olee otu inwe uche nke Kraịst ga - esi enyere gị aka n’ihe ndị ị na - eme kwa ụbọchị ?",
+          "expected": "Olee otú inwe uche nke Kraịst ga - esi enyere gị aka n’ihe ndị ị na - eme kwa ụbọchị ?"
+        },
+        {
+          "input": "Ihe ahu m kpebiri mgbe m bu nwata emeela ka obi na - adi m uto otu m na - atudighi anya ya . ”",
+          "predicted": "Ihe ahụ m kpebiri mgbe m bụ nwata emeela ka obi na - adị m ụtọ otu m na - atụdịghị anya ya . ”",
+          "expected": "Ihe ahụ m kpebiri mgbe m bụ nwata emeela ka obi na - adị m ụtọ otú m na - atụdịghị anya ya . ”"
+        },
+        {
+          "input": "( a ) O diiri Jefta na ada ya mfe imezu nkwa o kwere Chineke ?",
+          "predicted": "( a ) Ọ dịịrị Jefta na ada ya mfe imezu nkwa o kwere Chineke ?",
+          "expected": "( a ) Ọ̀ dịịrị Jefta na ada ya mfe imezu nkwa o kwere Chineke ?"
+        },
+        {
+          "input": "O bu naani m bu okenye n’otu igwe na - eji asusu Vietnamiiz amu ihe .",
+          "predicted": "Ọ bụ naanị m bụ okenye n’otu ìgwe na - eji asụsụ Vietnamiiz amụ ihe .",
+          "expected": "Ọ bụ naanị m bụ okenye n’otu ìgwè na - eji asụsụ Vietnamiiz amụ ihe ."
+        },
+        {
+          "input": "Uzo nke ato anyi ga - esi gosi na anyi anaghi etinye aka na ndoro ndoro ochichi bu itukwasi Jehova obi .",
+          "predicted": "Ụzọ nke atọ anyị ga - esi gosi na anyị anaghị etinye aka ná ndọrọ ndọrọ ọchịchị bụ ịtụkwasị Jehova obi .",
+          "expected": "Ụzọ nke atọ anyị ga - esi gosi na anyị anaghị etinye aka na ndọrọ ndọrọ ọchịchị bụ ịtụkwasị Jehova obi ."
+        },
+        {
+          "input": "1 - 3 . ( a ) Olee otu Ndi Kraist sirila gosi na o na - agusi ha aguu ike iga omumu ihe ?",
+          "predicted": "1 - 3 . ( a ) Olee otu Ndị Kraịst sirila gosi na ọ na - agụsi ha agụụ ike ịga ọmụmụ ihe ?",
+          "expected": "1 - 3 . ( a ) Olee otú Ndị Kraịst sirila gosi na ọ na - agụsi ha agụụ ike ịga ọmụmụ ihe ?"
+        },
+        {
+          "input": "( b ) Olee otu Nwanna George Gangas si were iga omumu ihe ?",
+          "predicted": "( b ) Ọlee otu Nwanna George Gangas si were ịga ọmụmụ ihe ?",
+          "expected": "( b ) Olee otú Nwanna George Gangas si were ịga ọmụmụ ihe ?"
+        },
+        {
+          "input": "O na - akpokari umu mgbei na umu nwaanyi di ha nwuru ka ha bia n’ulo ha , ha esoro ha kparita uka , rikookwa nri .",
+          "predicted": "O na - akpọkarị ụmụ mgbeị na ụmụ nwaanyị di ha nwụrụ ka ha bịa n’ụlọ ha , ha esoro ha kparịta ụka , rịkọọkwa nri .",
+          "expected": "Ọ na - akpọkarị ụmụ mgbei na ụmụ nwaanyị di ha nwụrụ ka ha bịa n’ụlọ ha , ha esoro ha kparịta ụka , rikọọkwa nri ."
+        },
+        {
+          "input": "O kwuru , si : “ M na - echetara onwe m na m na - aza aha Jehova , nakwa na onwunwa ndi na - abiara m bu uzo Setan si aluso m ogu .",
+          "predicted": "O kwuru , si : “ M na - echetara onwe m na m na - aza aha Jehova , nakwa na ọnwụnwa ndị na - abịara m bụ ụzọ Setan sị alụso m ọgụ .",
+          "expected": "O kwuru , sị : “ M na - echetara onwe m na m na - aza aha Jehova , nakwa na ọnwụnwa ndị na - abịara m bụ ụzọ Setan si alụso m ọgụ ."
+        },
+        {
+          "input": "E nwee umuaka e kwesiri iji asusu abuo na - akuziri ihe , olee otu nne ha na nna ha ga - esi na - enyere ha aka ?",
+          "predicted": "E nwee ụmụaka e kwesịrị iji asụsụ abụọ na - akụziri ihe , olee otu nne ha na nna ha ga - esi na - enyere ha aka ?",
+          "expected": "E nwee ụmụaka e kwesịrị iji asụsụ abụọ na - akụziri ihe , olee otú nne ha na nna ha ga - esi na - enyere ha aka ?"
+        },
+        {
+          "input": "1 , 2 . ( a ) Olee otu ndu gaara adi ma a si na e nweghi Baibul ?",
+          "predicted": "1 , 2 . ( a ) Olee otu ndụ gaara adị ma a sị na e nweghị Baịbụl ?",
+          "expected": "1 , 2 . ( a ) Olee otú ndụ gaara adị ma à sị na e nweghị Baịbụl ?"
+        },
+        {
+          "input": "Di ka ihe atu , o kporo aka aha otutu ugboro .",
+          "predicted": "Dị ka ihe atụ , o kporọ aka aha otụtụ ugboro .",
+          "expected": "Dị ka ihe atụ , ọ kpọrọ aka aha ọtụtụ ugboro ."
+        }
+      ]
+    },
+    {
+      "language": "yoruba",
+      "model_version": "v2-bumie",
+      "test_size": 500,
+      "date": "2026-02-11",
+      "word_accuracy": 0.651819322459222,
+      "sentence_accuracy": 0.034,
+      "character_accuracy": 0.262037037037037,
+      "diacritic_precision": 0.22647998034880865,
+      "diacritic_recall": 0.18338526818272227,
+      "diacritic_f1": 0.20266705744431418,
+      "total_words": 11158,
+      "correct_words": 7273,
+      "total_sentences": 500,
+      "correct_sentences": 17,
+      "sample_errors": [
+        {
+          "input": "Leta Tatenai si Dariusi.",
+          "predicted": "Létà Tàtenaì sí Dáriusí.",
+          "expected": "Lẹ́tà Tatenai sí Dariusi."
+        },
+        {
+          "input": "Nje o maa ya o lenu ta a ba so pe ki i se ebi Olorun ?",
+          "predicted": "Njẹ ó máa ya ó lènu tá a bá sọ pé kì í ṣe ébi Ọlọrun ?",
+          "expected": "Ǹjẹ́ ó máa yà ọ́ lẹ́nu tá a bá sọ pé kì í ṣe ẹ̀bi Ọlọ́run ?"
+        },
+        {
+          "input": "Bo ti n so iyen lowo , asebi mii toun naa n ku lo ba okunrin yii wi , o ni : “ Se iwo ko beru Olorun rara ni , nisinsinyi ti iwo wa ninu idajo kan naa ?",
+          "predicted": "Bó ti ń sọ iyẹn lọwó , àṣebí miì toun naá ń kú lọ bá ọkùnrin yii wì , o ní : “ Ṣe ìwọ kò bẹrù Ọlọrun rárá ní , nísinsìnyí tí ìwọ wá nínú ìdájọ kan naà ?",
+          "expected": "Bó ti ń sọ ìyẹn lọ́wọ́ , aṣebi míì tóun náà ń kú lọ bá ọkùnrin yìí wí , ó ní : “ Ṣé ìwọ kò bẹ̀rù Ọlọ́run rárá ni , nísinsìnyí tí ìwọ wà nínú ìdájọ́ kan náà ?"
+        },
+        {
+          "input": "Ki nidi ta a fi nilo irapada ?",
+          "predicted": "Kí nìdí tá a fi nilò ìràpadá ?",
+          "expected": "Kí nìdí tá a fi nílò ìràpadà ?"
+        },
+        {
+          "input": "Ese kan to n je pineal ninu opolo lo maa n mu eroja melatonin jade .",
+          "predicted": "Ẹsẹ kan tó ń jẹ pineal nínú ọpọlọ ló máa ń mú èròjà melatónìń jáde .",
+          "expected": "Ẹṣẹ́ kan tó ń jẹ́ pineal nínú ọpọlọ ló máa ń mú èròjà melatonin jáde ."
+        },
+        {
+          "input": "Awon mejeeji ba bere si lo titi won fi de Betilehemu. Nigba ti won wo Betilehemu, gbogbo ilu mi titi nitori won. Awon obinrin ba bere si beere pe, “Se Naomi niyi?”",
+          "predicted": "Àwọn méjeeji bá bèrệ sí lọ títí wọn fi de Bẹtilẹhẹmu. Nígbà tí wọn wò Bẹtilẹhẹmu, gbogbo ìlú mi tìtì nítorí wọn. Àwọn òbìnrin bá bèrệ sí bẹèrẹ pé, “Se Náomì nìyí?”",
+          "expected": "Àwọn mejeeji bá bẹ̀rẹ̀ sí lọ títí wọ́n fi dé Bẹtilẹhẹmu. Nígbà tí wọ́n wọ Bẹtilẹhẹmu, gbogbo ìlú mì tìtì nítorí wọn. Àwọn obinrin bá bẹ̀rẹ̀ sí bèèrè pé, “Ṣé Naomi nìyí?”"
+        },
+        {
+          "input": "Awon atumo ede yii wa lara nnkan bi egbejila - o - din - ogorun - un [ 2,300 ] awon atumo ede ti won yonda ara won lati maa sise ni awon ibi to le ni igba - o - din - mewaa [ 190 ] kaakiri aye .",
+          "predicted": "Àwọn átúmo èdè yíì wà lára nńkan bí ẹgbéjìlá - o - din - ogọrun - un [ 2,300 ] àwọn átúmo èdè tí wọn yóndá ara wọn láti máa ṣìṣe ni àwọn ibi tó lé ní ìgba - ó - din - mẹwaa [ 190 ] kàakiri ayé .",
+          "expected": "Àwọn atúmọ̀ èdè yìí wà lára nǹkan bí egbèjìlá - ó - dín - ọgọ́rùn - ún [ 2,300 ] àwọn atúmọ̀ èdè tí wọ́n yọ̀ǹda ara wọn láti máa ṣiṣẹ́ ní àwọn ibi tó lé ní igba - ó - dín - mẹ́wàá [ 190 ] káàkiri ayé ."
+        },
+        {
+          "input": "Aisan la nwo, a ki i wo iku.",
+          "predicted": "Aiṣan là ńwo, à kì ì wọ ikú.",
+          "expected": "Àìsàn là ńwò, a kì í wo ikú."
+        },
+        {
+          "input": "mejidinlogbon",
+          "predicted": "méjìdínlógbọn",
+          "expected": "mejidinlọgbọn"
+        },
+        {
+          "input": "Iyen lo si fa a to fi je pe ni gbogbo ibi ti won wa laye , ife Kristeni so gbogbo won po sokan .",
+          "predicted": "Ìyẹn lọ sì fà á tó fi jẹ pẹ ní gbogbo ibi tí wọn wa láyé , ìfẹ Kristẹni ṣò gbogbo wọn pọ ṣòkan .",
+          "expected": "Ìyẹn ló sì fà á tó fi jẹ́ pé ní gbogbo ibi tí wọ́n wà láyé , ìfẹ́ Kristẹni so gbogbo wọn pọ̀ ṣọ̀kan ."
+        },
+        {
+          "input": "Bo tile je pe ninu oro ti Poolu so ni Ateni ko so eni to maa sedajo naa , sugbon a mo pe Jesu Kristi ti Olorun ji dide ni eni naa .",
+          "predicted": "Bó tilẹ jẹ pẹ nínú òró tí Pọolù sọ ni Àténi kò so eni tó máa ṣedájó nàà , ṣùgbọn a mọ pè Jésù Kristi tí Ọlọrun jí dìde ní ẹni naà .",
+          "expected": "Bó tilẹ̀ jẹ́ pé nínú ọ̀rọ̀ tí Pọ́ọ̀lù sọ ní Áténì kò sọ ẹni tó máa ṣèdájọ́ náà , ṣùgbọ́n a mọ̀ pé Jésù Kristi tí Ọlọ́run jí dìde ni ẹni náà ."
+        },
+        {
+          "input": "Agbegbe tempili tuntun.",
+          "predicted": "Agbègbé tempilì túntun.",
+          "expected": "Agbègbè tẹmpili tuntun."
+        },
+        {
+          "input": "Latenu ni eroja oloro inu re ti maa n wo inu eje lo .",
+          "predicted": "Latẹnu ni èròjà olóro inú rẹ tí máa ń wo inú ejẹ ló .",
+          "expected": "Látẹnu ni èròjà olóró inú rẹ̀ ti máa ń wọ inú ẹ̀jẹ̀ lọ ."
+        },
+        {
+          "input": "O tun tumo si riran awon omo lowo lati jafafa , ki won niteriba , ki won si je oloooto eeyan to laaanu omonikeji loju , ateni to n fogo fun Eledaa won .",
+          "predicted": "Ó tún túmọ sì ríran àwọn ọmọ lówó láti jàfáfá , kí wọn nítẹríba , kí wọn sì jẹ olóootó ẹeyàn tó laaanu ọmọnìkejì lójú , àténi tó ń fògo fún Ẹlèdáà wọn .",
+          "expected": "Ó tún túmọ̀ sí ríran àwọn ọmọ lọ́wọ́ láti jáfáfá , kí wọ́n nítẹríba , kí wọ́n sì jẹ́ olóòótọ́ èèyàn tó láàánú ọmọnìkejì lójú , àtẹni tó ń fògo fún Ẹlẹ́dàá wọn ."
+        },
+        {
+          "input": "Iru emi wo ni Poolu ni bo se n so awon eeyan domo eyin ?",
+          "predicted": "Irú èmi wò ni Pòolù ní bó ṣe ń sọ àwọn eeyàn dọmọ èyin ?",
+          "expected": "Irú ẹ̀mí wo ni Pọ́ọ̀lù ní bó ṣe ń sọ àwọn èèyàn dọmọ ẹ̀yìn ?"
+        },
+        {
+          "input": "lasubi",
+          "predicted": "làṣùbi",
+          "expected": "lásúbì"
+        },
+        {
+          "input": "O so fawon omo eyin re pe : “ E maa ba a lo ni didi alaaanu , gan - an gege bi Baba yin ti je alaaanu . ”",
+          "predicted": "Ó sọ fáwọn ọmọ èyin rẹ pé : “ Ẹ máa bá a lọ ní dídi alaaanu , gan - án gẹgẹ bí Baba yín tí jẹ alaaanu . ”",
+          "expected": "Ó sọ fáwọn ọmọ ẹ̀yìn rẹ̀ pé : “ Ẹ máa bá a lọ ní dídi aláàánú , gan - an gẹ́gẹ́ bí Baba yín ti jẹ́ aláàánú . ”"
+        },
+        {
+          "input": "Won yan Remegio sinu Igbimo Alarina Ile Iwosan niluu Baguio .",
+          "predicted": "Wọn yàn Remegiọ sinú Ìgbìmọ Alárinà Ilé Ìwòsàn nílúú Baguio .",
+          "expected": "Wọ́n yan Remegio sínú Ìgbìmọ̀ Alárinà Ilé Ìwòsàn nílùú Baguio ."
+        },
+        {
+          "input": "KA SO pe o to ounje kan wo fun igba akoko , bawo lo se maa pe to ko o to mo boya o feran re ?",
+          "predicted": "Ká Sọ pé ó tó òunjẹ kan wò fún ìgbà àkókò , báwo ló ṣe máa pé tọ kọ o tó mọ bóyá ó fẹran re ?",
+          "expected": "KÁ SỌ pé o tọ́ oúnjẹ kan wò fún ìgbà àkọ́kọ́ , báwo ló ṣe máa pẹ́ tó kó o tó mọ̀ bóyá o fẹ́ràn rẹ̀ ?"
+        },
+        {
+          "input": "Oun yoo wi pe, 'Nigba naa e tQ",
+          "predicted": "Òun yóo wí pé, 'Nígbà naà e tq",
+          "expected": "Òun yòò wí pé, 'Nígbà náà ẹ tQ"
+        }
+      ]
+    },
+    {
+      "language": "igbo",
+      "model_version": "v2-jw300",
+      "test_size": 500,
+      "date": "2026-02-11",
+      "word_accuracy": 0.9524100061012812,
+      "sentence_accuracy": 0.43,
+      "character_accuracy": 0.9183866112202465,
+      "diacritic_precision": 0.8943448917849662,
+      "diacritic_recall": 0.8690637720488467,
+      "diacritic_f1": 0.8815231104484459,
+      "total_words": 9834,
+      "correct_words": 9366,
+      "total_sentences": 500,
+      "correct_sentences": 215,
+      "sample_errors": [
+        {
+          "input": "3 , 4 . ( a ) Olee otu obi na - adi anyi maka akwukwo anyi di iche iche ?",
+          "predicted": "3 , 4 . ( a ) Olee otu obi na - adị anyị maka akwụkwọ anyị dị iche iche ?",
+          "expected": "3 , 4 . ( a ) Olee otú obi na - adị anyị maka akwụkwọ anyị dị́ iche iche ?"
+        },
+        {
+          "input": "Ozi oma ahu bu na Alaeze Chineke , nke bu ochichi di n’eluigwe , ga - eme ka ajo omume niile kwusi n’oge na - adighi anya , meekwa ka uwa ghoo paradais .",
+          "predicted": "Ozi ọma ahụ bụ na Alaeze Chineke , nke bụ ọchịchị dị n’eluigwe , ga - eme ka ajọ omume niile kwụsị n’oge na - adịghị anya , meekwa ka ụwa ghọọ paradaịs .",
+          "expected": "Ozi ọma ahụ bụ na Alaeze Chineke , nke bụ́ ọchịchị dị́ n’eluigwe , ga - eme ka ajọ omume niile kwụsị n’oge na - adịghị anya , meekwa ka ụwa ghọọ paradaịs ."
+        },
+        {
+          "input": "Cheta ihe di na Ndi Galeshia 6 : 5 .",
+          "predicted": "Cheta ihe dị na Ndị Galeshia 6 : 5 .",
+          "expected": "Cheta ihe dị ná Ndị Galeshia 6 : 5 ."
+        },
+        {
+          "input": "Ilu 3 : 13 - 15 siri : “ Obi uto na - adiri onye chotaworo amamihe , na onye nwetara nghota , n’ihi na o di mma inweta ya di ka uru karia inweta olaocha di ka uru , inweta ya di ka ihe mmadu ruputara dikwa mma karia inweta olaedo .",
+          "predicted": "Ilu 3 : 13 - 15 sirị : “ Obi ụtọ na - adịrị onye chọtaworo ámamihe , na onye nwetara nghọta , n’ihi na ọ dị mma inweta ya dị ka uru karịa inweta ọlaọcha dị ka uru , inweta ya dị ka ihe mmadụ rụpụtara dịkwa mma karịa inweta ọlaedo .",
+          "expected": "Ilu 3 : 13 - 15 sịrị : “ Obi ụtọ na - adịrị onye chọtaworo amamihe , na onye nwetara nghọta , n’ihi na ọ dị mma inweta ya dị ka uru karịa inweta ọlaọcha dị ka uru , inweta ya dị ka ihe mmadụ rụpụtara dịkwa mma karịa inweta ọlaedo ."
+        },
+        {
+          "input": "Otu nwoke aha ya bu Etienne , onye di afo iri asato na ano , kwuru , si : “ N’agbanyeghi na o kariala afo iri na asato nwunye oma m nwuru , aguu ihu ya na - agu m , m ka na - erukwara ya uju .",
+          "predicted": "Otu nwoke aha ya bụ Etienne , onye dị afọ iri asatọ na anọ , kwuru , sị : “ N’agbanyeghị na ọ karịala afọ iri na asatọ nwunye ọma m nwụrụ , agụụ ịhu ya na - agụ m , m ka na - erukwara ya uju .",
+          "expected": "Otu nwoke aha ya bụ Etienne , onye dị́ afọ iri asatọ na anọ , kwuru , sị : “ N’agbanyeghị na ọ karịala afọ iri na asatọ nwunye ọma m nwụrụ , agụụ ịhụ ya na - agụ m , m ka na - erukwara ya uju ."
+        },
+        {
+          "input": "Gini mere obi ji kwesi isi gi ike na adim na mma gi na Jehova ga - eme ka i di ike ?",
+          "predicted": "Gịnị mere obi ji kwesị ísi gị ike na adịm na mma gị na Jehova ga - eme ka ị dị ike ?",
+          "expected": "Gịnị mere obi ji kwesị isi gị ike na adịm ná mma gị na Jehova ga - eme ka ị dị ike ?"
+        },
+        {
+          "input": "N’eziokwu , “ Chineke huru uwa n’anya nke ukwuu nke na o nyere Okpara o muru naani ya , ka e wee ghara ibibi onye o bula nke nwere okwukwe na ya , kama ka o nwee ndu ebighi ebi . ”",
+          "predicted": "N’eziokwu , “ Chineke hụrụ ụwa n’anya nke ukwuu nke na o nyere Ọkpara ọ mụrụ naanị ya , ka e wee ghara ịbibi onye ọ bụla nke nwere okwukwe na ya , kama ka o nwee ndụ ebighị ebi . ”",
+          "expected": "N’eziokwu , “ Chineke hụrụ ụwa n’anya nke ukwuu nke na o nyere Ọkpara ọ mụrụ naanị ya , ka e wee ghara ibibi onye ọ bụla nke nwere okwukwe na ya , kama ka o nwee ndụ ebighị ebi . ”"
+        },
+        {
+          "input": "O gwara m , si : “ Gaa ulo akwukwo ka i muta otutu ihe , i lota , gi akuziere anyi . ”",
+          "predicted": "Ọ gwara m , sị : “ Gaa ụlọ akwụkwọ ka ị mụta otụtụ ihe , i lọta , gị akụziere anyị . ”",
+          "expected": "Ọ gwara m , sị : “ Gaa ụlọ akwụkwọ ka ị mụta ọtụtụ ihe , ị lọta , gị akụziere anyị . ”"
+        },
+        {
+          "input": "Olee otu inwe uche nke Kraist ga - esi enyere gi aka n’ihe ndi i na - eme kwa ubochi ?",
+          "predicted": "Olee otu inwe uche nke Kraịst ga - esi enyere gị aka n’ihe ndị ị na - eme kwa ụbọchị ?",
+          "expected": "Olee otú inwe uche nke Kraịst ga - esi enyere gị aka n’ihe ndị ị na - eme kwa ụbọchị ?"
+        },
+        {
+          "input": "Ihe ahu m kpebiri mgbe m bu nwata emeela ka obi na - adi m uto otu m na - atudighi anya ya . ”",
+          "predicted": "Ihe ahụ m kpebiri mgbe m bụ nwata emeela ka obi na - adị m ụtọ otu m na - atụdịghị anya ya . ”",
+          "expected": "Ihe ahụ m kpebiri mgbe m bụ nwata emeela ka obi na - adị m ụtọ otú m na - atụdịghị anya ya . ”"
+        },
+        {
+          "input": "( a ) O diiri Jefta na ada ya mfe imezu nkwa o kwere Chineke ?",
+          "predicted": "( a ) Ọ dịịrị Jefta na ada ya mfe imezu nkwa o kwere Chineke ?",
+          "expected": "( a ) Ọ̀ dịịrị Jefta na ada ya mfe imezu nkwa o kwere Chineke ?"
+        },
+        {
+          "input": "O bu naani m bu okenye n’otu igwe na - eji asusu Vietnamiiz amu ihe .",
+          "predicted": "Ọ bụ naanị m bụ okenye n’otu ìgwe na - eji asụsụ Vietnamiiz amụ ihe .",
+          "expected": "Ọ bụ naanị m bụ okenye n’otu ìgwè na - eji asụsụ Vietnamiiz amụ ihe ."
+        },
+        {
+          "input": "Uzo nke ato anyi ga - esi gosi na anyi anaghi etinye aka na ndoro ndoro ochichi bu itukwasi Jehova obi .",
+          "predicted": "Ụzọ nke atọ anyị ga - esi gosi na anyị anaghị etinye aka ná ndọrọ ndọrọ ọchịchị bụ ịtụkwasị Jehova obi .",
+          "expected": "Ụzọ nke atọ anyị ga - esi gosi na anyị anaghị etinye aka na ndọrọ ndọrọ ọchịchị bụ ịtụkwasị Jehova obi ."
+        },
+        {
+          "input": "1 - 3 . ( a ) Olee otu Ndi Kraist sirila gosi na o na - agusi ha aguu ike iga omumu ihe ?",
+          "predicted": "1 - 3 . ( a ) Olee otu Ndị Kraịst sirila gosi na ọ na - agụsi ha agụụ ike ịga ọmụmụ ihe ?",
+          "expected": "1 - 3 . ( a ) Olee otú Ndị Kraịst sirila gosi na ọ na - agụsi ha agụụ ike ịga ọmụmụ ihe ?"
+        },
+        {
+          "input": "( b ) Olee otu Nwanna George Gangas si were iga omumu ihe ?",
+          "predicted": "( b ) Ọlee otu Nwanna George Gangas si were ịga ọmụmụ ihe ?",
+          "expected": "( b ) Olee otú Nwanna George Gangas si were ịga ọmụmụ ihe ?"
+        },
+        {
+          "input": "O na - akpokari umu mgbei na umu nwaanyi di ha nwuru ka ha bia n’ulo ha , ha esoro ha kparita uka , rikookwa nri .",
+          "predicted": "O na - akpọkarị ụmụ mgbeị na ụmụ nwaanyị di ha nwụrụ ka ha bịa n’ụlọ ha , ha esoro ha kparịta ụka , rịkọọkwa nri .",
+          "expected": "Ọ na - akpọkarị ụmụ mgbei na ụmụ nwaanyị di ha nwụrụ ka ha bịa n’ụlọ ha , ha esoro ha kparịta ụka , rikọọkwa nri ."
+        },
+        {
+          "input": "O kwuru , si : “ M na - echetara onwe m na m na - aza aha Jehova , nakwa na onwunwa ndi na - abiara m bu uzo Setan si aluso m ogu .",
+          "predicted": "O kwuru , si : “ M na - echetara onwe m na m na - aza aha Jehova , nakwa na ọnwụnwa ndị na - abịara m bụ ụzọ Setan sị alụso m ọgụ .",
+          "expected": "O kwuru , sị : “ M na - echetara onwe m na m na - aza aha Jehova , nakwa na ọnwụnwa ndị na - abịara m bụ ụzọ Setan si alụso m ọgụ ."
+        },
+        {
+          "input": "E nwee umuaka e kwesiri iji asusu abuo na - akuziri ihe , olee otu nne ha na nna ha ga - esi na - enyere ha aka ?",
+          "predicted": "E nwee ụmụaka e kwesịrị iji asụsụ abụọ na - akụziri ihe , olee otu nne ha na nna ha ga - esi na - enyere ha aka ?",
+          "expected": "E nwee ụmụaka e kwesịrị iji asụsụ abụọ na - akụziri ihe , olee otú nne ha na nna ha ga - esi na - enyere ha aka ?"
+        },
+        {
+          "input": "1 , 2 . ( a ) Olee otu ndu gaara adi ma a si na e nweghi Baibul ?",
+          "predicted": "1 , 2 . ( a ) Olee otu ndụ gaara adị ma a sị na e nweghị Baịbụl ?",
+          "expected": "1 , 2 . ( a ) Olee otú ndụ gaara adị ma à sị na e nweghị Baịbụl ?"
+        },
+        {
+          "input": "Di ka ihe atu , o kporo aka aha otutu ugboro .",
+          "predicted": "Dị ka ihe atụ , o kporọ aka aha otụtụ ugboro .",
+          "expected": "Dị ka ihe atụ , ọ kpọrọ aka aha ọtụtụ ugboro ."
+        }
+      ]
+    }
+  ],
+  "last_updated": "2026-02-11T19:13:27.322372"
+}

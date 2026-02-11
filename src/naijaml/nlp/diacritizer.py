@@ -569,7 +569,10 @@ def _get_fallback_training_data() -> List[str]:
 
 
 def _collect_training_data() -> List[str]:
-    """Collect training data from MENYO-20k dataset.
+    """Collect training data from available sources.
+
+    Uses bumie-e/Yoruba-diacritics-vs-non-diacritics (676k sentences)
+    which has proper tonal marks AND dot-below characters.
 
     Returns:
         List of diacritized Yorùbá sentences.
@@ -577,17 +580,45 @@ def _collect_training_data() -> List[str]:
     texts = _get_fallback_training_data()
     logger.info("Starting with %d fallback sentences", len(texts))
 
+    # Try to load from HuggingFace dataset (best quality)
+    try:
+        from datasets import load_dataset
+
+        logger.info("Loading Yorùbá diacritics dataset from HuggingFace...")
+        ds = load_dataset("bumie-e/Yoruba-diacritics-vs-non-diacritics", split="train")
+
+        # Sample to avoid huge model (take ~50k sentences)
+        max_samples = 50000
+        if len(ds) > max_samples:
+            import random
+            random.seed(42)
+            indices = random.sample(range(len(ds)), max_samples)
+        else:
+            indices = range(len(ds))
+
+        for i in indices:
+            diacritized = ds[i].get("diacritcs", "")  # Note: typo in dataset column name
+            if diacritized and any(c in diacritized for c in "ọẹṣáàéèíìóòúù"):
+                texts.append(diacritized)
+
+        logger.info("Loaded %d sentences from Yorùbá diacritics dataset", len(texts))
+        return texts
+
+    except ImportError:
+        logger.info("datasets library not available, trying MENYO-20k...")
+    except Exception as e:
+        logger.warning("Failed to load HuggingFace dataset: %s", e)
+
+    # Fallback to MENYO-20k from Zenodo
     try:
         import requests
 
-        # Download from Zenodo (official source)
-        url = "https://zenodo.org/records/4297448/files/train.tsv"
+        url = "https://zenodo.org/api/records/4297448/files/train.tsv/content"
         logger.info("Downloading MENYO-20k from Zenodo...")
 
         response = requests.get(url, timeout=60)
         if response.status_code == 200:
             lines = response.text.strip().split("\n")
-            # Parse TSV - skip header, extract Yorùbá column
             for line in lines[1:]:
                 parts = line.split("\t")
                 if len(parts) >= 2:
