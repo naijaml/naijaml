@@ -20,6 +20,8 @@ from naijaml.nlp.langdetect import (
     detect_language_with_confidence,
     detect_all_languages,
     SUPPORTED_LANGUAGES,
+    train_and_save_model,
+    train_and_save_profiles,  # backwards compatibility alias
 )
 
 __all__ = [
@@ -42,4 +44,6 @@ __all__ = [
     "detect_language_with_confidence",
     "detect_all_languages",
     "SUPPORTED_LANGUAGES",
+    "train_and_save_model",
+    "train_and_save_profiles",  # backwards compatibility alias
 ]
