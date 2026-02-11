@@ -25,8 +25,16 @@ from naijaml.nlp.langdetect import (
 )
 from naijaml.nlp.diacritizer import (
     diacritize,
+    diacritize as diacritize_yoruba,  # explicit alias
     syllabify,
+    syllabify as syllabify_yoruba,  # explicit alias
     train_and_save_model as train_diacritizer,
+    train_and_save_model as train_yoruba_diacritizer,  # explicit alias
+)
+from naijaml.nlp.igbo_diacritizer import (
+    diacritize_igbo,
+    syllabify as syllabify_igbo,
+    train_and_save_model as train_igbo_diacritizer,
 )
 
 __all__ = [
@@ -51,8 +59,15 @@ __all__ = [
     "SUPPORTED_LANGUAGES",
     "train_and_save_model",
     "train_and_save_profiles",  # backwards compatibility alias
-    # Diacritization
+    # Yorùbá diacritization
     "diacritize",
+    "diacritize_yoruba",
     "syllabify",
+    "syllabify_yoruba",
     "train_diacritizer",
+    "train_yoruba_diacritizer",
+    # Igbo diacritization
+    "diacritize_igbo",
+    "syllabify_igbo",
+    "train_igbo_diacritizer",
 ]
