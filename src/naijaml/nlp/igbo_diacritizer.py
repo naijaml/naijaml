@@ -519,7 +519,8 @@ class IgboDiacritizer:
 
 def _get_fallback_training_data() -> List[str]:
     """Get built-in training sentences when datasets unavailable."""
-    return [
+    # Base sentences
+    sentences = [
         # Common greetings and phrases
         "Kedụ ka ị mere?",
         "Ọ dị mma, daalụ",
@@ -554,6 +555,79 @@ def _get_fallback_training_data() -> List[str]:
         "Ha na-ebili ụtụtụ",
     ]
 
+    # Add many examples with "ị" pronoun (you) to boost this pattern
+    # The corpus is inconsistent with "ị" vs "i" for the pronoun
+    pronoun_examples = [
+        # "ka ị" patterns (how you / that you)
+        "Kedụ ka ị mere taa?",
+        "Kedụ ka ị si eme?",
+        "Kedụ ka ị nọ?",
+        "Ọ mara ka ị si bịa",
+        "Ahụrụ m ka ị mere ya",
+        "Ọ dị mma ka ị bịara",
+        "Ọ dị mkpa ka ị mara",
+        "Ọ dị mma ka ị gara",
+        "Achọrọ m ka ị bịa",
+        "Ọ masịrị m ka ị nọrọ",
+        # "ị na-" patterns (you are doing)
+        "Ị na-eme gịnị?",
+        "Ị na-aga ebee?",
+        "Ị na-ekwu eziokwu",
+        "Ị na-arụ ọrụ dị mma",
+        "Ị na-amụ ihe ọhụrụ",
+        # "ị ga-" patterns (you will)
+        "Ị ga-eme ya",
+        "Ị ga-ahụ ya",
+        "Ị ga-amata",
+        "Ị ga-enwe obi ụtọ",
+        "Ị ga-aga n'ihu",
+        # "ị bụ" patterns (you are)
+        "Ị bụ onye ọma",
+        "Ị bụ ezigbo mmadụ",
+        "Ị bụ nwanne m",
+        "Ị bụ onye Igbo",
+        # Other "ị" patterns
+        "Ị mara ihe ahụ?",
+        "Ị hụrụ ya?",
+        "Ị nụrụ okwu ahụ?",
+        "Ị chọrọ nri?",
+        "Ị nọ ebe ahụ?",
+        "Ọ bụ gị ka ị bụ?",
+        "Gịnị ka ị chọrọ?",
+        "Ebee ka ị na-aga?",
+        "Olee mgbe ị ga-abịa?",
+        "Olee otu ị si eme ya?",
+    ]
+
+    # Add specific "ka ị mere" patterns (corpus has i=340 vs ị=14 for this context)
+    ka_i_mere_examples = [
+        "Kedụ ka ị mere?",
+        "Kedụ ka ị mere taa?",
+        "Ahụrụ m ka ị mere ya",
+        "Ọ dị mma ka ị mere nke a",
+        "Ọ mara ka ị mere",
+        "Ọ hụrụ ka ị mere ihe ahụ",
+        "Anyị hụrụ ka ị mere ya nke ọma",
+        "Ha mara ka ị mere",
+        "Ọ masịrị m ka ị mere nke a",
+        "Ọ tọrọ m ụtọ ka ị mere ya",
+    ]
+
+    # Repeat pronoun examples to boost their weight (50x to overcome corpus bias)
+    # Plus extra boost for "ka ị mere" pattern (200x)
+    return sentences + pronoun_examples * 50 + ka_i_mere_examples * 200
+
+
+def _diacritization_ratio(text: str) -> float:
+    """Calculate ratio of diacritized to total ambiguous vowels."""
+    text_lower = text.lower()
+    dotted = sum(1 for c in text_lower if c in "ịọụ")
+    undotted = sum(1 for c in text_lower if c in "iou")
+    total = dotted + undotted
+    if total == 0:
+        return 0.0
+    return dotted / total
+
 
 def _collect_training_data() -> List[str]:
     """Collect training data from available sources.
@@ -571,16 +645,28 @@ def _collect_training_data() -> List[str]:
         logger.info("Loading JW300 Igbo corpus...")
         ds = load_dataset("Tommy0201/JW300_Igbo_To_Eng", split="train")
 
+        # Filter for well-diacritized sentences (ratio > 0.5)
+        # This filters out inconsistently diacritized text
+        min_ratio = 0.5
+        high_quality = []
+
+        for i in range(len(ds)):
+            igbo_text = ds[i].get("igbo", "")
+            if igbo_text and len(igbo_text) > 20:
+                ratio = _diacritization_ratio(igbo_text)
+                if ratio >= min_ratio:
+                    high_quality.append(igbo_text)
+
         # Sample to avoid huge model (take ~50k sentences)
         max_samples = 50000
-        step = max(1, len(ds) // max_samples)
+        if len(high_quality) > max_samples:
+            import random
+            random.seed(42)
+            high_quality = random.sample(high_quality, max_samples)
 
-        for i in range(0, len(ds), step):
-            igbo_text = ds[i].get("igbo", "")
-            if igbo_text and any(c in igbo_text for c in "ịọụỊỌỤ"):
-                texts.append(igbo_text)
-
-        logger.info("Loaded %d sentences from JW300", len(texts))
+        texts.extend(high_quality)
+        logger.info("Loaded %d high-quality sentences from JW300 (ratio >= %.0f%%)",
+                    len(high_quality), min_ratio * 100)
 
     except ImportError:
         logger.info("datasets library not available")
