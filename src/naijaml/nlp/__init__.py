@@ -52,6 +52,13 @@ from naijaml.nlp.evaluation import (
     DiacritizerMetrics,
     run_all_evaluations,
 )
+from naijaml.nlp.sentiment import (
+    analyze_sentiment,
+    get_sentiment,
+    get_sentiment_with_confidence,
+    analyze_batch as analyze_sentiment_batch,
+    is_available as is_sentiment_available,
+)
 
 __all__ = [
     # Unicode
@@ -102,4 +109,10 @@ __all__ = [
     "evaluate_diacritizer",
     "DiacritizerMetrics",
     "run_all_evaluations",
+    # Sentiment analysis
+    "analyze_sentiment",
+    "get_sentiment",
+    "get_sentiment_with_confidence",
+    "analyze_sentiment_batch",
+    "is_sentiment_available",
 ]
