@@ -330,3 +330,99 @@ def is_valid_nin(nin: str) -> bool:
         True if valid NIN format (11 digits).
     """
     return bool(NIN_PATTERN.match(nin))
+
+
+# =============================================================================
+# Nigerian Pidgin (Naija) Particles and Common Words
+# =============================================================================
+
+# These are discourse particles, intensifiers, and function words that are
+# unique to Nigerian Pidgin and should be preserved during text cleaning.
+# Standard NLP tools often strip these as "noise" or "errors".
+
+PIDGIN_PARTICLES: set = {
+    # Discourse particles (sentence modifiers)
+    "sha",       # anyway, though (softener)
+    "sef",       # even, self (emphasis)
+    "abeg",      # please (politeness marker)
+    "abi",       # or, right? (question tag)
+    "shey",      # isn't it? (question tag)
+    "shebi",     # right? (confirmation)
+    "na",        # copula/focus marker
+    "dey",       # progressive marker / to be
+    "no",        # negation
+    "wey",       # relative pronoun (that/which)
+    "oya",       # let's go, come on
+    "jare",      # please (Yoruba origin)
+    "jor",       # please (variant)
+    "biko",      # please (Igbo origin)
+    "walahi",    # I swear (Hausa origin)
+    "wallahi",   # I swear (variant)
+
+    # Intensifiers and modifiers
+    "well",      # very, really
+    "die",       # extremely (to die for)
+    "gidigba",   # seriously, plenty
+    "scatter",   # extremely
+    "proper",    # properly, really
+    "sharp",     # quickly
+    "quick",     # quickly
+
+    # Common Pidgin verbs/words often stripped
+    "dey",       # be/is (progressive)
+    "chop",      # eat
+    "gist",      # chat/gossip
+    "vex",       # angry
+    "japa",      # run away/emigrate
+    "sabi",      # know
+    "wan",       # want
+    "go",        # future marker
+    "don",       # perfect marker
+    "fit",       # can/able
+
+    # Pronouns and determiners
+    "wetin",     # what
+    "weda",      # whether
+    "una",       # you (plural)
+    "dem",       # them/they
+    "am",        # him/her/it
+    "im",        # his/her
+
+    # Greetings and expressions
+    "howfar",    # hello, how are you
+    "ehen",      # I see, okay
+    "ehn",       # really? (question)
+    "kai",       # exclamation
+    "chei",      # exclamation
+    "wahala",    # trouble
+    "palava",    # problem
+    "yawa",      # trouble
+    "kolo",      # crazy
+    "mumu",      # fool
+    "oga",       # boss
+    "madam",     # ma'am
+    "bros",      # brother
+    "sista",     # sister
+    "pikin",     # child
+    "baba",      # father/old man
+    "mama",      # mother
+}
+
+# Common Pidgin multi-word expressions
+PIDGIN_EXPRESSIONS: set = {
+    "how far",
+    "no wahala",
+    "no vex",
+    "e go be",
+    "na so",
+    "na wa",
+    "no be",
+    "wey dey",
+    "for where",
+    "make we",
+    "i no",
+    "you no",
+    "e no",
+    "dem no",
+    "no dey",
+}

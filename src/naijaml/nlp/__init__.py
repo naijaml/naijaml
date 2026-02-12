@@ -14,6 +14,10 @@ from naijaml.nlp.preprocess import (
     # Nigerian-specific
     normalize_naira_symbol,
     clean_nigerian_text,
+    # Pidgin handling
+    is_pidgin_particle,
+    preserve_pidgin_particles,
+    get_pidgin_particles,
 )
 from naijaml.nlp.langdetect import (
     detect_language,
@@ -64,6 +68,10 @@ __all__ = [
     # Nigerian-specific
     "normalize_naira_symbol",
     "clean_nigerian_text",
+    # Pidgin handling
+    "is_pidgin_particle",
+    "preserve_pidgin_particles",
+    "get_pidgin_particles",
     # Language detection
     "detect_language",
     "detect_language_with_confidence",

@@ -17,6 +17,7 @@ from naijaml.utils.constants import (
     BVN_PATTERN,
     NIN_PATTERN,
     NAIRA_PATTERN,
+    PIDGIN_PARTICLES,
 )
 
 # =============================================================================
@@ -342,3 +343,69 @@ def clean_nigerian_text(
         result = result.lower()
 
     return result
+
+
+# =============================================================================
+# Nigerian Pidgin Handling
+# =============================================================================
+
+def is_pidgin_particle(word: str) -> bool:
+    """Check if a word is a Nigerian Pidgin particle or discourse marker.
+
+    These are words like 'sha', 'sef', 'abeg' that standard NLP tools often
+    strip as noise or classify as errors, but are meaningful in Pidgin.
+
+    Args:
+        word: Word to check.
+
+    Returns:
+        True if the word is a known Pidgin particle.
+
+    Example:
+        >>> is_pidgin_particle("sha")
+        True
+        >>> is_pidgin_particle("hello")
+        False
+    """
+    return word.lower() in PIDGIN_PARTICLES
+
+
+def preserve_pidgin_particles(text: str, words_to_remove: List[str]) -> str:
+    """Remove words from text while preserving Pidgin particles.
+
+    Useful when cleaning text with a stopword list that might incorrectly
+    include Pidgin discourse markers.
+
+    Args:
+        text: Input text.
+        words_to_remove: List of words to remove (stopwords).
+
+    Returns:
+        Text with non-Pidgin stopwords removed but Pidgin particles kept.
+
+    Example:
+        >>> preserve_pidgin_particles("The film sha too sweet", ["the", "sha", "too"])
+        'film sha sweet'
+    """
+    words = text.split()
+    result = []
+    for word in words:
+        # Keep if not in removal list OR if it's a Pidgin particle
+        word_lower = word.lower().strip(".,!?;:'\"")
+        if word_lower not in words_to_remove or is_pidgin_particle(word_lower):
+            result.append(word)
+    return " ".join(result)
+
+
+def get_pidgin_particles() -> set:
+    """Get the set of known Nigerian Pidgin particles.
+
+    Returns:
+        Set of Pidgin particle strings.
+
+    Example:
+        >>> particles = get_pidgin_particles()
+        >>> "abeg" in particles
+        True
+    """
+    return PIDGIN_PARTICLES.copy()
