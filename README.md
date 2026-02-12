@@ -1,45 +1,29 @@
-# NaijaML
+<p align="center">
+  <h1 align="center">NaijaML</h1>
+  <p align="center"><strong>Sovereign ML infrastructure for Nigeria.</strong></p>
+  <p align="center">Production-ready NLP tools for Yoruba, Hausa, Igbo, and Nigerian Pidgin.<br>Works on CPU. Works offline. 17MB total. No GPU required.</p>
+</p>
 
-Python library for Nigerian language NLP. Supports Yorùbá, Hausa, Igbo, and Nigerian Pidgin.
+<p align="center">
+  <a href="https://pypi.org/project/naijaml/"><img alt="PyPI" src="https://img.shields.io/pypi/v/naijaml"></a>
+  <a href="https://pypi.org/project/naijaml/"><img alt="Python" src="https://img.shields.io/pypi/pyversions/naijaml"></a>
+  <a href="https://github.com/naijaml/naijaml/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/github/license/naijaml/naijaml"></a>
+  <a href="https://huggingface.co/naijaml"><img alt="HuggingFace" src="https://img.shields.io/badge/🤗-HuggingFace-yellow"></a>
+</p>
+
+---
+
+Standard NLP tools don't work for Nigeria. Tokenizers strip Yoruba diacritics. NER models don't recognize Nigerian names or states. Sentiment tools think Pidgin is broken English. Preprocessing libraries flag "sha" and "sef" as misspellings.
+
+NaijaML is an open-source Python library that fixes this — built for the real constraints of developing ML in Nigeria: limited compute, intermittent connectivity, expensive bandwidth, and 500+ languages that the global ML ecosystem ignores.
 
 ```bash
 pip install naijaml
 ```
 
-## What's Inside
-
-| Feature | What it does | Accuracy |
-|---------|--------------|----------|
-| Language Detection | Identify yor/hau/ibo/pcm/eng | ~95% |
-| Yorùbá Diacritizer | Restore ọ, ẹ, ṣ marks | 97.5% |
-| Igbo Diacritizer | Restore ị, ọ, ụ marks | 95.2% |
-| Sentiment Analysis | Classify pos/neg/neutral | 72% |
-| Dataset Loaders | NaijaSenti, MasakhaNER, MasakhaNEWS | - |
-| Text Preprocessing | PII masking, Pidgin-aware cleaning | - |
-
-All models run on CPU. No GPU required. Total size: ~17MB.
-
 ## Quick Start
 
-### Language Detection
-
-```python
-from naijaml.nlp import detect_language
-
-detect_language("Bawo ni, se daadaa ni?")
-# → 'yor'
-
-detect_language("Ina kwana?")
-# → 'hau'
-
-detect_language("Kedu ka ị mere?")
-# → 'ibo'
-
-detect_language("How far, wetin dey happen?")
-# → 'pcm'
-```
-
-### Yorùbá Diacritizer
+### Yoruba Diacritizer
 
 ```python
 from naijaml.nlp import diacritize_dot_below
@@ -49,6 +33,8 @@ diacritize_dot_below("Ojo lo si oja")
 
 diacritize_dot_below("Ese pupo fun iranlowo re")
 # → 'Ẹsẹ pupo fun iranlọwọ rẹ'
+
+# 97.5% accuracy | 6.4MB model | CPU only | Works offline
 ```
 
 ### Igbo Diacritizer
@@ -59,8 +45,20 @@ from naijaml.nlp import diacritize_igbo
 diacritize_igbo("Kedu ka i mere")
 # → 'Kedụ ka ị mere'
 
-diacritize_igbo("Daalu nne")
-# → 'Daalu nne'
+# 95.2% accuracy | 4.9MB model | CPU only
+```
+
+### Language Detection
+
+```python
+from naijaml.nlp import detect_language
+
+detect_language("Bawo ni, se daadaa ni?")   # → 'yor'
+detect_language("Ina kwana?")                # → 'hau'
+detect_language("Kedu ka ị mere?")           # → 'ibo'
+detect_language("How far, wetin dey happen?") # → 'pcm'
+
+# 5 languages: Yoruba, Hausa, Igbo, Pidgin, English | ~95% accuracy
 ```
 
 ### Sentiment Analysis
@@ -76,27 +74,28 @@ analyze_sentiment("I no like am at all")
 
 analyze_sentiment("Wannan fim din yana da kyau")  # Hausa
 # → {'label': 'positive', 'confidence': 0.81, ...}
+
+# Works across Yoruba, Hausa, Igbo, and Pidgin
 ```
 
-### Dataset Loaders
+### Load Nigerian Datasets
 
 ```python
 from naijaml.data import load_dataset
 
-# NaijaSenti - Sentiment Analysis (Hausa, Igbo, Yorùbá, Pidgin)
+# NaijaSenti — Sentiment in 4 Nigerian languages
 data = load_dataset("naijasenti", lang="yor", split="train")
-# → [{'text': 'Ọjọ́ yìí dára gan!', 'label': 'positive'}, ...]
-# 8,522 Yorùbá samples, 14,172 Hausa, 10,192 Igbo, 5,121 Pidgin
+# → 8,522 Yoruba samples, 14,172 Hausa, 10,192 Igbo, 5,121 Pidgin
 
-# MasakhaNER - Named Entity Recognition (Hausa, Igbo, Yorùbá)
+# MasakhaNER — Named Entity Recognition
 ner_data = load_dataset("masakhaner", lang="hau", split="train")
-# → [{'tokens': ['Shugaba', 'Tinubu', 'ya', ...], 'ner_tags': ['B-PER', 'I-PER', 'O', ...]}, ...]
-# Tags: PER (person), ORG (organization), LOC (location), DATE
+# → Tags: PER, ORG, LOC, DATE
 
-# MasakhaNEWS - News Classification (Hausa, Igbo, Yorùbá, Pidgin)
+# MasakhaNEWS — News Classification
 news = load_dataset("masakhanews", lang="pcm", split="train")
-# → [{'text': '...', 'label': 'sports', 'headline': '...', 'url': '...'}, ...]
-# Categories: business, entertainment, health, politics, sports, technology
+# → Categories: business, entertainment, health, politics, sports, technology
+
+# 7 datasets total | Downloads once, cached offline
 ```
 
 ### Text Preprocessing
@@ -104,14 +103,15 @@ news = load_dataset("masakhanews", lang="pcm", split="train")
 ```python
 from naijaml.nlp import mask_pii, is_pidgin_particle
 
-# Mask Nigerian phone numbers, emails, BVN, NIN
+# Mask Nigerian PII patterns
 mask_pii("Call me on 08012345678 or email me@example.com")
 # → 'Call me on [PHONE] or [EMAIL]'
+# Detects: +234 numbers, 080x/070x/090x, BVN, NIN, emails
 
-# Check Pidgin particles (words often stripped by other NLP tools)
-is_pidgin_particle("sha")  # → True
-is_pidgin_particle("sef")  # → True
-is_pidgin_particle("abeg") # → True
+# Pidgin-aware — preserves particles other tools strip
+is_pidgin_particle("sha")   # → True
+is_pidgin_particle("sef")   # → True
+is_pidgin_particle("abeg")  # → True
 ```
 
 ### Nigerian Constants
@@ -119,71 +119,85 @@ is_pidgin_particle("abeg") # → True
 ```python
 from naijaml.utils.constants import STATES, BANKS, format_naira, get_telco
 
-# All 36 states + FCT
-STATES["Lagos"]  # → 'Ikeja'
-
-# Nigerian banks
-BANKS["GTBank"]  # → '058'
-
-# Format Naira
-format_naira(1500000)  # → '₦1,500,000.00'
-
-# Identify telco from phone number
-get_telco("08031234567")  # → 'MTN'
+STATES["Lagos"]              # → 'Ikeja'
+BANKS["GTBank"]              # → '058'
+format_naira(1500000)        # → '₦1,500,000.00'
+get_telco("08031234567")     # → 'MTN'
 ```
+
+## Features
+
+| Feature | Status | Accuracy | Model Size |
+|---------|--------|----------|------------|
+| Language Detection | ✅ | ~95% | 1.8MB |
+| Yoruba Diacritizer (dot-below) | ✅ | 97.5% | 6.4MB |
+| Igbo Diacritizer | ✅ | 95.2% | 4.9MB |
+| Sentiment Analysis | ✅ | 72% | 4.3MB |
+| Dataset Loaders (7 datasets) | ✅ | — | — |
+| Text Preprocessing & PII Masking | ✅ | — | — |
+| Nigerian Constants (states, banks, telcos) | ✅ | — | — |
+
+**Total model size: ~17MB.** Everything runs on CPU. No GPU required.
 
 ## Design Philosophy
 
-- **CPU-first**: Everything works on a laptop with 4GB RAM
-- **Minimal dependencies**: Core package needs only `numpy`, `requests`, `tqdm`
-- **Offline-capable**: Models cached locally after first download
-- **Honest metrics**: We report real accuracy numbers, not cherry-picked results
+**CPU-first.** Every feature works on a laptop with 4GB RAM. GPU makes things faster but is never required. 95% of African AI talent has no meaningful GPU access — NaijaML is built for them.
+
+**Offline-capable.** Models are bundled. Datasets cache locally after first download. Core features work without internet.
+
+**Minimal dependencies.** Core package needs only `numpy`, `requests`, `tqdm`. We don't pull in PyTorch if we don't need it.
+
+**Honest metrics.** We report real accuracy numbers, not cherry-picked results. The sentiment model is 72%, not 95%. The Yoruba diacritizer handles dot-below at 97.5% but full tonal is ~77%. We tell you upfront.
+
+**Nigerian context.** Examples use Nigerian names, cities, and data. PII masking handles Nigerian phone formats and national ID numbers. Currency is in Naira, not dollars.
 
 ## Models
-
-All models are lightweight and included in the package:
 
 | Model | Size | Approach |
 |-------|------|----------|
 | Language Detection | 1.8MB | Naive Bayes + char n-grams |
-| Yorùbá Diacritizer | 6.4MB | Syllable-based k-NN |
+| Yoruba Diacritizer | 6.4MB | Syllable-based k-NN |
 | Igbo Diacritizer | 4.9MB | Syllable-based k-NN |
 | Sentiment Analysis | 4.3MB | TF-IDF + Logistic Regression |
 
 ## Limitations
 
-Be aware of current limitations:
+We believe in transparency. Here's what NaijaML can't do yet:
 
-- **Yorùbá tones**: Dot-below restoration is 97.5% accurate, but full tonal diacritization is ~77% due to contextual ambiguity
-- **Sentiment**: 72% accuracy on Twitter data. Production use cases may want the optional transformer model (coming soon)
-- **Pidgin-English**: Short texts can be ambiguous between Pidgin and English
+- **Yoruba tones:** Dot-below restoration (ọ, ẹ, ṣ) is 97.5% accurate. Full tonal diacritization (à, á, è, é) is ~77% due to contextual ambiguity — even native speakers sometimes disagree on tones.
+- **Sentiment accuracy:** 72% on Twitter data. Good enough for trend analysis, not for production decisions on individual texts. Optional transformer models coming soon.
+- **Pidgin vs English:** Short texts can be ambiguous between Pidgin and informal English. The detector works best on sentences of 5+ words.
 
-## Coming Soon
+## Roadmap
 
-- [ ] Hausa diacritizer
-- [ ] More dataset loaders (MENYO-20k, NollySenti, AfriQA, MasakhaPOS)
-- [ ] Optional transformer models via `pip install naijaml[nlp]`
-- [ ] Named Entity Recognition wrapper
-- [ ] Speech-to-text for Nigerian languages
+- Hausa diacritizer
+- More dataset loaders (MENYO-20k, NollySenti, AfriQA, MasakhaPOS)
+- Optional transformer models via `pip install naijaml[transformers]`
+- Named Entity Recognition for Nigerian entities
+- Speech-to-text for Nigerian languages
+- Nigerian ML Benchmark — how do GPT-4, Llama, Gemma perform on Nigerian tasks?
 
 ## Contributing
 
-We welcome contributions from the Nigerian and global ML community.
+We need people who know Nigerian languages, Nigerian data, and Nigerian problems — ML engineers, linguists, data scientists, and domain experts in fintech, agritech, and health.
 
 ```bash
-# Clone and install dev dependencies
 git clone https://github.com/naijaml/naijaml.git
 cd naijaml
 pip install -e ".[dev]"
-
-# Run tests
 pytest tests/ -v
 ```
 
-## License
+## Links
 
-MIT
+- [PyPI](https://pypi.org/project/naijaml/)
+- [GitHub](https://github.com/naijaml/naijaml)
+- [HuggingFace](https://huggingface.co/naijaml)
 
 ## Acknowledgments
 
-Built with data from [Masakhane](https://www.masakhane.io/), [HausaNLP](https://hausanlp.github.io/), and the African NLP community.
+Built with data and research from [Masakhane](https://www.masakhane.io/), [HausaNLP](https://hausanlp.github.io/), and the African NLP community.
+
+## License
+
+Apache 2.0
