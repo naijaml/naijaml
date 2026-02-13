@@ -168,6 +168,19 @@ We believe in transparency. Here's what NaijaML can't do yet:
 - **Sentiment accuracy:** 72% on Twitter data. Good enough for trend analysis, not for production decisions on individual texts. Optional transformer models coming soon.
 - **Pidgin vs English:** Short texts can be ambiguous between Pidgin and informal English. The detector works best on sentences of 5+ words.
 
+## Tokenizer Benchmark
+
+We benchmarked 7 major AI tokenizers (GPT-4, GPT-4o, Llama 3, Gemma 2, Mistral, BERT, XLM-RoBERTa) on Nigerian languages. The results:
+
+| Language | Avg Token Ratio vs English |
+|----------|:-:|
+| Yoruba | **3.14x** |
+| Igbo | **2.30x** |
+| Hausa | **1.75x** |
+| Pidgin | **1.05x** |
+
+Yoruba text costs 3x more to process than English with most tokenizers. GPT-4o's newer tokenizer performs best (1.69x); Mistral performs worst (2.47x). See the full analysis with interactive charts in [`benchmarks/`](benchmarks/).
+
 ## Roadmap
 
 - Hausa diacritizer
@@ -175,7 +188,6 @@ We believe in transparency. Here's what NaijaML can't do yet:
 - Optional transformer models via `pip install naijaml[transformers]`
 - Named Entity Recognition for Nigerian entities
 - Speech-to-text for Nigerian languages
-- Nigerian ML Benchmark — how do GPT-4, Llama, Gemma perform on Nigerian tasks?
 
 ## Contributing
 

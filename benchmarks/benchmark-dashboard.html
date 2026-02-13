@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Hidden Tax on Nigerian AI — NaijaML Tokenizer Benchmark</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #fafaf8;
+    --surface: #ffffff;
+    --surface-alt: #f3f2ee;
+    --border: #e0ddd5;
+    --border-strong: #c8c4b8;
+    --green: #006b3f;
+    --red: #cc2936;
+    --orange: #c45d00;
+    --purple: #6b21a8;
+    --blue: #2b4acb;
+    --black: #1a1a1a;
+    --dark: #333;
+    --muted: #444;
+    --dimmed: #666;
+  }
+
+  body {
+    background: var(--bg);
+    font-family: 'Courier New', Courier, monospace;
+    color: var(--black);
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+
+  /* === HERO === */
+  .hero {
+    padding: 56px 40px 44px;
+    border-bottom: 2px solid var(--black);
+  }
+
+  .flag-bar {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 20px;
+  }
+  .flag-bar span {
+    display: block;
+    width: 32px;
+    height: 5px;
+    border-radius: 1px;
+  }
+  .flag-g { background: #008751; }
+  .flag-w { background: #e8e5dc; }
+
+  .hero h1 {
+    font-size: clamp(30px, 5vw, 52px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -2px;
+  }
+  .hero h1 .accent { color: var(--green); }
+
+  .hero .subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 14px;
+    max-width: 560px;
+    line-height: 1.7;
+  }
+  .hero .subtitle .red { color: var(--red); font-weight: 700; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 24px;
+    margin-top: 36px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+  }
+
+  .stat-num {
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -2px;
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    margin-top: 6px;
+    font-weight: 700;
+  }
+  .stat-sub {
+    font-size: 11px;
+    color: var(--dimmed);
+    margin-top: 1px;
+  }
+
+  /* === SECTIONS === */
+  .section {
+    padding: 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-tag {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    margin-bottom: 4px;
+    font-weight: 700;
+  }
+
+  .section h2 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+
+  .section .desc {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+
+  /* === COST BARS === */
+  .bar-row { margin-bottom: 14px; }
+
+  .bar-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 3px;
+  }
+
+  .bar-lang {
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .bar-lang.is-english { color: var(--muted); }
+
+  .bar-value {
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .bar-mult {
+    font-size: 11px;
+    color: var(--surface);
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 2px;
+  }
+  .bar-mult.severe { background: var(--red); }
+  .bar-mult.warning { background: var(--orange); }
+
+  .bar-track {
+    width: 100%;
+    height: 28px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 1px;
+  }
+  .bar-fill.is-english { opacity: 0.4; background: var(--dimmed); }
+
+  .bar-baseline {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-left: 2px dashed var(--border-strong);
+  }
+
+  .bar-footnote {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 14px;
+    border-left: 3px solid var(--green);
+    padding-left: 12px;
+    line-height: 1.5;
+  }
+
+  /* === TOKEN EXPLOSION === */
+  .explosion-box {
+    background: var(--surface);
+    border: 2px solid var(--black);
+    border-radius: 3px;
+    padding: 24px;
+    margin-bottom: 28px;
+  }
+
+  .explosion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .eng-label {
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    font-weight: 700;
+  }
+
+  .eng-token {
+    display: inline-block;
+    font-size: 18px;
+    background: var(--blue);
+    color: #fff;
+    padding: 5px 14px;
+    border-radius: 2px;
+    font-weight: 700;
+    margin-top: 6px;
+  }
+
+  .eng-count {
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: 10px;
+  }
+
+  .ratio-big {
+    font-size: 52px;
+    color: var(--red);
+    font-weight: 700;
+    letter-spacing: -3px;
+    line-height: 1;
+  }
+
+  .yor-label {
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+
+  .token-fragments {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+  }
+
+  .fragment {
+    font-size: 12px;
+    padding: 3px 7px;
+    background: #fce8ea;
+    border: 1px solid #f0b4ba;
+    border-radius: 2px;
+    color: var(--red);
+    font-weight: 500;
+  }
+
+  .explosion-note {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 10px;
+  }
+
+  /* === WORST LIST === */
+  .worst-label {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+
+  .worst-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .worst-row:first-of-type { border-top: 1px solid var(--border); }
+  .worst-row:nth-child(odd) { background: var(--surface-alt); }
+  .worst-row:nth-child(even) { background: var(--surface); }
+
+  .worst-ratio {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--red);
+    min-width: 55px;
+    letter-spacing: -1px;
+  }
+
+  .worst-text {
+    flex: 1;
+    min-width: 0;
+  }
+  .worst-text .word {
+    font-size: 13px;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .worst-text .detail {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .worst-tokenizer {
+    font-size: 10px;
+    color: var(--dark);
+    font-weight: 700;
+  }
+
+  /* === HEATMAP === */
+  .heatmap-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid var(--border-strong);
+  }
+  .heatmap-table thead tr { background: var(--black); }
+  .heatmap-table th {
+    padding: 10px 6px;
+    text-align: center;
+    font-size: 9px;
+    color: #eee;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+  }
+  .heatmap-table th:first-child { text-align: left; padding-left: 12px; }
+
+  .heatmap-table td {
+    padding: 10px 6px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    border-bottom: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+  }
+  .heatmap-table td:first-child {
+    text-align: left;
+    padding-left: 12px;
+    font-size: 12px;
+    background: var(--surface);
+    border-left: none;
+    white-space: nowrap;
+  }
+
+  .heatmap-legend {
+    display: flex;
+    gap: 14px;
+    margin-top: 14px;
+    font-size: 10px;
+    color: var(--muted);
+    flex-wrap: wrap;
+  }
+  .legend-swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 4px;
+    vertical-align: middle;
+    border: 1px solid var(--border);
+  }
+
+  /* === BOTTOM === */
+  .bottom { padding: 40px; }
+
+  .bottom .punchline {
+    font-size: clamp(17px, 3vw, 26px);
+    line-height: 1.5;
+    max-width: 650px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .bottom .punchline .dim { color: var(--muted); }
+  .bottom .punchline .hit { color: var(--red); }
+
+  .methodology {
+    margin-top: 28px;
+    padding: 18px 20px;
+    background: #f0faf4;
+    border: 1px solid #b7e4c7;
+    border-left: 4px solid var(--green);
+    border-radius: 2px;
+    max-width: 560px;
+  }
+  .methodology .tag {
+    font-size: 9px;
+    color: var(--green);
+    margin-bottom: 6px;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+  }
+  .methodology .body {
+    font-size: 11px;
+    color: var(--black);
+    line-height: 1.8;
+  }
+
+  .footer-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 2px solid var(--black);
+  }
+  .footer-bar .brand {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--green);
+  }
+  .footer-bar .version {
+    font-size: 11px;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="flag-bar">
+      <span class="flag-g"></span>
+      <span class="flag-w"></span>
+      <span class="flag-g"></span>
+    </div>
+    <h1>THE HIDDEN TAX ON<br><span class="accent">NIGERIAN AI</span></h1>
+    <p class="subtitle">
+      7 tokenizers. 5 languages. 3,500 data points.
+      <br>Yorùbá costs up to <span class="red">3.5× more</span> to process than English.
+      <br>Same meaning. Same API. Different price.
+    </p>
+
+    <div class="stats-grid">
+      <div>
+        <div class="stat-num" style="color:var(--red)">3.5×</div>
+        <div class="stat-label">WORST COST MULT.</div>
+        <div class="stat-sub">Yorùbá on Mistral</div>
+      </div>
+      <div>
+        <div class="stat-num" style="color:var(--orange)">17:1</div>
+        <div class="stat-label">WORST TOKEN RATIO</div>
+        <div class="stat-sub">"telephone" in Yorùbá</div>
+      </div>
+      <div>
+        <div class="stat-num" style="color:var(--green)">₦11,824</div>
+        <div class="stat-label">HIGHEST COST / 1M</div>
+        <div class="stat-sub">Yorùbá via Mistral</div>
+      </div>
+      <div>
+        <div class="stat-num" style="color:var(--blue)">7</div>
+        <div class="stat-label">MODELS TESTED</div>
+        <div class="stat-sub">OpenAI, Meta, Google, Mistral</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 01 COST BARS -->
+  <div class="section">
+    <div class="section-tag">01 — COST PER LANGUAGE</div>
+    <h2>What Nigerian developers actually pay</h2>
+    <p class="desc">GPT-4o · $2.50/1M input tokens · ₦1,350/$1</p>
+
+    <!-- English -->
+    <div class="bar-row">
+      <div class="bar-header">
+        <span class="bar-lang is-english">English</span>
+        <span class="bar-value">₦3,375</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill is-english" style="width:33.8%"></div>
+      </div>
+    </div>
+
+    <!-- Pidgin -->
+    <div class="bar-row">
+      <div class="bar-header">
+        <span class="bar-lang">Pidgin</span>
+        <span class="bar-value">₦3,613</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:36.1%;background:var(--red);opacity:0.85"></div>
+        <div class="bar-baseline" style="left:33.8%"></div>
+      </div>
+    </div>
+
+    <!-- Hausa -->
+    <div class="bar-row">
+      <div class="bar-header">
+        <span class="bar-lang">Hausa</span>
+        <span class="bar-value">₦4,892 <span class="bar-mult warning">1.45×</span></span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:48.9%;background:var(--orange);opacity:0.85"></div>
+        <div class="bar-baseline" style="left:33.8%"></div>
+      </div>
+    </div>
+
+    <!-- Igbo -->
+    <div class="bar-row">
+      <div class="bar-header">
+        <span class="bar-lang">Igbo</span>
+        <span class="bar-value">₦5,201 <span class="bar-mult warning">1.54×</span></span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:52.0%;background:var(--purple);opacity:0.85"></div>
+        <div class="bar-baseline" style="left:33.8%"></div>
+      </div>
+    </div>
+
+    <!-- Yorùbá -->
+    <div class="bar-row">
+      <div class="bar-header">
+        <span class="bar-lang">Yorùbá</span>
+        <span class="bar-value">₦8,084 <span class="bar-mult severe">2.40×</span></span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:80.8%;background:var(--green);opacity:0.85"></div>
+        <div class="bar-baseline" style="left:33.8%"></div>
+      </div>
+    </div>
+
+    <div class="bar-footnote">
+      Dashed line = English baseline ₦3,375. Everything to the right is the language tax.
+    </div>
+  </div>
+
+  <!-- 02 TOKEN EXPLOSION -->
+  <div class="section">
+    <div class="section-tag">02 — TOKEN EXPLOSION</div>
+    <h2 style="margin-bottom:28px">How tokenizers shred Yorùbá</h2>
+
+    <div class="explosion-box">
+      <div class="explosion-header">
+        <div>
+          <div class="eng-label">ENGLISH INPUT</div>
+          <span class="eng-token">telephone</span>
+          <span class="eng-count">= 1 token</span>
+        </div>
+        <div class="ratio-big">17×</div>
+      </div>
+
+      <div>
+        <div class="yor-label">YORÙBÁ → MISTRAL v0.3 → 17 FRAGMENTS</div>
+        <div class="token-fragments">
+          <span class="fragment">▁</span>
+          <span class="fragment">&lt;0xE1&gt;</span>
+          <span class="fragment">&lt;0xBA&gt;</span>
+          <span class="fragment">&lt;0xB9&gt;</span>
+          <span class="fragment">̀</span>
+          <span class="fragment">r</span>
+          <span class="fragment">ọ</span>
+          <span class="fragment">▁</span>
+          <span class="fragment">ì</span>
+          <span class="fragment">b</span>
+          <span class="fragment">án</span>
+          <span class="fragment">is</span>
+          <span class="fragment">ọ</span>
+          <span class="fragment">̀</span>
+          <span class="fragment">r</span>
+          <span class="fragment">ọ</span>
+          <span class="fragment">̀</span>
+        </div>
+        <div class="explosion-note">"ẹ̀rọ ìbánisọ̀rọ̀" — the tokenizer doesn't recognize a single Yorùbá character.</div>
+      </div>
+    </div>
+
+    <div class="worst-label">TOP 5 WORST CASES</div>
+
+    <div class="worst-row">
+      <div class="worst-ratio">17×</div>
+      <div class="worst-text">
+        <div class="word">ẹ̀rọ ìbánisọ̀rọ̀</div>
+        <div class="detail">eng: "telephone" (1 tok) → 17 tokens</div>
+      </div>
+      <div class="worst-tokenizer">Mistral</div>
+    </div>
+    <div class="worst-row">
+      <div class="worst-ratio">15×</div>
+      <div class="worst-text">
+        <div class="word">pápá ọkọ̀ òfuurufú</div>
+        <div class="detail">eng: "airport" (1 tok) → 15 tokens</div>
+      </div>
+      <div class="worst-tokenizer">GPT-4</div>
+    </div>
+    <div class="worst-row">
+      <div class="worst-ratio">13×</div>
+      <div class="worst-text">
+        <div class="word">ilé ẹ̀kọ́ gíga</div>
+        <div class="detail">eng: "university" (1 tok) → 13 tokens</div>
+      </div>
+      <div class="worst-tokenizer">Mistral</div>
+    </div>
+    <div class="worst-row">
+      <div class="worst-ratio">11×</div>
+      <div class="worst-text">
+        <div class="word">iná mọ̀nàmọ́ná</div>
+        <div class="detail">eng: "electricity" (1 tok) → 11 tokens</div>
+      </div>
+      <div class="worst-tokenizer">Mistral</div>
+    </div>
+    <div class="worst-row">
+      <div class="worst-ratio">10×</div>
+      <div class="worst-text">
+        <div class="word">mmịrị ọzụzọ</div>
+        <div class="detail">eng: "rain" (1 tok) → 10 tokens</div>
+      </div>
+      <div class="worst-tokenizer">GPT-4</div>
+    </div>
+  </div>
+
+  <!-- 03 HEATMAP -->
+  <div class="section">
+    <div class="section-tag">03 — FULL MATRIX</div>
+    <h2>Token ratio vs English — all models</h2>
+    <p class="desc">1.0× = same as English. Higher = more expensive to process.</p>
+
+    <div style="overflow-x:auto">
+      <table class="heatmap-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>GPT-4</th>
+            <th>GPT-4o</th>
+            <th>Llama 3</th>
+            <th>Gemma 2</th>
+            <th>Mistral</th>
+            <th>BERT-ML</th>
+            <th>XLM-R</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:var(--green);font-weight:700">Yorùbá</td>
+            <td style="background:#ffcdd2;color:var(--red)">3.4×</td>
+            <td style="background:#fff3e0;color:var(--orange)">2.4×</td>
+            <td style="background:#ffcdd2;color:var(--red)">3.1×</td>
+            <td style="background:#ffccbc;color:#bf360c">2.9×</td>
+            <td style="background:#ffcdd2;color:var(--red)">3.5×</td>
+            <td style="background:#fff3e0;color:var(--orange)">2.4×</td>
+            <td style="background:#ffccbc;color:#bf360c">2.8×</td>
+          </tr>
+          <tr>
+            <td style="color:var(--purple);font-weight:700">Igbo</td>
+            <td style="background:#fff3e0;color:var(--orange)">2.4×</td>
+            <td style="background:#c8e6c9;color:#2e7d32">1.5×</td>
+            <td style="background:#fff3e0;color:var(--orange)">2.3×</td>
+            <td style="background:#fff3e0;color:var(--orange)">2.3×</td>
+            <td style="background:#ffccbc;color:#bf360c">2.5×</td>
+            <td style="background:#fff3e0;color:var(--orange)">2.2×</td>
+            <td style="background:#fff3e0;color:var(--orange)">2.3×</td>
+          </tr>
+          <tr>
+            <td style="color:var(--orange);font-weight:700">Hausa</td>
+            <td style="background:#c8e6c9;color:#2e7d32">1.8×</td>
+            <td style="background:#c8e6c9;color:#2e7d32">1.5×</td>
+            <td style="background:#c8e6c9;color:#2e7d32">1.8×</td>
+            <td style="background:#c8e6c9;color:#2e7d32">1.6×</td>
+            <td style="background:#c8e6c9;color:#2e7d32">1.9×</td>
+            <td style="background:#c8e6c9;color:#2e7d32">1.5×</td>
+            <td style="background:#c8e6c9;color:#2e7d32">1.3×</td>
+          </tr>
+          <tr>
+            <td style="color:var(--red);font-weight:700">Pidgin</td>
+            <td style="background:#e8f5e9;color:var(--green)">1.1×</td>
+            <td style="background:#e8f5e9;color:var(--green)">1.1×</td>
+            <td style="background:#e8f5e9;color:var(--green)">1.1×</td>
+            <td style="background:#e8f5e9;color:var(--green)">1.1×</td>
+            <td style="background:#e8f5e9;color:var(--green)">1.1×</td>
+            <td style="background:#e8f5e9;color:var(--green)">1.1×</td>
+            <td style="background:#e8f5e9;color:var(--green)">1.0×</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="heatmap-legend">
+      <span><span class="legend-swatch" style="background:#c8e6c9"></span>~1× fair</span>
+      <span><span class="legend-swatch" style="background:#fff3e0"></span>~2× penalty</span>
+      <span><span class="legend-swatch" style="background:#ffcdd2"></span>3×+ severe</span>
+    </div>
+  </div>
+
+  <!-- 04 BOTTOM LINE -->
+  <div class="bottom">
+    <div class="section-tag">04 — NOW WHAT</div>
+
+    <div class="punchline">
+      Two startups build the same chatbot.
+      <br>One in London. One in Lagos.
+      <br><span class="dim">Same API. Same product. Same users.</span>
+      <br><span class="hit">Lagos pays 2.4× more.</span>
+    </div>
+
+    <div class="methodology" style="margin-top:28px;background:#fff8f0;border-color:#f0c8a0;border-left-color:var(--orange)">
+      <div class="tag" style="color:var(--orange)">WHAT THIS MEANS</div>
+      <div class="body">
+        We can't fix GPT-4's tokenizer. But we can measure the problem, publish the data, and build tools that work for Nigerian languages from the ground up.
+        <br><br>This benchmark is part of <b>NaijaML</b>, an open-source toolkit building ML infrastructure for Nigerian languages — diacritization, language detection, sentiment analysis, and more.
+      </div>
+    </div>
+
+    <div class="methodology">
+      <div class="tag">METHODOLOGY</div>
+      <div class="body">
+        100 entries/lang × 5 languages × 7 tokenizers = 3,500 data points
+        <br>Languages: English, Yorùbá, Hausa, Igbo, Nigerian Pidgin
+        <br>Categories: greetings, nouns, verbs, sentences, names, places
+        <br>Matched meanings across all languages
+        <br>Code + data: github.com/naijaml/naijaml
+      </div>
+    </div>
+
+    <div class="footer-bar">
+      <div class="flag-bar" style="margin:0">
+        <span class="flag-g" style="width:20px;height:4px"></span>
+        <span class="flag-w" style="width:20px;height:4px"></span>
+        <span class="flag-g" style="width:20px;height:4px"></span>
+      </div>
+      <div class="brand">NaijaML</div>
+      <div class="version">pip install naijaml · v0.1.1</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

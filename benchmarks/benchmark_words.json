@@ -1,0 +1,917 @@
+{
+  "metadata": {
+    "description": "Curated word list for tokenizer benchmarking across Nigerian languages and English",
+    "version": "2.0",
+    "languages": ["eng", "yor", "hau", "ibo", "pcm"],
+    "categories": [
+      "greetings", "common_nouns", "verbs", "adjectives",
+      "numbers", "names", "places", "phrases", "sentences",
+      "proverbs", "fintech", "culture", "body_parts", "time",
+      "food_drink", "religion", "compound_words"
+    ],
+    "notes": "Each entry has an id and equivalent translations across languages where possible. Yorùbá includes full diacritics. Nigerian Pidgin uses common spellings."
+  },
+  "entries": [
+    {
+      "id": 1,
+      "category": "greetings",
+      "eng": "Good morning",
+      "yor": "Ẹ kú àárọ̀",
+      "hau": "Ina kwana",
+      "ibo": "Ụ̀tụ̀tụ̀ ọ̀ma",
+      "pcm": "Good morning o"
+    },
+    {
+      "id": 2,
+      "category": "greetings",
+      "eng": "How are you?",
+      "yor": "Ṣé àlàáfíà ni?",
+      "hau": "Yaya kake?",
+      "ibo": "Kedụ ka ị mere?",
+      "pcm": "How you dey?"
+    },
+    {
+      "id": 3,
+      "category": "greetings",
+      "eng": "Thank you very much",
+      "yor": "Ẹ ṣé púpọ̀",
+      "hau": "Na gode sosai",
+      "ibo": "Daalụ nke ukwuu",
+      "pcm": "Thank you well well"
+    },
+    {
+      "id": 4,
+      "category": "greetings",
+      "eng": "Welcome home",
+      "yor": "Ẹ kú ilé o",
+      "hau": "Sannu da zuwa",
+      "ibo": "Nnọọ n'ụlọ",
+      "pcm": "You don come house"
+    },
+    {
+      "id": 5,
+      "category": "greetings",
+      "eng": "Goodbye",
+      "yor": "Ó dàbọ̀",
+      "hau": "Sai an jima",
+      "ibo": "Ka ọ dị",
+      "pcm": "Make we dey go"
+    },
+    {
+      "id": 6,
+      "category": "common_nouns",
+      "eng": "water",
+      "yor": "omi",
+      "hau": "ruwa",
+      "ibo": "mmịrị",
+      "pcm": "water"
+    },
+    {
+      "id": 7,
+      "category": "common_nouns",
+      "eng": "food",
+      "yor": "oúnjẹ",
+      "hau": "abinci",
+      "ibo": "nri",
+      "pcm": "chop"
+    },
+    {
+      "id": 8,
+      "category": "common_nouns",
+      "eng": "money",
+      "yor": "owó",
+      "hau": "kuɗi",
+      "ibo": "ego",
+      "pcm": "money"
+    },
+    {
+      "id": 9,
+      "category": "common_nouns",
+      "eng": "house",
+      "yor": "ilé",
+      "hau": "gida",
+      "ibo": "ụlọ",
+      "pcm": "house"
+    },
+    {
+      "id": 10,
+      "category": "common_nouns",
+      "eng": "child",
+      "yor": "ọmọ",
+      "hau": "yaro",
+      "ibo": "nwa",
+      "pcm": "pikin"
+    },
+    {
+      "id": 11,
+      "category": "common_nouns",
+      "eng": "mother",
+      "yor": "ìyá",
+      "hau": "uwa",
+      "ibo": "nne",
+      "pcm": "mama"
+    },
+    {
+      "id": 12,
+      "category": "common_nouns",
+      "eng": "father",
+      "yor": "bàbá",
+      "hau": "uba",
+      "ibo": "nna",
+      "pcm": "papa"
+    },
+    {
+      "id": 13,
+      "category": "common_nouns",
+      "eng": "road",
+      "yor": "ọ̀nà",
+      "hau": "hanya",
+      "ibo": "ụzọ",
+      "pcm": "road"
+    },
+    {
+      "id": 14,
+      "category": "common_nouns",
+      "eng": "market",
+      "yor": "ọjà",
+      "hau": "kasuwa",
+      "ibo": "ahịa",
+      "pcm": "market"
+    },
+    {
+      "id": 15,
+      "category": "common_nouns",
+      "eng": "king",
+      "yor": "ọba",
+      "hau": "sarki",
+      "ibo": "eze",
+      "pcm": "king"
+    },
+    {
+      "id": 16,
+      "category": "verbs",
+      "eng": "to eat",
+      "yor": "jẹun",
+      "hau": "ci abinci",
+      "ibo": "iri nri",
+      "pcm": "chop"
+    },
+    {
+      "id": 17,
+      "category": "verbs",
+      "eng": "to go",
+      "yor": "lọ",
+      "hau": "tafi",
+      "ibo": "ịga",
+      "pcm": "go"
+    },
+    {
+      "id": 18,
+      "category": "verbs",
+      "eng": "to come",
+      "yor": "wá",
+      "hau": "zo",
+      "ibo": "bịa",
+      "pcm": "come"
+    },
+    {
+      "id": 19,
+      "category": "verbs",
+      "eng": "to speak",
+      "yor": "sọ̀rọ̀",
+      "hau": "yi magana",
+      "ibo": "kwuo okwu",
+      "pcm": "talk"
+    },
+    {
+      "id": 20,
+      "category": "verbs",
+      "eng": "to buy",
+      "yor": "ra",
+      "hau": "saya",
+      "ibo": "zụta",
+      "pcm": "buy"
+    },
+    {
+      "id": 21,
+      "category": "verbs",
+      "eng": "to work",
+      "yor": "ṣiṣẹ́",
+      "hau": "yi aiki",
+      "ibo": "rụọ ọrụ",
+      "pcm": "work"
+    },
+    {
+      "id": 22,
+      "category": "verbs",
+      "eng": "to learn",
+      "yor": "kọ́ ẹ̀kọ́",
+      "hau": "koyi",
+      "ibo": "mụta ihe",
+      "pcm": "learn"
+    },
+    {
+      "id": 23,
+      "category": "adjectives",
+      "eng": "big",
+      "yor": "ńlá",
+      "hau": "babba",
+      "ibo": "ukwu",
+      "pcm": "big"
+    },
+    {
+      "id": 24,
+      "category": "adjectives",
+      "eng": "beautiful",
+      "yor": "arẹwà",
+      "hau": "kyakkyawa",
+      "ibo": "mara mma",
+      "pcm": "fine"
+    },
+    {
+      "id": 25,
+      "category": "adjectives",
+      "eng": "good",
+      "yor": "dára",
+      "hau": "nagari",
+      "ibo": "ọma",
+      "pcm": "correct"
+    },
+    {
+      "id": 26,
+      "category": "numbers",
+      "eng": "one hundred",
+      "yor": "ọgọ́rùn",
+      "hau": "ɗari",
+      "ibo": "narị",
+      "pcm": "one hundred"
+    },
+    {
+      "id": 27,
+      "category": "numbers",
+      "eng": "one thousand",
+      "yor": "ẹgbẹ̀rún",
+      "hau": "dubu",
+      "ibo": "puku",
+      "pcm": "one thousand"
+    },
+    {
+      "id": 28,
+      "category": "names",
+      "eng": "Olawale",
+      "yor": "Ọláwálé",
+      "hau": "Abubakar",
+      "ibo": "Nnamdi",
+      "pcm": "Olawale"
+    },
+    {
+      "id": 29,
+      "category": "names",
+      "eng": "Adeyemi",
+      "yor": "Adéyẹmí",
+      "hau": "Abdullahi",
+      "ibo": "Chinwendu",
+      "pcm": "Adeyemi"
+    },
+    {
+      "id": 30,
+      "category": "names",
+      "eng": "Folake",
+      "yor": "Fọláké",
+      "hau": "Halima",
+      "ibo": "Ụzọchukwu",
+      "pcm": "Folake"
+    },
+    {
+      "id": 31,
+      "category": "names",
+      "eng": "Ayodele",
+      "yor": "Ayọ̀délé",
+      "hau": "Ibrahim",
+      "ibo": "Obiọma",
+      "pcm": "Ayodele"
+    },
+    {
+      "id": 32,
+      "category": "places",
+      "eng": "Lagos",
+      "yor": "Èkó",
+      "hau": "Lagos",
+      "ibo": "Lagos",
+      "pcm": "Lagos"
+    },
+    {
+      "id": 33,
+      "category": "places",
+      "eng": "Osogbo",
+      "yor": "Ọ̀ṣogbo",
+      "hau": "Maiduguri",
+      "ibo": "Onitsha",
+      "pcm": "Oshogbo"
+    },
+    {
+      "id": 34,
+      "category": "places",
+      "eng": "Ibadan",
+      "yor": "Ìbàdàn",
+      "hau": "Kano",
+      "ibo": "Nnewi",
+      "pcm": "Ibadan"
+    },
+    {
+      "id": 35,
+      "category": "places",
+      "eng": "Abeokuta",
+      "yor": "Abẹ́òkúta",
+      "hau": "Kaduna",
+      "ibo": "Enugwu",
+      "pcm": "Abeokuta"
+    },
+    {
+      "id": 36,
+      "category": "phrases",
+      "eng": "The food is delicious",
+      "yor": "Oúnjẹ náà dùn gidi gan",
+      "hau": "Abincin nan yana da daɗi",
+      "ibo": "Nri a dị ụtọ nke ukwuu",
+      "pcm": "Dis food sweet well well"
+    },
+    {
+      "id": 37,
+      "category": "phrases",
+      "eng": "I am going to the market",
+      "yor": "Mo ń lọ sí ọjà",
+      "hau": "Ina zuwa kasuwa",
+      "ibo": "Ana m aga ahịa",
+      "pcm": "I dey go market"
+    },
+    {
+      "id": 38,
+      "category": "phrases",
+      "eng": "How much does this cost?",
+      "yor": "Ẹ̀ló ni èyí?",
+      "hau": "Nawa ne wannan?",
+      "ibo": "Ego ole ka nke a?",
+      "pcm": "How much be dis one?"
+    },
+    {
+      "id": 39,
+      "category": "phrases",
+      "eng": "Please help me",
+      "yor": "Ẹ jọ̀wọ́, ẹ ràn mí lọ́wọ́",
+      "hau": "Don Allah ka taimake ni",
+      "ibo": "Biko nyere m aka",
+      "pcm": "Abeg help me"
+    },
+    {
+      "id": 40,
+      "category": "phrases",
+      "eng": "Where is the hospital?",
+      "yor": "Níbo ni ilé ìwòsàn wà?",
+      "hau": "Ina asibiti yake?",
+      "ibo": "Olee ebe ụlọ ọgwụ dị?",
+      "pcm": "Where hospital dey?"
+    },
+    {
+      "id": 41,
+      "category": "sentences",
+      "eng": "The children are playing in the compound",
+      "yor": "Àwọn ọmọ ń ṣeré nínú àgbàlá",
+      "hau": "Yara suna wasa a cikin fili",
+      "ibo": "Ụmụaka na-egwu egwu n'ogige",
+      "pcm": "De pikin dem dey play for compound"
+    },
+    {
+      "id": 42,
+      "category": "sentences",
+      "eng": "My grandmother told us stories every night",
+      "yor": "Ìyá àgbà mi máa ń sọ ìtàn fún wa ní alẹ́ gbogbo",
+      "hau": "Kakkata tana ba mu labari kowace dare",
+      "ibo": "Nne nne m na-akọrọ anyị akụkọ kwa abalị",
+      "pcm": "My grandmama dey tell us story every night"
+    },
+    {
+      "id": 43,
+      "category": "sentences",
+      "eng": "The rainy season has started and the farmers are happy",
+      "yor": "Àkókò òjò ti bẹ̀rẹ̀, àwọn àgbẹ̀ sì ń yọ̀",
+      "hau": "Lokacin damina ya fara kuma manoma suna farin ciki",
+      "ibo": "Oge mmiri ebidola na ndị ọrụ ugbo nwere aṅụrị",
+      "pcm": "Rain season don start and de farmers dem dey happy"
+    },
+    {
+      "id": 44,
+      "category": "sentences",
+      "eng": "Nigeria is the most populous country in Africa",
+      "yor": "Nàìjíríà ni orílẹ̀-èdè tó pọ̀ jù lọ ní Áfríkà",
+      "hau": "Nijeriya ita ce ƙasa mafi yawan jama'a a Afirka",
+      "ibo": "Naịjirịa bụ obodo kachasị mmadụ n'Afrịka",
+      "pcm": "Nigeria na de country wey get de most people for Africa"
+    },
+    {
+      "id": 45,
+      "category": "sentences",
+      "eng": "Education is the key to a better future for our youth",
+      "yor": "Ẹ̀kọ́ ni kọ́kọ́rọ́ sí ọjọ́ ọ̀la tó dára fún àwọn ọ̀dọ́ wa",
+      "hau": "Ilimi shi ne mabuɗin kyakkyawan makomar matasan mu",
+      "ibo": "Agụmakwụkwọ bụ isi ihe maka ọdịnihu ka mma nke ụmụ okorobịa anyị",
+      "pcm": "Education na de key to better tomorrow for our young people dem"
+    },
+    {
+      "id": 46,
+      "category": "sentences",
+      "eng": "The new technology is transforming how businesses operate in Lagos",
+      "yor": "Ìmọ̀ ẹ̀rọ tuntun ń yí bí àwọn iṣẹ́ ṣe ń ṣiṣẹ́ ní Èkó padà",
+      "hau": "Sabuwar fasaha tana canza yadda kasuwanci ke gudana a Legas",
+      "ibo": "Teknụzụ ọhụrụ na-agbanwe otu azụmaahịa si arụ ọrụ na Legọs",
+      "pcm": "Dis new technology dey change how business dey run for Lagos"
+    },
+    {
+      "id": 47,
+      "category": "sentences",
+      "eng": "President Tinubu addressed the nation on Independence Day",
+      "yor": "Ààrẹ Tinubu bá orílẹ̀-èdè sọ̀rọ̀ ní ọjọ́ òmìnira",
+      "hau": "Shugaba Tinubu ya yi jawabi ga al'umma a ranar 'yancin kai",
+      "ibo": "Onye isi ala Tinubu kwuru okwu nye mba a n'ụbọchị nnwere onwe",
+      "pcm": "President Tinubu talk to de country on Independence Day"
+    },
+    {
+      "id": 48,
+      "category": "sentences",
+      "eng": "The jollof rice competition between Nigeria and Ghana is legendary",
+      "yor": "Ìdíje irẹsì jólóf láàárín Nàìjíríà àti Ghana ti di àkàyé",
+      "hau": "Gasa jollof rice tsakanin Nijeriya da Ghana labari ne na tarihi",
+      "ibo": "Asọmpị osikapa jọlọf n'etiti Naịjirịa na Ghana abụrụla akụkọ",
+      "pcm": "De jollof rice fight between Nigeria and Ghana na legendary something"
+    },
+    {
+      "id": 49,
+      "category": "sentences",
+      "eng": "Mobile money and fintech are revolutionizing banking for the unbanked population",
+      "yor": "Owó orí fóònù àti fíntẹ́kì ń ṣe àyípadà ìṣòwò ilé ìfowópamọ́ fún àwọn tí kò ní àkáǹtì báńkì",
+      "hau": "Kuɗin wayar hannu da fintech suna juyin juya halin banki ga waɗanda ba su da asusun banki",
+      "ibo": "Ego ekwentị na fintech na-eme mgbanwe n'ụzọ ụlọ akụ na-arụ ọrụ maka ndị nweghị akaụntụ ụlọ akụ",
+      "pcm": "Mobile money and fintech dey change how banking dey work for people wey no get bank account"
+    },
+    {
+      "id": 50,
+      "category": "sentences",
+      "eng": "Nollywood produces more films annually than Hollywood, making it a global cultural force",
+      "yor": "Nollywood máa ń ṣe fíìmù tó pọ̀ ju Hollywood lọ lọ́dọọdún, èyí sì ti jẹ́ kí ó di agbára àṣà àgbáyé",
+      "hau": "Nollywood tana yin fina-finai fiye da Hollywood a kowace shekara, wanda ya sa ta zama ƙarfin al'ada na duniya",
+      "ibo": "Nollywood na-emepụta ihe nkiri karịa Hollywood kwa afọ, nke mere ka ọ bụrụ ike omenala ụwa",
+      "pcm": "Nollywood dey make more film pass Hollywood every year, dat one make am become world power for culture"
+    },
+    {
+      "id": 51,
+      "category": "common_nouns",
+      "eng": "teacher",
+      "yor": "olùkọ́",
+      "hau": "malami",
+      "ibo": "onye nkụzi",
+      "pcm": "teacher"
+    },
+    {
+      "id": 52,
+      "category": "common_nouns",
+      "eng": "doctor",
+      "yor": "oníṣègùn",
+      "hau": "likita",
+      "ibo": "dibịa",
+      "pcm": "doctor"
+    },
+    {
+      "id": 53,
+      "category": "common_nouns",
+      "eng": "friend",
+      "yor": "ọ̀rẹ́",
+      "hau": "aboki",
+      "ibo": "enyi",
+      "pcm": "paddy"
+    },
+    {
+      "id": 54,
+      "category": "common_nouns",
+      "eng": "sun",
+      "yor": "oòrùn",
+      "hau": "rana",
+      "ibo": "anyanwụ",
+      "pcm": "sun"
+    },
+    {
+      "id": 55,
+      "category": "common_nouns",
+      "eng": "rain",
+      "yor": "òjò",
+      "hau": "ruwan sama",
+      "ibo": "mmịrị ọzụzọ",
+      "pcm": "rain"
+    },
+    {
+      "id": 56,
+      "category": "body_parts",
+      "eng": "head",
+      "yor": "orí",
+      "hau": "kai",
+      "ibo": "isi",
+      "pcm": "head"
+    },
+    {
+      "id": 57,
+      "category": "body_parts",
+      "eng": "hand",
+      "yor": "ọwọ́",
+      "hau": "hannu",
+      "ibo": "aka",
+      "pcm": "hand"
+    },
+    {
+      "id": 58,
+      "category": "body_parts",
+      "eng": "eye",
+      "yor": "ojú",
+      "hau": "ido",
+      "ibo": "anya",
+      "pcm": "eye"
+    },
+    {
+      "id": 59,
+      "category": "body_parts",
+      "eng": "stomach",
+      "yor": "ikùn",
+      "hau": "ciki",
+      "ibo": "afọ",
+      "pcm": "belle"
+    },
+    {
+      "id": 60,
+      "category": "body_parts",
+      "eng": "heart",
+      "yor": "ọkàn",
+      "hau": "zuciya",
+      "ibo": "obi",
+      "pcm": "heart"
+    },
+    {
+      "id": 61,
+      "category": "time",
+      "eng": "yesterday",
+      "yor": "lánàá",
+      "hau": "jiya",
+      "ibo": "ụnyaahụ",
+      "pcm": "yesterday"
+    },
+    {
+      "id": 62,
+      "category": "time",
+      "eng": "tomorrow",
+      "yor": "ọ̀la",
+      "hau": "gobe",
+      "ibo": "echi",
+      "pcm": "tomorrow"
+    },
+    {
+      "id": 63,
+      "category": "time",
+      "eng": "today",
+      "yor": "lónìí",
+      "hau": "yau",
+      "ibo": "taa",
+      "pcm": "today"
+    },
+    {
+      "id": 64,
+      "category": "food_drink",
+      "eng": "palm wine",
+      "yor": "ẹmu",
+      "hau": "bammi",
+      "ibo": "mmanya ngwọ",
+      "pcm": "palmie"
+    },
+    {
+      "id": 65,
+      "category": "food_drink",
+      "eng": "pepper soup",
+      "yor": "ọbẹ̀ ata",
+      "hau": "miyan barkono",
+      "ibo": "ofe ose",
+      "pcm": "pepper soup"
+    },
+    {
+      "id": 66,
+      "category": "food_drink",
+      "eng": "yam",
+      "yor": "iṣu",
+      "hau": "doya",
+      "ibo": "ji",
+      "pcm": "yam"
+    },
+    {
+      "id": 67,
+      "category": "food_drink",
+      "eng": "cassava",
+      "yor": "ẹ̀gẹ́",
+      "hau": "rogo",
+      "ibo": "akpụ",
+      "pcm": "garri"
+    },
+    {
+      "id": 68,
+      "category": "verbs",
+      "eng": "to run",
+      "yor": "sáré",
+      "hau": "gudu",
+      "ibo": "gbaa ọsọ",
+      "pcm": "run"
+    },
+    {
+      "id": 69,
+      "category": "verbs",
+      "eng": "to sing",
+      "yor": "kọrin",
+      "hau": "rera waƙa",
+      "ibo": "kwee abụ",
+      "pcm": "sing"
+    },
+    {
+      "id": 70,
+      "category": "verbs",
+      "eng": "to cook",
+      "yor": "ṣe oúnjẹ",
+      "hau": "dafa abinci",
+      "ibo": "sie nri",
+      "pcm": "cook"
+    },
+    {
+      "id": 71,
+      "category": "verbs",
+      "eng": "to write",
+      "yor": "kọ̀wé",
+      "hau": "rubuta",
+      "ibo": "dee ihe",
+      "pcm": "write"
+    },
+    {
+      "id": 72,
+      "category": "verbs",
+      "eng": "to dance",
+      "yor": "jó",
+      "hau": "yi rawa",
+      "ibo": "gbaa egwu",
+      "pcm": "dance"
+    },
+    {
+      "id": 73,
+      "category": "adjectives",
+      "eng": "small",
+      "yor": "kékeré",
+      "hau": "ƙarami",
+      "ibo": "obere",
+      "pcm": "small"
+    },
+    {
+      "id": 74,
+      "category": "adjectives",
+      "eng": "old",
+      "yor": "àgbàlagbà",
+      "hau": "tsoho",
+      "ibo": "ochie",
+      "pcm": "old"
+    },
+    {
+      "id": 75,
+      "category": "adjectives",
+      "eng": "new",
+      "yor": "tuntun",
+      "hau": "sabon",
+      "ibo": "ọhụrụ",
+      "pcm": "new"
+    },
+    {
+      "id": 76,
+      "category": "names",
+      "eng": "Oluwaseun",
+      "yor": "Olúwáṣeun",
+      "hau": "Mustapha",
+      "ibo": "Chukwuemeka",
+      "pcm": "Oluwaseun"
+    },
+    {
+      "id": 77,
+      "category": "names",
+      "eng": "Temitope",
+      "yor": "Tẹ́mítọ́pẹ́",
+      "hau": "Aminu",
+      "ibo": "Ọbịnna",
+      "pcm": "Temitope"
+    },
+    {
+      "id": 78,
+      "category": "names",
+      "eng": "Oluwafunmilayo",
+      "yor": "Olúwáfúnmiláyọ̀",
+      "hau": "Zainab",
+      "ibo": "Adaeze",
+      "pcm": "Funmi"
+    },
+    {
+      "id": 79,
+      "category": "places",
+      "eng": "Port Harcourt",
+      "yor": "Port Harcourt",
+      "hau": "Sokoto",
+      "ibo": "Ọwerri",
+      "pcm": "Portharcourt"
+    },
+    {
+      "id": 80,
+      "category": "places",
+      "eng": "Abuja",
+      "yor": "Abùjá",
+      "hau": "Abuja",
+      "ibo": "Abuja",
+      "pcm": "Abuja"
+    },
+    {
+      "id": 81,
+      "category": "proverbs",
+      "eng": "A child who washes their hands well eats with elders",
+      "yor": "Ọmọ tí ó bá wẹ ọwọ́ rẹ̀ mọ́, á bá àgbà jẹun",
+      "hau": "Yaro da ya wanke hannunsa zai ci abinci da manya",
+      "ibo": "Nwa bụ onye sachara aka ya, ya na ndị okenye rie nri",
+      "pcm": "Pikin wey wash im hand well go chop with big people"
+    },
+    {
+      "id": 82,
+      "category": "proverbs",
+      "eng": "However long the night, the dawn will break",
+      "yor": "Bí alẹ́ bá pẹ́ tó, ọ̀sán á mọ́",
+      "hau": "Ko dare ya yi tsawo, gari zai waye",
+      "ibo": "Otu abalị si ogologo, chi ga-abọ",
+      "pcm": "No matter how long night be, morning go still come"
+    },
+    {
+      "id": 83,
+      "category": "proverbs",
+      "eng": "What an elder sees sitting down, a child cannot see standing up",
+      "yor": "Ohun tí àgbà bá rí jókòó, tí ọmọdé bá dúró, kò lè rí i",
+      "hau": "Abin da babba ya gani a zaune, yaro ba zai iya ganin sa a tsaye ba",
+      "ibo": "Ihe agadi nwanyị nọ ala na-ahụ, nwata arịa elu osisi adịghị ahụ ya",
+      "pcm": "Wetin old person see sit down, small pikin no fit see am even if e stand up"
+    },
+    {
+      "id": 84,
+      "category": "fintech",
+      "eng": "Please transfer five thousand naira to my account",
+      "yor": "Ẹ jọ̀wọ́ fi ẹgbẹ̀rún márùn-ún owó náírà ránṣẹ́ sí àkáǹtì mi",
+      "hau": "Don Allah canja naira dubu biyar zuwa asusuna",
+      "ibo": "Biko ziga puku ise naira n'akaụntụ m",
+      "pcm": "Abeg transfer five thousand naira to my account"
+    },
+    {
+      "id": 85,
+      "category": "fintech",
+      "eng": "My bank app is not working, I cannot check my balance",
+      "yor": "Àpù báńkì mi kò ń ṣiṣẹ́, èmi kò lè ṣàyẹ̀wò owó mi",
+      "hau": "Appin bankina ba ya aiki, ba zan iya duba kuɗina ba",
+      "ibo": "Ngwa ụlọ akụ m anaghị arụ ọrụ, enweghị m ike ịlele ego m",
+      "pcm": "My bank app no dey work, I no fit check my balance"
+    },
+    {
+      "id": 86,
+      "category": "fintech",
+      "eng": "The exchange rate for dollars to naira keeps increasing every day",
+      "yor": "Iye owó dọ́là sí náírà ń pọ̀ sí i lójoojúmọ́",
+      "hau": "Farashin musayar dala zuwa naira yana ƙaruwa kowace rana",
+      "ibo": "Ọnụ ego mgbanwe dọla na naira na-abawanye kwa ụbọchị",
+      "pcm": "Dollar to naira rate dey go up every day"
+    },
+    {
+      "id": 87,
+      "category": "culture",
+      "eng": "The masquerade festival is a sacred tradition in our community",
+      "yor": "Odún egúngún jẹ́ àṣà mímọ́ nínú ìlú wa",
+      "hau": "Bikin ɗan kallabi al'ada ce mai tsarki a al'ummarmu",
+      "ibo": "Emume mmanwụ bụ omenala dị nsọ n'obodo anyị",
+      "pcm": "Masquerade festival na holy tradition for our community"
+    },
+    {
+      "id": 88,
+      "category": "culture",
+      "eng": "The naming ceremony will hold on Saturday at our family house",
+      "yor": "Ayẹyẹ ìsọmọlórúkọ yóò wáyé ní ọjọ́ Sátidé ní ilé ìdílé wa",
+      "hau": "Bikin suna zai kasance ranar Asabar a gidan iyalinmu",
+      "ibo": "Emume ịgụ aha ga-eme n'ụbọchị Satọdee n'ụlọ ezinụlọ anyị",
+      "pcm": "De naming ceremony go happen for Saturday for our family house"
+    },
+    {
+      "id": 89,
+      "category": "religion",
+      "eng": "We give thanks to God for this new day",
+      "yor": "A dúpẹ́ lọ́wọ́ Ọlọ́run fún ọjọ́ tuntun yìí",
+      "hau": "Muna godiya ga Allah saboda sabuwar ranar nan",
+      "ibo": "Anyị na-ekele Chukwu maka ụbọchị ọhụrụ a",
+      "pcm": "We dey thank God for dis new day"
+    },
+    {
+      "id": 90,
+      "category": "compound_words",
+      "eng": "airport",
+      "yor": "pápá ọkọ̀ òfuurufú",
+      "hau": "filin jirgin sama",
+      "ibo": "ọdụ ụgbọ elu",
+      "pcm": "airport"
+    },
+    {
+      "id": 91,
+      "category": "compound_words",
+      "eng": "telephone",
+      "yor": "ẹ̀rọ ìbánisọ̀rọ̀",
+      "hau": "wayar tarho",
+      "ibo": "ekwentị",
+      "pcm": "phone"
+    },
+    {
+      "id": 92,
+      "category": "compound_words",
+      "eng": "university",
+      "yor": "ilé ẹ̀kọ́ gíga",
+      "hau": "jami'a",
+      "ibo": "mahadum",
+      "pcm": "university"
+    },
+    {
+      "id": 93,
+      "category": "compound_words",
+      "eng": "hospital",
+      "yor": "ilé ìwòsàn",
+      "hau": "asibiti",
+      "ibo": "ụlọ ọgwụ",
+      "pcm": "hospital"
+    },
+    {
+      "id": 94,
+      "category": "compound_words",
+      "eng": "electricity",
+      "yor": "iná mọ̀nàmọ́ná",
+      "hau": "wutar lantarki",
+      "ibo": "ọkụ latrik",
+      "pcm": "light"
+    },
+    {
+      "id": 95,
+      "category": "sentences",
+      "eng": "Traffic in Lagos is terrible during rush hour, everyone is stuck on the road",
+      "yor": "Ọkọ̀ pọ̀ gan ní Èkó ní àkókò tí gbogbo ènìyàn ń lọ síṣẹ́, gbogbo ènìyàn dúró lójú ọ̀nà",
+      "hau": "Cunkoson ababen mota a Legas yana da muni lokacin tashi, kowa yana makale a hanya",
+      "ibo": "Ọkụkọ ụgbọ ala na Lagos jọrọ njọ n'oge ọrụ, onye ọ bụla nọ n'okporo ụzọ",
+      "pcm": "Lagos traffic bad die during rush hour, everybody don stuck for road"
+    },
+    {
+      "id": 96,
+      "category": "sentences",
+      "eng": "The electricity has been off for three days, we are using generator",
+      "yor": "Iná mọ̀nàmọ́ná ti pàdánù fún ọjọ́ mẹ́ta, a ń lo ẹ̀rọ amúnáwá",
+      "hau": "Wutar lantarki ta daina kwana uku, muna amfani da janareta",
+      "ibo": "Ọkụ latrik apụọla ụbọchị atọ, anyị na-eji jenereto",
+      "pcm": "NEPA don take light for three days now, we dey use generator"
+    },
+    {
+      "id": 97,
+      "category": "sentences",
+      "eng": "My grandmother makes the best egusi soup with pounded yam",
+      "yor": "Ìyá àgbà mi ló ń ṣe ọbẹ̀ ẹgúsí tó dára jù lọ pẹ̀lú iyán",
+      "hau": "Kakkata tafi kowa wajen dafa miyan gyada da tuwo",
+      "ibo": "Nne nne m na-esi ofe egusi kachasi mma na ji akpụ akpụ",
+      "pcm": "My grandmama dey cook de best egusi soup with pounded yam"
+    },
+    {
+      "id": 98,
+      "category": "sentences",
+      "eng": "Young people in Nigeria are building innovative technology startups",
+      "yor": "Àwọn ọ̀dọ́ ní Nàìjíríà ń kọ́ àwọn ilé iṣẹ́ ìmọ̀ ẹ̀rọ tuntun",
+      "hau": "Matasa a Nijeriya suna gina sabbin kamfanonin fasaha",
+      "ibo": "Ụmụ okorobịa na Naịjirịa na-ewu ụlọ ọrụ teknụzụ ọhụrụ",
+      "pcm": "Young people for Nigeria dey build new new tech companies"
+    },
+    {
+      "id": 99,
+      "category": "greetings",
+      "eng": "Happy New Year, may this year bring prosperity",
+      "yor": "Ẹ kú ọdún tuntun, kí ọdún yìí mú àlàáfíà wá",
+      "hau": "Barka da sabuwar shekara, Allah ya sa shekara mai albarka",
+      "ibo": "Ọnụ ọhụrụ ọma, ka afọ a wetara anyị ọganihu",
+      "pcm": "Happy New Year o, make dis year bring better thing"
+    },
+    {
+      "id": 100,
+      "category": "sentences",
+      "eng": "The farmer planted cassava and maize before the rains came",
+      "yor": "Àgbẹ̀ náà gbìn ẹ̀gẹ́ àti àgbàdo kí òjò tó bẹ̀rẹ̀",
+      "hau": "Manomi ya shuka rogo da masara kafin damina ta zo",
+      "ibo": "Onye ọrụ ugbo kụrụ akpụ na ọka tupu mmịrị ọzụzọ abịa",
+      "pcm": "De farmer plant garri and corn before rain start"
+    }
+  ]
+}
+
