@@ -26,15 +26,16 @@ pip install naijaml
 ### Yoruba Diacritizer
 
 ```python
-from naijaml.nlp import diacritize_dot_below
+from naijaml.nlp import diacritize_yoruba, diacritize_yoruba_dot_below
 
-diacritize_dot_below("Ojo lo si oja")
-# → 'Ọjọ lo si ọja'
+diacritize_yoruba_dot_below("Ojo lo si oja")
+# → 'Ọjọ lo si ọja'  (dot-below only, no tones)
 
-diacritize_dot_below("Ese pupo fun iranlowo re")
-# → 'Ẹsẹ pupo fun iranlọwọ rẹ'
+diacritize_yoruba("Ojo lo si oja lana")
+# → 'Ọjọ́ ló sí ọjà lànà'  (full tonal restoration)
 
-# 97.5% accuracy | 6.4MB model | CPU only | Works offline
+# Dot-below: 97.5% accuracy | 6.4MB bundled
+# Full tonal: 90.0% accuracy | 12.6MB auto-downloaded on first use
 ```
 
 ### Igbo Diacritizer
