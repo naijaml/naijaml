@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "naijaml"
-version = "0.1.2"
+version = "0.1.3"
 description = "Open-source ML tools, libraries, and notebooks for the Nigerian ML ecosystem"
 readme = "README.md"
 license = "Apache-2.0"

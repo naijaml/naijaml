@@ -59,7 +59,7 @@ detect_language("Ina kwana?")                # → 'hau'
 detect_language("Kedu ka ị mere?")           # → 'ibo'
 detect_language("How far, wetin dey happen?") # → 'pcm'
 
-# 5 languages: Yoruba, Hausa, Igbo, Pidgin, English | ~95% accuracy
+# 5 languages: Yoruba, Hausa, Igbo, Pidgin, English | 96.6% accuracy
 ```
 
 ### Sentiment Analysis
@@ -130,7 +130,7 @@ get_telco("08031234567")     # → 'MTN'
 
 | Feature | Status | Accuracy | Model Size |
 |---------|--------|----------|------------|
-| Language Detection | ✅ | ~95% | 1.8MB |
+| Language Detection | ✅ | 96.6% | 29.6MB |
 | Yoruba Diacritizer (full tonal) | ✅ | 90.0% word | 12.6MB |
 | Yoruba Diacritizer (dot-below) | ✅ | 97.5% char | 6.4MB |
 | Igbo Diacritizer | ✅ | 95.2% | 4.9MB |
@@ -139,7 +139,7 @@ get_telco("08031234567")     # → 'MTN'
 | Text Preprocessing & PII Masking | ✅ | — | — |
 | Nigerian Constants (states, banks, telcos) | ✅ | — | — |
 
-**17MB bundled, 13MB downloaded on first use.** Everything runs on CPU. No GPU required.
+**45MB bundled, 13MB downloaded on first use.** Everything runs on CPU. No GPU required.
 
 ## Design Philosophy
 
@@ -157,7 +157,7 @@ get_telco("08031234567")     # → 'MTN'
 
 | Model | Size | Approach |
 |-------|------|----------|
-| Language Detection | 1.8MB | Naive Bayes + char n-grams |
+| Language Detection | 29.6MB | Naive Bayes + char n-grams (1-4) + language features |
 | Yoruba Diacritizer (full) | 12.6MB | Word-level lookup + Viterbi decoding |
 | Yoruba Diacritizer (dot-below) | 6.4MB | Syllable-based k-NN |
 | Igbo Diacritizer | 4.9MB | Syllable-based k-NN |
@@ -169,7 +169,7 @@ We believe in transparency. Here's what NaijaML can't do yet:
 
 - **Yoruba tones:** Dot-below restoration (ọ, ẹ, ṣ) is 97.5% accurate. Full tonal diacritization (à, á, è, é) is 90% word accuracy using Viterbi decoding — remaining errors are due to contextual ambiguity where even native speakers sometimes disagree on tones.
 - **Sentiment accuracy:** 72% on Twitter data. Good enough for trend analysis, not for production decisions on individual texts. Optional transformer models coming soon.
-- **Pidgin vs English:** Short texts can be ambiguous between Pidgin and informal English. The detector works best on sentences of 5+ words.
+- **Pidgin vs English:** Pidgin is an English-based creole, so code-mixed texts can be ambiguous. The detector requires Pidgin-specific markers (e.g., "dey", "wetin", "abeg") to classify as Pidgin — English-like text without markers defaults to English. 94.6% Pidgin recall, 99.9% English recall on held-out data.
 
 ## Tokenizer Benchmark
 
