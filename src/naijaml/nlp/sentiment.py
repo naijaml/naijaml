@@ -16,8 +16,10 @@ from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 
-# Model file path
-_MODEL_PATH = Path(__file__).parent / "sentiment_model.json"
+from naijaml.utils.download import get_model_path
+
+# Bundled model (ships with pip install)
+_BUNDLED_MODEL_PATH = Path(__file__).parent / "sentiment_model.json"
 
 # Cached model
 _model: Optional[Dict] = None
@@ -30,13 +32,20 @@ def _load_model() -> Dict:
     if _model is not None:
         return _model
 
-    if not _MODEL_PATH.exists():
-        raise RuntimeError(
-            "Sentiment model not found. Run the training script first:\n"
-            "  uv run python scripts/train_tfidf_sentiment.py"
-        )
+    # Try bundled model first, then HF download
+    if _BUNDLED_MODEL_PATH.exists():
+        model_path = _BUNDLED_MODEL_PATH
+    else:
+        try:
+            model_path = get_model_path("sentiment_model.json")
+        except Exception as e:
+            raise RuntimeError(
+                "Failed to download sentiment model. "
+                "Check your internet connection and try again.\n"
+                "Error: %s" % e
+            )
 
-    with open(_MODEL_PATH, "r", encoding="utf-8") as f:
+    with open(model_path, "r", encoding="utf-8") as f:
         _model = json.load(f)
 
     # Convert lists back to numpy arrays for fast inference
@@ -217,4 +226,7 @@ def is_available() -> bool:
     Returns:
         True if the sentiment model is installed.
     """
-    return _MODEL_PATH.exists()
+    if _BUNDLED_MODEL_PATH.exists():
+        return True
+    from naijaml.utils.download import get_models_cache_dir
+    return (get_models_cache_dir() / "sentiment_model.json").exists()

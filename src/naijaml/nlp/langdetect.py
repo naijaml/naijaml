@@ -20,8 +20,10 @@ logger = logging.getLogger(__name__)
 
 SUPPORTED_LANGUAGES: List[str] = ["yor", "hau", "ibo", "pcm", "eng"]
 
-# Path to bundled pre-trained model
-_MODEL_PATH = Path(__file__).parent / "lang_model.json"
+from naijaml.utils.download import get_model_path
+
+# Bundled model (ships with pip install)
+_BUNDLED_MODEL_PATH = Path(__file__).parent / "lang_model.json"
 
 # Cached model (loaded lazily)
 _MODEL: Optional["NaiveBayesLangDetector"] = None
@@ -662,14 +664,17 @@ def _get_model() -> NaiveBayesLangDetector:
     if _MODEL is not None:
         return _MODEL
 
-    # Try to load pre-trained model
-    if _MODEL_PATH.exists():
-        try:
-            _MODEL = NaiveBayesLangDetector.load(_MODEL_PATH)
-            logger.debug("Loaded pre-trained model from %s", _MODEL_PATH)
-            return _MODEL
-        except Exception as e:
-            logger.warning("Failed to load model from %s: %s", _MODEL_PATH, e)
+    # Try bundled model first, then HF download
+    try:
+        if _BUNDLED_MODEL_PATH.exists():
+            model_path = _BUNDLED_MODEL_PATH
+        else:
+            model_path = get_model_path("lang_model.json")
+        _MODEL = NaiveBayesLangDetector.load(model_path)
+        logger.debug("Loaded pre-trained model from %s", model_path)
+        return _MODEL
+    except Exception as e:
+        logger.warning("Failed to load lang model: %s", e)
 
     # Train a new model
     logger.info("Training new language detection model...")
@@ -794,7 +799,8 @@ def train_and_save_model(path: Optional[Path] = None) -> Path:
     global _MODEL
 
     if path is None:
-        path = _MODEL_PATH
+        from naijaml.utils.download import get_models_cache_dir
+        path = get_models_cache_dir() / "lang_model.json"
 
     # Try to collect training data from datasets
     try:

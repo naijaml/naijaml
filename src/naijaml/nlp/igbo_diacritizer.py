@@ -17,8 +17,10 @@ from typing import Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
-# Path to bundled pre-trained model
-_MODEL_PATH = Path(__file__).parent / "igbo_diacritic_model.json"
+from naijaml.utils.download import get_model_path
+
+# Bundled model (ships with pip install)
+_BUNDLED_MODEL_PATH = Path(__file__).parent / "igbo_diacritic_model.json"
 
 # Cached model
 _MODEL: Optional["IgboDiacritizer"] = None
@@ -706,14 +708,17 @@ def _get_model() -> IgboDiacritizer:
     if _MODEL is not None:
         return _MODEL
 
-    # Try to load pre-trained model
-    if _MODEL_PATH.exists():
-        try:
-            _MODEL = IgboDiacritizer.load(_MODEL_PATH)
-            logger.debug("Loaded pre-trained Igbo diacritizer from %s", _MODEL_PATH)
-            return _MODEL
-        except Exception as e:
-            logger.warning("Failed to load diacritizer from %s: %s", _MODEL_PATH, e)
+    # Try bundled model first, then HF download
+    try:
+        if _BUNDLED_MODEL_PATH.exists():
+            model_path = _BUNDLED_MODEL_PATH
+        else:
+            model_path = get_model_path("igbo_diacritic_model.json")
+        _MODEL = IgboDiacritizer.load(model_path)
+        logger.debug("Loaded pre-trained Igbo diacritizer from %s", model_path)
+        return _MODEL
+    except Exception as e:
+        logger.warning("Failed to load Igbo diacritizer: %s", e)
 
     # Train a new model
     logger.info("Training new Igbo diacritizer model...")
@@ -774,7 +779,8 @@ def train_and_save_model(path: Optional[Path] = None) -> Path:
     global _MODEL
 
     if path is None:
-        path = _MODEL_PATH
+        from naijaml.utils.download import get_models_cache_dir
+        path = get_models_cache_dir() / "igbo_diacritic_model.json"
 
     texts = _collect_training_data()
 

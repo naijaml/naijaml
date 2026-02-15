@@ -34,9 +34,17 @@ dev = ["pytest>=7.0", "pytest-cov", "ruff", "mypy", "build", "twine"]
 Homepage = "https://github.com/naijaml/naijaml"
 Repository = "https://github.com/naijaml/naijaml"
 
+[tool.hatch.build.targets.wheel]
+# Include bundled model files (<7MB each), exclude large HF-only models
+exclude = [
+    "src/naijaml/nlp/diacritic_model.json",
+    "src/naijaml/nlp/word_diacritic_model.json",
+]
+
 [dependency-groups]
 dev = [
     "datasets>=3.1.0",
+    "huggingface-hub[cli]>=0.36.2",
     "ipykernel>=6.29.5",
     "pytest>=8.3.5",
 ]

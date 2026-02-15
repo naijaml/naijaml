@@ -51,12 +51,9 @@ Thumbs.db
 # Internal/private files
 experiments/
 
-# Large model files (optional - uncomment to exclude)
-# src/naijaml/nlp/*_model.json
+# Large model files (downloaded from HuggingFace on first use)
+src/naijaml/nlp/diacritic_model.json
+src/naijaml/nlp/word_diacritic_model.json
 
 # Benchmark regenerated output (static PNGs, CSV)
 benchmarks/results/
-
-# Large/experimental model files
-src/naijaml/nlp/diacritic_model.json
-src/naijaml/nlp/word_diacritic_model.json

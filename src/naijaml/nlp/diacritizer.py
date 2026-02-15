@@ -20,9 +20,7 @@ from typing import Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
-# Path to bundled pre-trained models
-_MODEL_PATH = Path(__file__).parent / "diacritic_model.json"
-_WORD_MODEL_PATH = Path(__file__).parent / "word_diacritic_model.json"
+from naijaml.utils.download import get_model_path
 
 # Cached models
 _MODEL: Optional["YorubaDiacritizer"] = None
@@ -1130,14 +1128,14 @@ def _get_word_model() -> WordLevelDiacritizer:
     if _WORD_MODEL is not None:
         return _WORD_MODEL
 
-    # Try to load pre-trained model
-    if _WORD_MODEL_PATH.exists():
-        try:
-            _WORD_MODEL = WordLevelDiacritizer.load(_WORD_MODEL_PATH)
-            logger.debug("Loaded pre-trained word-level diacritizer from %s", _WORD_MODEL_PATH)
-            return _WORD_MODEL
-        except Exception as e:
-            logger.warning("Failed to load word-level model from %s: %s", _WORD_MODEL_PATH, e)
+    # Try to load pre-trained model (downloads from HF if needed)
+    try:
+        model_path = get_model_path("word_diacritic_model.json")
+        _WORD_MODEL = WordLevelDiacritizer.load(model_path)
+        logger.debug("Loaded pre-trained word-level diacritizer from %s", model_path)
+        return _WORD_MODEL
+    except Exception as e:
+        logger.warning("Failed to load word-level model: %s", e)
 
     # Train a new model from HuggingFace dataset
     logger.info("Training new word-level diacritizer model...")
@@ -1179,8 +1177,8 @@ def _get_word_model() -> WordLevelDiacritizer:
 # Dot-Below-Only Diacritizer (Stage 1)
 # =============================================================================
 
-# Path to bundled dot-below model
-_DOT_BELOW_MODEL_PATH = Path(__file__).parent / "dot_below_model.json"
+# Bundled dot-below model (ships with pip install)
+_BUNDLED_DOT_BELOW_PATH = Path(__file__).parent / "dot_below_model.json"
 
 # Cached dot-below model
 _DOT_BELOW_MODEL: Optional["DotBelowDiacritizer"] = None
@@ -1435,14 +1433,17 @@ def _get_dot_below_model() -> DotBelowDiacritizer:
     if _DOT_BELOW_MODEL is not None:
         return _DOT_BELOW_MODEL
 
-    # Try to load pre-trained model
-    if _DOT_BELOW_MODEL_PATH.exists():
-        try:
-            _DOT_BELOW_MODEL = DotBelowDiacritizer.load(_DOT_BELOW_MODEL_PATH)
-            logger.debug("Loaded pre-trained dot-below model from %s", _DOT_BELOW_MODEL_PATH)
-            return _DOT_BELOW_MODEL
-        except Exception as e:
-            logger.warning("Failed to load dot-below model from %s: %s", _DOT_BELOW_MODEL_PATH, e)
+    # Try bundled model first, then HF download
+    try:
+        if _BUNDLED_DOT_BELOW_PATH.exists():
+            model_path = _BUNDLED_DOT_BELOW_PATH
+        else:
+            model_path = get_model_path("dot_below_model.json")
+        _DOT_BELOW_MODEL = DotBelowDiacritizer.load(model_path)
+        logger.debug("Loaded pre-trained dot-below model from %s", model_path)
+        return _DOT_BELOW_MODEL
+    except Exception as e:
+        logger.warning("Failed to load dot-below model: %s", e)
 
     # Train a new model
     logger.info("Training new dot-below diacritizer model...")
@@ -1607,14 +1608,14 @@ def _get_model() -> YorubaDiacritizer:
     if _MODEL is not None:
         return _MODEL
 
-    # Try to load pre-trained model
-    if _MODEL_PATH.exists():
-        try:
-            _MODEL = YorubaDiacritizer.load(_MODEL_PATH)
-            logger.debug("Loaded pre-trained diacritizer from %s", _MODEL_PATH)
-            return _MODEL
-        except Exception as e:
-            logger.warning("Failed to load diacritizer from %s: %s", _MODEL_PATH, e)
+    # Try to load pre-trained model (downloads from HF if needed)
+    try:
+        model_path = get_model_path("diacritic_model.json")
+        _MODEL = YorubaDiacritizer.load(model_path)
+        logger.debug("Loaded pre-trained diacritizer from %s", model_path)
+        return _MODEL
+    except Exception as e:
+        logger.warning("Failed to load diacritizer: %s", e)
 
     # Train a new model
     logger.info("Training new diacritizer model...")
@@ -1677,9 +1678,9 @@ def train_and_save_model(
     Requires the 'datasets' package for best results.
 
     Args:
-        path: Base path for models. If None, uses bundled locations.
-              Word model saved to path or _WORD_MODEL_PATH,
-              syllable model saved to path with '_syllable' suffix or _MODEL_PATH.
+        path: Base path for models. If None, saves to cache directory.
+              Word model saved to path or cache/word_diacritic_model.json,
+              syllable model saved to path with '_syllable' suffix or cache/diacritic_model.json.
         train_word_level: Whether to train word-level model (default True).
         train_syllable: Whether to train syllable model (default True).
 
@@ -1721,7 +1722,8 @@ def train_and_save_model(
 
     # Train word-level model
     if train_word_level:
-        word_path = path if path else _WORD_MODEL_PATH
+        from naijaml.utils.download import get_models_cache_dir
+        word_path = path if path else get_models_cache_dir() / "word_diacritic_model.json"
         model = WordLevelDiacritizer(min_word_freq=5, min_bigram_freq=3)
         model.train(diacritized_texts, undiacritized_texts)
         model.save(word_path)
@@ -1731,7 +1733,8 @@ def train_and_save_model(
 
     # Train syllable model
     if train_syllable:
-        syllable_path = _MODEL_PATH
+        from naijaml.utils.download import get_models_cache_dir
+        syllable_path = get_models_cache_dir() / "diacritic_model.json"
         if path:
             syllable_path = path.parent / (path.stem + "_syllable" + path.suffix)
 
@@ -1795,7 +1798,8 @@ def train_and_save_dot_below_model(path: Optional[Path] = None) -> Path:
     global _DOT_BELOW_MODEL
 
     if path is None:
-        path = _DOT_BELOW_MODEL_PATH
+        from naijaml.utils.download import get_models_cache_dir
+        path = get_models_cache_dir() / "dot_below_model.json"
 
     texts = _collect_training_data()
 

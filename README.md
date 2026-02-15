@@ -1,7 +1,7 @@
 <p align="center">
   <h1 align="center">NaijaML</h1>
   <p align="center"><strong>Sovereign ML infrastructure for Nigeria.</strong></p>
-  <p align="center">Production-ready NLP tools for Yoruba, Hausa, Igbo, and Nigerian Pidgin.<br>Works on CPU. Works offline. 17MB total. No GPU required.</p>
+  <p align="center">Production-ready NLP tools for Yoruba, Hausa, Igbo, and Nigerian Pidgin.<br>Works on CPU. Works offline. No GPU required.</p>
 </p>
 
 <p align="center">
@@ -120,7 +120,7 @@ is_pidgin_particle("abeg")  # → True
 from naijaml.utils.constants import STATES, BANKS, format_naira, get_telco
 
 STATES["Lagos"]              # → 'Ikeja'
-BANKS["GTBank"]              # → '058'
+BANKS["Guaranty Trust Bank"]  # → '058'
 format_naira(1500000)        # → '₦1,500,000.00'
 get_telco("08031234567")     # → 'MTN'
 ```
@@ -130,24 +130,25 @@ get_telco("08031234567")     # → 'MTN'
 | Feature | Status | Accuracy | Model Size |
 |---------|--------|----------|------------|
 | Language Detection | ✅ | ~95% | 1.8MB |
-| Yoruba Diacritizer (dot-below) | ✅ | 97.5% | 6.4MB |
+| Yoruba Diacritizer (full tonal) | ✅ | 90.0% word | 12.6MB |
+| Yoruba Diacritizer (dot-below) | ✅ | 97.5% char | 6.4MB |
 | Igbo Diacritizer | ✅ | 95.2% | 4.9MB |
 | Sentiment Analysis | ✅ | 72% | 4.3MB |
 | Dataset Loaders (7 datasets) | ✅ | — | — |
 | Text Preprocessing & PII Masking | ✅ | — | — |
 | Nigerian Constants (states, banks, telcos) | ✅ | — | — |
 
-**Total model size: ~17MB.** Everything runs on CPU. No GPU required.
+**17MB bundled, 13MB downloaded on first use.** Everything runs on CPU. No GPU required.
 
 ## Design Philosophy
 
 **CPU-first.** Every feature works on a laptop with 4GB RAM. GPU makes things faster but is never required. 95% of African AI talent has no meaningful GPU access — NaijaML is built for them.
 
-**Offline-capable.** Models are bundled. Datasets cache locally after first download. Core features work without internet.
+**Offline-capable.** Small models ship with the package; larger ones auto-download from [HuggingFace](https://huggingface.co/naijaml/naijaml-models) on first use and cache locally. After first run, everything works without internet.
 
 **Minimal dependencies.** Core package needs only `numpy`, `requests`, `tqdm`. We don't pull in PyTorch if we don't need it.
 
-**Honest metrics.** We report real accuracy numbers, not cherry-picked results. The sentiment model is 72%, not 95%. The Yoruba diacritizer handles dot-below at 97.5% but full tonal is ~77%. We tell you upfront.
+**Honest metrics.** We report real accuracy numbers, not cherry-picked results. The sentiment model is 72%, not 95%. The Yoruba diacritizer handles dot-below at 97.5% but full tonal is 90%. We tell you upfront.
 
 **Nigerian context.** Examples use Nigerian names, cities, and data. PII masking handles Nigerian phone formats and national ID numbers. Currency is in Naira, not dollars.
 
@@ -156,7 +157,8 @@ get_telco("08031234567")     # → 'MTN'
 | Model | Size | Approach |
 |-------|------|----------|
 | Language Detection | 1.8MB | Naive Bayes + char n-grams |
-| Yoruba Diacritizer | 6.4MB | Syllable-based k-NN |
+| Yoruba Diacritizer (full) | 12.6MB | Word-level lookup + Viterbi decoding |
+| Yoruba Diacritizer (dot-below) | 6.4MB | Syllable-based k-NN |
 | Igbo Diacritizer | 4.9MB | Syllable-based k-NN |
 | Sentiment Analysis | 4.3MB | TF-IDF + Logistic Regression |
 
@@ -164,7 +166,7 @@ get_telco("08031234567")     # → 'MTN'
 
 We believe in transparency. Here's what NaijaML can't do yet:
 
-- **Yoruba tones:** Dot-below restoration (ọ, ẹ, ṣ) is 97.5% accurate. Full tonal diacritization (à, á, è, é) is ~77% due to contextual ambiguity — even native speakers sometimes disagree on tones.
+- **Yoruba tones:** Dot-below restoration (ọ, ẹ, ṣ) is 97.5% accurate. Full tonal diacritization (à, á, è, é) is 90% word accuracy using Viterbi decoding — remaining errors are due to contextual ambiguity where even native speakers sometimes disagree on tones.
 - **Sentiment accuracy:** 72% on Twitter data. Good enough for trend analysis, not for production decisions on individual texts. Optional transformer models coming soon.
 - **Pidgin vs English:** Short texts can be ambiguous between Pidgin and informal English. The detector works best on sentences of 5+ words.
 

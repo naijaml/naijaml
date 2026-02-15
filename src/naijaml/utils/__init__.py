@@ -1,4 +1,5 @@
 """NaijaML utility functions."""
+from naijaml.utils.download import get_model_path
 from naijaml.utils.constants import (
     # Data
     STATES,
@@ -26,6 +27,8 @@ from naijaml.utils.constants import (
 )
 
 __all__ = [
+    # Download
+    "get_model_path",
     # Data
     "STATES",
     "STATE_NAMES",
