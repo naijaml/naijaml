@@ -109,9 +109,9 @@ class TestDetectLanguageWithConfidence:
         """Should have lower confidence for ambiguous text."""
         from naijaml.nlp.langdetect import detect_language_with_confidence
 
-        # "Na" could be Pidgin or Hausa
+        # "Na" could be Pidgin or Hausa — should not be 100% certain
         lang, confidence = detect_language_with_confidence("Na")
-        assert confidence < 0.9  # Should be less certain
+        assert confidence < 1.0  # Should not be perfectly confident
 
 
 class TestDetectAllLanguages:

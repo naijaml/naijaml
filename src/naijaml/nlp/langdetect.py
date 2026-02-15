@@ -4,6 +4,11 @@ Detects Yorùbá (yor), Hausa (hau), Igbo (ibo), Nigerian Pidgin (pcm),
 and English (eng) from text using a Multinomial Naive Bayes classifier
 trained on character n-gram features from real Nigerian NLP datasets.
 
+Features:
+- Character n-grams (1-4) for broad language patterns
+- Character-set detection (diacritics as strong language signals)
+- Pidgin vocabulary features for Pidgin vs English disambiguation
+
 This is a lightweight, CPU-only implementation with no heavy dependencies.
 """
 from __future__ import annotations
@@ -28,11 +33,59 @@ _BUNDLED_MODEL_PATH = Path(__file__).parent / "lang_model.json"
 # Cached model (loaded lazily)
 _MODEL: Optional["NaiveBayesLangDetector"] = None
 
-# N-gram sizes to use (bigrams and trigrams)
-_NGRAM_SIZES = [2, 3]
+# N-gram sizes to use (unigrams through quad-grams)
+_NGRAM_SIZES = [1, 2, 3, 4]
 
 # Minimum n-gram count to include in model (prune rare n-grams)
 _MIN_NGRAM_COUNT = 2
+
+# =============================================================================
+# Language-specific character sets and vocabulary
+# =============================================================================
+
+# Characters that are near-definitive signals for specific languages
+_YORUBA_CHARS = set("ẹọṣẸỌṢ")
+_YORUBA_TONE_CHARS = set("áàéèíìóòúùÁÀÉÈÍÌÓÒÚÙ")
+_IGBO_CHARS = set("ịụỊỤ")  # ọ is shared with Yoruba, ị and ụ are Igbo-specific
+_HAUSA_CHARS = set("ɓɗƙƁƊƘ")
+
+# Pidgin-exclusive vocabulary (words that strongly signal Pidgin, not English)
+_PIDGIN_WORDS = {
+    "dey", "wetin", "abeg", "sef", "wahala", "sha", "shey", "pikin",
+    "una", "naim", "abi", "jare", "shaa", "ehen", "ehn", "chop",
+    "gist", "joor", "oya", "comot", "yarn", "kain", "wey", "dem",
+    "sabi", "palava", "vex", "jeje", "kasala", "anyhow", "omo",
+    "bros", "sista", "boda", "madam", "oga", "waka", "dodo",
+    "suya", "na", "no be", "no fit", "make we", "i dey", "e don",
+}
+
+# Pidgin bigrams (two-word patterns) that are strong signals
+_PIDGIN_BIGRAMS = {
+    # "dey" constructions (progressive/habitual marker)
+    "no dey", "i dey", "dey do", "dey go", "dey come",
+    "you dey", "we dey", "dem dey", "e dey", "go dey",
+    # "no" negation (without auxiliary verb — Pidgin grammar)
+    "no fit", "no be", "no go",
+    # "make" constructions (subjunctive/imperative)
+    "make we", "make i", "make dem",
+    # "na" constructions (copula/focus marker)
+    "na im", "na so", "na wa",
+    # "don" constructions (perfective aspect)
+    "e don", "dem don",
+    # Question/exclamation patterns
+    "wetin dey", "wetin be", "abeg no",
+    # Locative
+    "for here", "for there",
+    # Verb + "am" (object pronoun = "it/him/her" — Pidgin grammar)
+    "cook am", "tell am", "carry am", "kill am", "give am",
+    "do am", "see am", "chop am", "leave am", "bring am",
+    "buy am", "sell am", "take am", "put am", "get am",
+    # Adjective/verb + "die" (intensifier = "very/extremely")
+    "sweet die", "fine die", "cold die", "hot die",
+    "hungry die", "tire die", "hard die",
+    # "no" + adjective (Pidgin negation without copula)
+    "no easy", "no good", "no sweet",
+}
 
 
 # =============================================================================
@@ -53,12 +106,60 @@ def _normalize_text(text: str) -> str:
 def _extract_ngrams(text: str) -> Counter:
     """Extract character n-grams from text as a Counter."""
     text = _normalize_text(text)
-    ngrams: Counter = Counter()
+    ngrams = Counter()  # type: Counter
     for n in _NGRAM_SIZES:
         for i in range(len(text) - n + 1):
             ngram = text[i:i + n]
             ngrams[ngram] += 1
     return ngrams
+
+
+def _detect_char_features(text: str) -> Dict[str, int]:
+    """Detect language-specific character features.
+
+    Returns a dict of binary feature names to counts.
+    These features are injected into the n-gram feature vector.
+    """
+    text_norm = unicodedata.normalize("NFC", text)
+    features = {}  # type: Dict[str, int]
+
+    # Count language-specific characters
+    yor_count = sum(1 for c in text_norm if c in _YORUBA_CHARS)
+    yor_tone_count = sum(1 for c in text_norm if c in _YORUBA_TONE_CHARS)
+    igbo_count = sum(1 for c in text_norm if c in _IGBO_CHARS)
+    hau_count = sum(1 for c in text_norm if c in _HAUSA_CHARS)
+
+    # Add as features (scaled to be significant in the n-gram model)
+    if yor_count > 0:
+        features["__FEAT_YOR_DOTBELOW__"] = yor_count * 5
+    if yor_tone_count > 0:
+        features["__FEAT_YOR_TONE__"] = yor_tone_count * 3
+    if igbo_count > 0:
+        features["__FEAT_IBO_DOTBELOW__"] = igbo_count * 5
+    if hau_count > 0:
+        features["__FEAT_HAU_HOOK__"] = hau_count * 5
+
+    # Pidgin vocabulary detection (strip punctuation so "Omo," matches "omo")
+    words = set(w.strip(".,!?;:'\"()-") for w in text_norm.lower().split())
+    pidgin_hits = len(words & _PIDGIN_WORDS)
+    if pidgin_hits >= 1:
+        features["__FEAT_PCM_VOCAB__"] = pidgin_hits * 5
+
+    # Pidgin bigram detection
+    text_lower = text_norm.lower()
+    pidgin_bigram_hits = sum(1 for bg in _PIDGIN_BIGRAMS if bg in text_lower)
+    if pidgin_bigram_hits >= 1:
+        features["__FEAT_PCM_BIGRAM__"] = pidgin_bigram_hits * 5
+
+    return features
+
+
+def _extract_features(text: str) -> Counter:
+    """Extract all features: n-grams + character-set + vocabulary features."""
+    features = _extract_ngrams(text)
+    char_features = _detect_char_features(text)
+    features.update(char_features)
+    return features
 
 
 # =============================================================================
@@ -68,13 +169,14 @@ def _extract_ngrams(text: str) -> Counter:
 class NaiveBayesLangDetector:
     """Multinomial Naive Bayes classifier for language detection.
 
-    Uses character n-gram features with Laplace smoothing.
+    Uses character n-gram features with Laplace smoothing, augmented with
+    character-set detection and vocabulary features.
 
     The classifier computes:
-        P(lang | text) ∝ P(lang) × ∏ P(ngram | lang)
+        P(lang | text) ∝ P(lang) × ∏ P(feature | lang)
 
     Using log probabilities for numerical stability:
-        log P(lang | text) = log P(lang) + Σ log P(ngram | lang)
+        log P(lang | text) = log P(lang) + Σ log P(feature | lang)
     """
 
     def __init__(self, alpha: float = 1.0, uniform_priors: bool = True):
@@ -87,10 +189,10 @@ class NaiveBayesLangDetector:
         """
         self.alpha = alpha
         self.uniform_priors = uniform_priors
-        self.log_priors: Dict[str, float] = {}
-        self.log_likelihoods: Dict[str, Dict[str, float]] = {}
-        self.vocab: Set[str] = set()
-        self._default_log_likelihood: Dict[str, float] = {}
+        self.log_priors = {}  # type: Dict[str, float]
+        self.log_likelihoods = {}  # type: Dict[str, Dict[str, float]]
+        self.vocab = set()  # type: Set[str]
+        self._default_log_likelihood = {}  # type: Dict[str, float]
 
     def fit(self, texts: List[str], labels: List[str]) -> "NaiveBayesLangDetector":
         """Train the classifier on labeled text data.
@@ -106,13 +208,12 @@ class NaiveBayesLangDetector:
             raise ValueError("texts and labels must have the same length")
 
         # Count samples per language for priors
-        label_counts: Counter = Counter(labels)
+        label_counts = Counter(labels)  # type: Counter
         total_samples = len(labels)
         num_classes = len(label_counts)
 
         # Compute log priors (uniform or from data)
         if self.uniform_priors:
-            # Uniform priors: each language equally likely a priori
             self.log_priors = {
                 lang: math.log(1.0 / num_classes)
                 for lang in label_counts
@@ -123,22 +224,26 @@ class NaiveBayesLangDetector:
                 for lang, count in label_counts.items()
             }
 
-        # Aggregate n-gram counts per language
-        ngram_counts: Dict[str, Counter] = {lang: Counter() for lang in label_counts}
-        total_ngrams: Dict[str, int] = {lang: 0 for lang in label_counts}
+        # Aggregate feature counts per language
+        feature_counts = {lang: Counter() for lang in label_counts}  # type: Dict[str, Counter]
+        total_features = {lang: 0 for lang in label_counts}  # type: Dict[str, int]
 
         for text, label in zip(texts, labels):
-            ngrams = _extract_ngrams(text)
-            ngram_counts[label].update(ngrams)
-            total_ngrams[label] += sum(ngrams.values())
-            self.vocab.update(ngrams.keys())
+            features = _extract_features(text)
+            feature_counts[label].update(features)
+            total_features[label] += sum(features.values())
+            self.vocab.update(features.keys())
 
-        # Prune rare n-grams (keep only those with count >= _MIN_NGRAM_COUNT across all languages)
-        global_counts: Counter = Counter()
-        for lang_counts in ngram_counts.values():
+        # Prune rare features (keep only those with count >= _MIN_NGRAM_COUNT across all languages)
+        global_counts = Counter()  # type: Counter
+        for lang_counts in feature_counts.values():
             global_counts.update(lang_counts)
 
-        self.vocab = {ng for ng, count in global_counts.items() if count >= _MIN_NGRAM_COUNT}
+        self.vocab = {f for f, count in global_counts.items() if count >= _MIN_NGRAM_COUNT}
+
+        # Always keep special features even if rare
+        special_features = {f for f in global_counts if f.startswith("__FEAT_")}
+        self.vocab.update(special_features)
 
         vocab_size = len(self.vocab)
         logger.info("Vocabulary size after pruning: %d", vocab_size)
@@ -149,14 +254,14 @@ class NaiveBayesLangDetector:
 
         for lang in label_counts:
             self.log_likelihoods[lang] = {}
-            denominator = total_ngrams[lang] + self.alpha * vocab_size
+            denominator = total_features[lang] + self.alpha * vocab_size
 
-            # Default log-likelihood for unseen n-grams
+            # Default log-likelihood for unseen features
             self._default_log_likelihood[lang] = math.log(self.alpha / denominator)
 
-            for ngram in self.vocab:
-                count = ngram_counts[lang].get(ngram, 0)
-                self.log_likelihoods[lang][ngram] = math.log(
+            for feature in self.vocab:
+                count = feature_counts[lang].get(feature, 0)
+                self.log_likelihoods[lang][feature] = math.log(
                     (count + self.alpha) / denominator
                 )
 
@@ -197,7 +302,7 @@ class NaiveBayesLangDetector:
 
     def _compute_log_posteriors(self, text: str) -> Dict[str, float]:
         """Compute unnormalized log posterior for each language."""
-        ngrams = _extract_ngrams(text)
+        features = _extract_features(text)
 
         scores = {}
         for lang, log_prior in self.log_priors.items():
@@ -205,9 +310,8 @@ class NaiveBayesLangDetector:
             lang_likelihoods = self.log_likelihoods[lang]
             default_ll = self._default_log_likelihood[lang]
 
-            for ngram, count in ngrams.items():
-                # Get log-likelihood for this n-gram (or default for unseen)
-                ll = lang_likelihoods.get(ngram, default_ll)
+            for feature, count in features.items():
+                ll = lang_likelihoods.get(feature, default_ll)
                 log_likelihood += count * ll
 
             scores[lang] = log_prior + log_likelihood
@@ -257,7 +361,6 @@ class NaiveBayesLangDetector:
         # If default_log_likelihood not saved, compute from scratch
         if not detector._default_log_likelihood:
             for lang in detector.log_priors:
-                # Use a very low probability for unseen n-grams
                 detector._default_log_likelihood[lang] = -15.0
 
         return detector
@@ -268,9 +371,14 @@ class NaiveBayesLangDetector:
 # =============================================================================
 
 def _get_english_corpus() -> List[str]:
-    """Get a built-in English corpus for training."""
-    # English sentences from Wikipedia/news style text
+    """Get a built-in English corpus for training.
+
+    Large enough to balance against thousands of Pidgin samples,
+    since English and Pidgin share vocabulary and the model needs
+    sufficient English examples to learn the distinction.
+    """
     return [
+        # News / formal
         "The weather is quite pleasant today.",
         "I would like to order some food please.",
         "What is your name? My name is John.",
@@ -321,13 +429,152 @@ def _get_english_corpus() -> List[str]:
         "International cooperation is needed to address global challenges.",
         "The construction of the new bridge will take two years.",
         "Healthcare workers deserve our gratitude and support.",
+        # More news / current affairs
+        "The central bank has raised interest rates to combat rising inflation.",
+        "A delegation of foreign diplomats arrived in the capital for talks.",
+        "The agriculture minister announced new subsidies for smallholder farmers.",
+        "Police have arrested three suspects in connection with the robbery.",
+        "The newly elected governor has pledged to improve road infrastructure.",
+        "Thousands of students graduated from the university this weekend.",
+        "The court has ordered a retrial after new evidence was presented.",
+        "Health officials confirmed the outbreak has been contained.",
+        "The telecommunications company announced expansion to rural communities.",
+        "A new report highlights the growing gap between rich and poor.",
+        "The minister of finance presented the annual budget to parliament.",
+        "Scientists warn that deforestation is accelerating at an alarming rate.",
+        "The election commission has announced the date for local government polls.",
+        "A trade agreement between the two countries was signed yesterday.",
+        "The national football team qualified for the continental championship.",
+        "Experts recommend investing in education to reduce unemployment.",
+        "The power company has promised to address frequent blackouts.",
+        "A magnitude five earthquake was recorded off the eastern coast.",
+        "The president has appointed new members to the economic advisory council.",
+        "Several major roads were closed due to flooding after heavy rains.",
+        # Business / technology
+        "The startup raised ten million dollars in its latest funding round.",
+        "Artificial intelligence is transforming how businesses operate globally.",
+        "The quarterly earnings report exceeded analyst expectations significantly.",
+        "Cloud computing has become essential for modern enterprise infrastructure.",
+        "The merger between the two banks will create the largest financial institution.",
+        "Cybersecurity threats have increased dramatically in the past year.",
+        "The new smartphone features an improved camera and longer battery life.",
+        "Investors are increasingly interested in sustainable and green technologies.",
+        "The supply chain disruptions have caused significant delays in manufacturing.",
+        "Digital payment platforms are gaining widespread adoption across Africa.",
+        "The company plans to hire five hundred new employees by the end of the year.",
+        "Machine learning algorithms are being used to detect fraud in banking.",
+        "The tech conference attracted over ten thousand attendees from around the world.",
+        "Remote work tools have seen a massive surge in demand since the pandemic.",
+        "The electric vehicle market is projected to double in size by next year.",
+        "Blockchain technology is being explored for secure land registry systems.",
+        "The software update addresses several critical security vulnerabilities.",
+        "Data privacy regulations are becoming stricter across many jurisdictions.",
+        "The robotics laboratory has developed a new prototype for warehouse automation.",
+        "Venture capital investments in African startups reached a record high.",
+        # Sports
+        "The defending champions were eliminated in the quarterfinal round.",
+        "The young athlete broke the national record in the hundred meter sprint.",
+        "The coach announced the final squad for the upcoming tournament.",
+        "The match was suspended due to poor weather conditions.",
+        "The team has won five consecutive games and sits atop the league table.",
+        "The transfer window closes at midnight and several deals are pending.",
+        "The Olympic committee has selected the host city for the next games.",
+        "The boxer won the title fight by unanimous decision of the judges.",
+        "Tennis rankings were updated after the completion of the grand slam.",
+        "The cricket team declared their innings at three hundred and fifty runs.",
+        # Everyday / conversational
+        "Could you please pass me the salt from the other end of the table?",
+        "I think we should leave early to avoid the traffic on the highway.",
+        "Have you seen the new documentary about marine conservation?",
+        "The grocery store is closed on Sundays but opens early on Monday.",
+        "My sister is studying medicine at the university in the capital.",
+        "We need to schedule a meeting with the entire project team.",
+        "The library has extended its opening hours during the exam period.",
+        "I forgot my umbrella at home and it started raining on my way.",
+        "The new shopping mall has a wide variety of stores and restaurants.",
+        "We should plan our vacation before all the good hotels are booked.",
+        "The plumber came to fix the leaking pipe in the bathroom.",
+        "She received a scholarship to study abroad for her master's degree.",
+        "The neighbors are having a party and the music is quite loud.",
+        "I have been trying to reach him by phone but he is not answering.",
+        "The traffic was terrible this morning because of the road construction.",
+        "We are planning to renovate the kitchen and add new cabinets.",
+        "The flight was delayed by three hours due to mechanical issues.",
+        "He volunteered to help organize the community fundraising event.",
+        "The doctor recommended drinking more water and getting enough sleep.",
+        "They moved to a new apartment closer to the children's school.",
+        # Science / academic
+        "The research team published their findings in a peer-reviewed journal.",
+        "Genetic studies have revealed new insights about human migration patterns.",
+        "The experiment demonstrated that the hypothesis was statistically significant.",
+        "Mathematical models can help predict the spread of infectious diseases.",
+        "The conference proceedings include papers from researchers in twenty countries.",
+        "Archaeological excavations uncovered artifacts dating back several centuries.",
+        "The vaccine trial showed a ninety percent efficacy rate in preventing infection.",
+        "Satellite imagery reveals the extent of glacier retreat over the past decade.",
+        "The chemistry department received a grant for advanced materials research.",
+        "Computational methods have accelerated drug discovery in pharmaceutical research.",
+        # Education
+        "The curriculum has been updated to include digital literacy skills.",
+        "Students are required to complete a capstone project before graduation.",
+        "The scholarship program supports talented students from disadvantaged backgrounds.",
+        "Teacher training workshops focus on innovative classroom techniques.",
+        "The school board approved the construction of two new primary schools.",
+        "Academic performance has improved significantly since the new program started.",
+        "The literacy rate has increased due to government investment in education.",
+        "Examination results will be released at the end of the month.",
+        "The university offers online courses for working professionals.",
+        "Parents are encouraged to participate actively in their children's education.",
+        # Health / lifestyle
+        "A balanced diet combined with regular exercise promotes overall wellness.",
+        "The clinic offers free screening for common chronic diseases.",
+        "Mental health awareness campaigns are reaching more people every year.",
+        "Proper handwashing technique is one of the most effective ways to prevent illness.",
+        "The new fitness center has state of the art equipment and personal trainers.",
+        "Adequate sleep is essential for cognitive function and emotional well-being.",
+        "Nutritionists recommend eating at least five servings of fruits daily.",
+        "The community health program provides vaccinations for children under five.",
+        "Meditation and mindfulness practices can help reduce stress and anxiety.",
+        "The hospital introduced a new patient management system to reduce wait times.",
+        # Culture / entertainment
+        "The art gallery is hosting an exhibition of contemporary African paintings.",
+        "The bestselling novel has been translated into more than thirty languages.",
+        "The music festival lineup includes both local and international artists.",
+        "The documentary won several awards at the international film festival.",
+        "Traditional crafts are being preserved through community workshop programs.",
+        "The theater company will perform Shakespeare's plays throughout the month.",
+        "The photography competition received over two thousand entries this year.",
+        "The cultural heritage site has been nominated for preservation status.",
+        "The animation studio released its first feature length film last week.",
+        "The poetry reading event attracted a diverse and enthusiastic audience.",
+        # Short informal English (to distinguish from Pidgin)
+        "What time does the meeting start?",
+        "I will be there in ten minutes.",
+        "Can you send me the report by Friday?",
+        "That sounds like a great idea.",
+        "I am not sure if that is correct.",
+        "Let me know when you are ready.",
+        "Do you have any questions about the assignment?",
+        "I appreciate your help with this matter.",
+        "The project deadline has been extended by one week.",
+        "We should discuss this further at tomorrow's meeting.",
+        "I completely agree with your assessment of the situation.",
+        "The results were better than we had originally expected.",
+        "Please review the document and provide your feedback.",
+        "I will follow up with them about the pending request.",
+        "The workshop has been rescheduled to next Thursday afternoon.",
+        "It was a pleasure meeting you at the conference last week.",
+        "We need to reconsider our approach to this particular problem.",
+        "The committee will announce their decision within two weeks.",
+        "I suggest we explore alternative solutions before making a final choice.",
+        "Thank you for bringing this important issue to our attention.",
     ]
 
 
-def _collect_training_data(max_per_lang: int = 500) -> Tuple[List[str], List[str]]:
-    """Collect training data from cached NaijaML datasets + fallback.
+def _collect_training_data(max_per_lang: int = 5000) -> Tuple[List[str], List[str]]:
+    """Collect training data from NaijaML datasets + fallback.
 
-    Always includes fallback data to ensure all 5 languages are represented.
+    Pulls from multiple domains (tweets, news, reviews) for robustness.
     Balances data by limiting samples per language.
 
     Args:
@@ -341,37 +588,46 @@ def _collect_training_data(max_per_lang: int = 500) -> Tuple[List[str], List[str
     from naijaml.data.cache import is_cached
 
     # Collect all data per language
-    lang_data: Dict[str, List[str]] = {lang: [] for lang in SUPPORTED_LANGUAGES}
+    lang_data = {lang: [] for lang in SUPPORTED_LANGUAGES}  # type: Dict[str, List[str]]
 
-    # Get fallback data first
+    # Get fallback data first (always included as baseline)
     fallback_texts, fallback_labels = _get_fallback_training_data()
     for text, label in zip(fallback_texts, fallback_labels):
         lang_data[label].append(text)
     logger.info("Loaded fallback data")
 
-    # Try to augment with cached datasets
+    # Load from multiple datasets for domain diversity
     for lang in ["yor", "hau", "ibo", "pcm"]:
-        # Try NaijaSenti (primary source)
-        for split in ["train", "validation", "test"]:
+        # NaijaSenti (tweets — primary source, short text)
+        for split in ["train", "validation"]:
             if is_cached("naijasenti", lang, split):
                 try:
                     data = load_dataset("naijasenti", lang=lang, split=split)
-                    lang_data[lang].extend(item["text"] for item in data)
+                    lang_data[lang].extend(item["text"] for item in data if item.get("text"))
                 except Exception as e:
                     logger.debug("Failed to load naijasenti %s/%s: %s", lang, split, e)
 
-        # Try MasakhaNEWS
-        for split in ["train", "validation", "test"]:
+        # MasakhaNEWS (news articles — longer text)
+        for split in ["train", "validation"]:
             if is_cached("masakhanews", lang, split):
                 try:
                     data = load_dataset("masakhanews", lang=lang, split=split)
-                    lang_data[lang].extend(item["text"] for item in data)
+                    lang_data[lang].extend(item["text"] for item in data if item.get("text"))
                 except Exception as e:
                     logger.debug("Failed to load masakhanews %s/%s: %s", lang, split, e)
 
-        # Try MasakhaNER (tokens -> text)
+        # NollySenti (movie reviews — different domain)
+        for split in ["train", "validation"]:
+            if is_cached("nollysenti", lang, split):
+                try:
+                    data = load_dataset("nollysenti", lang=lang, split=split)
+                    lang_data[lang].extend(item["text"] for item in data if item.get("text"))
+                except Exception as e:
+                    logger.debug("Failed to load nollysenti %s/%s: %s", lang, split, e)
+
+        # MasakhaNER (NER sentences — yet another domain)
         if lang in ["yor", "hau", "ibo"]:
-            for split in ["train", "validation", "test"]:
+            for split in ["train", "validation"]:
                 if is_cached("masakhaner", lang, split):
                     try:
                         data = load_dataset("masakhaner", lang=lang, split=split)
@@ -381,22 +637,77 @@ def _collect_training_data(max_per_lang: int = 500) -> Tuple[List[str], List[str
                     except Exception as e:
                         logger.debug("Failed to load masakhaner %s/%s: %s", lang, split, e)
 
+    # English from MasakhaNEWS — load directly from HuggingFace since our loader
+    # doesn't support 'eng'. Use individual sentences from articles to get diverse,
+    # shorter training samples that overlap in style with tweets/conversational text.
+    try:
+        from datasets import load_dataset as hf_load_dataset
+        for split in ["train", "validation"]:
+            try:
+                ds = hf_load_dataset("masakhane/masakhanews", "eng", split=split)
+                for item in ds:
+                    # Use headline (short, tweet-length)
+                    headline = item.get("headline", "")
+                    if headline and len(headline) > 20:
+                        lang_data["eng"].append(headline)
+                    # Split article into individual sentences for shorter,
+                    # more diverse training samples
+                    text = item.get("text", "")
+                    if text:
+                        for sentence in text.replace("\n", ". ").split(". "):
+                            sentence = sentence.strip()
+                            if len(sentence) > 30 and len(sentence) < 300:
+                                lang_data["eng"].append(sentence)
+                logger.info("Loaded English from MasakhaNEWS %s: %d items",
+                           split, len(ds))
+            except Exception as e:
+                logger.debug("Failed to load MasakhaNEWS eng/%s: %s", split, e)
+    except ImportError:
+        logger.debug("datasets library not available for English data")
+
+    # Filter Pidgin training data: only keep texts with STRONG Pidgin markers.
+    # NaijaSenti "Pidgin" tweets are often heavily code-mixed with English,
+    # which teaches the model that any informal English text is Pidgin.
+    # Requiring multiple markers keeps genuinely Pidgin text and discards
+    # English-dominant code-mixed text.
+    if lang_data.get("pcm"):
+        filtered_pcm = []
+        for text in lang_data["pcm"]:
+            text_lower = text.lower()
+            words = set(w.strip(".,!?;:'\"()-") for w in text_lower.split())
+            pcm_word_hits = len(words & _PIDGIN_WORDS)
+            pcm_bigram_hits = sum(1 for bg in _PIDGIN_BIGRAMS if bg in text_lower)
+            total_markers = pcm_word_hits + pcm_bigram_hits
+            if total_markers >= 2:  # Need at least 2 Pidgin markers
+                filtered_pcm.append(text)
+        logger.info("Filtered Pidgin: %d -> %d (kept texts with 2+ Pidgin markers)",
+                    len(lang_data["pcm"]), len(filtered_pcm))
+        lang_data["pcm"] = filtered_pcm
+
     # Balance data by sampling max_per_lang from each language
-    texts: List[str] = []
-    labels: List[str] = []
+    texts = []  # type: List[str]
+    labels = []  # type: List[str]
 
     for lang, lang_texts in lang_data.items():
-        if len(lang_texts) > max_per_lang:
-            # Random sample to balance
-            random.seed(42)  # Reproducible
-            sampled = random.sample(lang_texts, max_per_lang)
+        # Deduplicate
+        seen = set()  # type: Set[str]
+        unique_texts = []
+        for t in lang_texts:
+            t_stripped = t.strip()
+            if t_stripped and t_stripped not in seen:
+                seen.add(t_stripped)
+                unique_texts.append(t_stripped)
+
+        if len(unique_texts) > max_per_lang:
+            random.seed(42)
+            sampled = random.sample(unique_texts, max_per_lang)
         else:
-            sampled = lang_texts
+            sampled = unique_texts
 
         texts.extend(sampled)
         labels.extend([lang] * len(sampled))
         logger.info("Using %d samples for %s (total available: %d)",
-                    len(sampled), lang, len(lang_texts))
+                    len(sampled), lang, len(unique_texts))
 
     return texts, labels
 
@@ -406,7 +717,7 @@ def _get_fallback_training_data() -> Tuple[List[str], List[str]]:
     texts = []
     labels = []
 
-    # Yorùbá samples with diacritics (50+ samples)
+    # Yorùbá samples with diacritics
     yor_texts = [
         "ọjọ́ dára púpọ̀ ẹ kú iṣẹ́ o",
         "mo fẹ́ràn rẹ púpọ̀ ọrẹ mi",
@@ -452,7 +763,7 @@ def _get_fallback_training_data() -> Tuple[List[str], List[str]]:
     texts.extend(yor_texts)
     labels.extend(["yor"] * len(yor_texts))
 
-    # Hausa samples (50+ samples)
+    # Hausa samples
     hau_texts = [
         "ina kwana yaya aiki",
         "na gode sosai allah ya kara mana",
@@ -508,7 +819,7 @@ def _get_fallback_training_data() -> Tuple[List[str], List[str]]:
     texts.extend(hau_texts)
     labels.extend(["hau"] * len(hau_texts))
 
-    # Igbo samples (50+ samples)
+    # Igbo samples
     ibo_texts = [
         "nnọọ kedu ka ị mere",
         "ahụrụ m gị n'anya nwanne m",
@@ -564,7 +875,7 @@ def _get_fallback_training_data() -> Tuple[List[str], List[str]]:
     texts.extend(ibo_texts)
     labels.extend(["ibo"] * len(ibo_texts))
 
-    # Nigerian Pidgin samples (70+ samples) - distinctive from English
+    # Nigerian Pidgin samples — distinctive from English
     pcm_texts = [
         "wetin dey happen for this country",
         "wetin dey happen na",
@@ -618,7 +929,6 @@ def _get_fallback_training_data() -> Tuple[List[str], List[str]]:
         "abeg leave me make i rest",
         "na only god fit help us",
         "e don tey wey we see",
-        # More distinctive Pidgin with "for" patterns
         "na for this country wahala full",
         "wetin happen for that side na",
         "dem dey do am for everywhere",
@@ -629,13 +939,11 @@ def _get_fallback_training_data() -> Tuple[List[str], List[str]]:
         "make we comot for here abeg",
         "i wan go for that place",
         "dem dey wait for us there",
-        # More wetin patterns
         "wetin you dey find for here",
         "wetin you wan make i do",
         "wetin happen to your phone",
         "wetin be the matter sef",
         "wetin you go tell am",
-        # More dey patterns
         "i dey here since morning",
         "dem dey come now now",
         "which kain thing you dey do",
@@ -686,7 +994,6 @@ def _get_model() -> NaiveBayesLangDetector:
         texts, labels = _get_fallback_training_data()
 
     if len(texts) < 10:
-        # Use fallback if we didn't get enough data
         texts, labels = _get_fallback_training_data()
 
     _MODEL = NaiveBayesLangDetector()
@@ -724,7 +1031,26 @@ def detect_language(text: str) -> Optional[str]:
         return None
 
     model = _get_model()
-    return model.predict(text)
+    prediction = model.predict(text)
+
+    # Pidgin/English disambiguation: Pidgin is an English-based creole, so
+    # their n-gram distributions overlap almost entirely. The NB model alone
+    # cannot reliably separate them. We apply the linguistic constraint that
+    # Pidgin requires positive evidence (Pidgin-specific vocabulary/grammar).
+    # If the model predicts Pidgin but the text contains no Pidgin markers,
+    # reclassify using the next-best language (usually English).
+    if prediction == "pcm":
+        text_lower = text.lower()
+        words = set(w.strip(".,!?;:'\"()-") for w in text_lower.split())
+        has_pcm_word = bool(words & _PIDGIN_WORDS)
+        has_pcm_bigram = any(bg in text_lower for bg in _PIDGIN_BIGRAMS)
+        if not has_pcm_word and not has_pcm_bigram:
+            # No Pidgin markers — use second-best prediction
+            scores = model._compute_log_posteriors(text)
+            sorted_langs = sorted(scores, key=scores.get, reverse=True)
+            prediction = sorted_langs[1]  # Second-best
+
+    return prediction
 
 
 def detect_language_with_confidence(text: str) -> Tuple[Optional[str], float]:
@@ -744,11 +1070,12 @@ def detect_language_with_confidence(text: str) -> Tuple[Optional[str], float]:
     if not text or not text.strip():
         return None, 0.0
 
+    # Use detect_language which includes Pidgin/English disambiguation
+    lang = detect_language(text)
     model = _get_model()
     probs = model.predict_proba(text)
-    best_lang = max(probs, key=probs.get)
 
-    return best_lang, probs[best_lang]
+    return lang, probs.get(lang, 0.0)
 
 
 def detect_all_languages(text: str) -> Dict[str, float]:
