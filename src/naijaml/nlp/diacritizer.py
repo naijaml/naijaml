@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import logging
+import math
 import re
 import unicodedata
 from collections import Counter, defaultdict
@@ -534,22 +535,41 @@ class WordLevelDiacritizer:
     3. High-frequency words dominate real text, and they're well-covered
     """
 
-    def __init__(self, min_word_freq: int = 5):
+    def __init__(self, min_word_freq: int = 5, min_bigram_freq: int = 3,
+                 max_candidates: int = 5):
         """Initialize the word-level diacritizer.
 
         Args:
             min_word_freq: Minimum frequency threshold for including a word
                           in the lookup table. Words seen fewer times are
                           handled by syllable fallback. Default 5.
+            min_bigram_freq: Minimum frequency threshold for including a bigram
+                            in the bigram lookup. Default 3.
+            max_candidates: Maximum number of candidate diacritized forms to
+                           keep per ambiguous word for Viterbi decoding. Default 5.
         """
         self.min_word_freq = min_word_freq
+        self.min_bigram_freq = min_bigram_freq
+        self.max_candidates = max_candidates
         # undiacritized_word -> diacritized_word (most common form)
         self.word_map: Dict[str, str] = {}
+        # bigram context: "prev_undiac\tcurrent_undiac" -> diacritized form
+        # Only stores entries where bigram prediction differs from unigram
+        self.bigram_map: Dict[str, str] = {}
+        self.bigram_count: int = 0
         # Statistics
         self.total_words_trained = 0
         self.vocab_size = 0
         # Syllable fallback model (lazy loaded)
         self._syllable_model: Optional[YorubaDiacritizer] = None
+        # Viterbi decoding data structures
+        # Top-K candidates per ambiguous word: undiac -> [(diac_form, log_prob), ...]
+        self.word_candidates: Dict[str, List[Tuple[str, float]]] = {}
+        # Transition log-probs: diac_prev -> {diac_current -> log_prob}
+        self.transition_probs: Dict[str, Dict[str, float]] = {}
+        # Unigram log-probs (back-off for unseen transitions)
+        self.unigram_log_probs: Dict[str, float] = {}
+        self.has_viterbi: bool = False
 
     def train(
         self,
@@ -569,6 +589,8 @@ class WordLevelDiacritizer:
         """
         # Build word frequency table: undiac -> {diac -> count}
         word_lookup: Dict[str, Counter] = defaultdict(Counter)
+        # Build bigram frequency table: "prev\tcurrent" -> {diac -> count}
+        bigram_lookup: Dict[str, Counter] = defaultdict(Counter)
 
         for i, diac_text in enumerate(diacritized_texts):
             # Get undiacritized version
@@ -580,9 +602,20 @@ class WordLevelDiacritizer:
             diac_words = diac_text.split()
             undiac_words = undiac_text.split()
 
+            prev_undiac = None
             for undiac, diac in zip(undiac_words, diac_words):
-                word_lookup[undiac.lower()][diac.lower()] += 1
+                undiac_lower = undiac.lower()
+                diac_lower = diac.lower()
+
+                word_lookup[undiac_lower][diac_lower] += 1
                 self.total_words_trained += 1
+
+                # Collect bigrams
+                if prev_undiac is not None:
+                    bigram_key = prev_undiac + "\t" + undiac_lower
+                    bigram_lookup[bigram_key][diac_lower] += 1
+
+                prev_undiac = undiac_lower
 
         # Build word map: keep only words above frequency threshold
         for undiac, diac_counts in word_lookup.items():
@@ -593,12 +626,115 @@ class WordLevelDiacritizer:
 
         self.vocab_size = len(self.word_map)
 
+        # Build bigram map: only store disambiguating bigrams
+        # (where bigram prediction differs from unigram default)
+        for bigram_key, diac_counts in bigram_lookup.items():
+            total_count = sum(diac_counts.values())
+            if total_count < self.min_bigram_freq:
+                continue
+
+            best_bigram = diac_counts.most_common(1)[0][0]
+            current_undiac = bigram_key.split("\t", 1)[1]
+            unigram_default = self.word_map.get(current_undiac)
+
+            # Only store if bigram disagrees with unigram
+            if unigram_default is not None and best_bigram != unigram_default:
+                self.bigram_map[bigram_key] = best_bigram
+
+        self.bigram_count = len(self.bigram_map)
+
+        # =================================================================
+        # Build Viterbi data structures
+        # =================================================================
+
+        # 1. Build word_candidates: top-K candidates per ambiguous word
+        for undiac, diac_counts in word_lookup.items():
+            total_count = sum(diac_counts.values())
+            if total_count < self.min_word_freq:
+                continue
+            candidates = diac_counts.most_common()
+            if len(candidates) > 1:
+                # Ambiguous word — store top-K with log probabilities
+                top_k = candidates[:self.max_candidates]
+                self.word_candidates[undiac] = [
+                    (normalize_yoruba(form), math.log(count / total_count))
+                    for form, count in top_k
+                ]
+
+        # 2. Build diacritized bigram counts (transitions between diac forms)
+        diac_bigram_counts: Dict[str, Counter] = defaultdict(Counter)
+        diac_unigram_counts: Counter = Counter()
+
+        for i, diac_text in enumerate(diacritized_texts):
+            diac_words = diac_text.split()
+            prev_diac = None
+            for diac in diac_words:
+                diac_lower = normalize_yoruba(diac.lower())
+                diac_unigram_counts[diac_lower] += 1
+                if prev_diac is not None:
+                    diac_bigram_counts[prev_diac][diac_lower] += 1
+                prev_diac = diac_lower
+
+        # Collect all diacritized forms that Viterbi can produce
+        known_diac_forms = set(self.word_map.values())
+        for candidates in self.word_candidates.values():
+            for form, _ in candidates:
+                known_diac_forms.add(form)
+
+        # 3. Compute unigram log-probs (only for forms Viterbi can produce)
+        total_unigram = sum(diac_unigram_counts.values())
+        if total_unigram > 0:
+            for form in known_diac_forms:
+                count = diac_unigram_counts.get(form, 0)
+                if count > 0:
+                    self.unigram_log_probs[form] = math.log(count / total_unigram)
+
+        # 4. Compute transition log-probs (sparse, only between known forms)
+        # Keep only top-N transitions per source to bound model size.
+        max_transitions_per_source = 10
+
+        ambiguous_forms = set()
+        for candidates in self.word_candidates.values():
+            for form, _ in candidates:
+                ambiguous_forms.add(form)
+
+        for prev_diac, next_counts in diac_bigram_counts.items():
+            if prev_diac not in known_diac_forms:
+                continue
+            # Only store transitions involving at least one ambiguous form
+            relevant = [
+                (nd, c) for nd, c in next_counts.items()
+                if nd in known_diac_forms and (
+                    prev_diac in ambiguous_forms or nd in ambiguous_forms
+                )
+            ]
+            if not relevant:
+                continue
+            # Keep top-N by count
+            relevant.sort(key=lambda x: x[1], reverse=True)
+            relevant = relevant[:max_transitions_per_source]
+            total_from_prev = sum(next_counts.values())
+            transitions = {}
+            for next_diac, count in relevant:
+                transitions[next_diac] = math.log(count / total_from_prev)
+            if transitions:
+                self.transition_probs[prev_diac] = transitions
+
+        self.has_viterbi = True
+
         logger.info(
             "Trained word-level model: %d words in vocabulary (min_freq=%d), "
-            "%d total word occurrences",
+            "%d disambiguating bigrams (min_freq=%d), "
+            "%d total word occurrences, "
+            "%d ambiguous words with candidates, "
+            "%d transition entries",
             self.vocab_size,
             self.min_word_freq,
+            self.bigram_count,
+            self.min_bigram_freq,
             self.total_words_trained,
+            len(self.word_candidates),
+            len(self.transition_probs),
         )
 
         return self
@@ -609,11 +745,13 @@ class WordLevelDiacritizer:
             self._syllable_model = _get_model()
         return self._syllable_model
 
-    def diacritize_word(self, word: str) -> str:
+    def diacritize_word(self, word: str, prev_word: Optional[str] = None) -> str:
         """Diacritize a single word.
 
         Args:
             word: Undiacritized word.
+            prev_word: Previous undiacritized word (lowercase) for bigram context.
+                      If provided, bigram lookup is tried first.
 
         Returns:
             Diacritized word.
@@ -621,7 +759,16 @@ class WordLevelDiacritizer:
         word_lower = word.lower()
         original_case = word[0].isupper() if word else False
 
-        # Try word-level lookup first
+        # Try bigram lookup first (prev_word + current_word)
+        if prev_word is not None and self.bigram_map:
+            bigram_key = prev_word + "\t" + word_lower
+            if bigram_key in self.bigram_map:
+                result = self.bigram_map[bigram_key]
+                if original_case:
+                    result = result[0].upper() + result[1:] if len(result) > 1 else result.upper()
+                return result
+
+        # Try word-level lookup
         if word_lower in self.word_map:
             result = self.word_map[word_lower]
             # Preserve original capitalization
@@ -636,8 +783,8 @@ class WordLevelDiacritizer:
     def diacritize(self, text: str) -> str:
         """Restore diacritics to undiacritized Yorùbá text.
 
-        Uses word-level lookup for known words (99% of typical text),
-        and syllable-based fallback for rare/unknown words.
+        Uses Viterbi decoding when available for globally optimal sequences,
+        falling back to greedy bigram+unigram decoding for old models.
 
         Args:
             text: Undiacritized Yorùbá text.
@@ -649,12 +796,55 @@ class WordLevelDiacritizer:
             >>> diacritizer.diacritize("Ojo dara pupo")
             'Ọjọ́ dára púpọ̀'
         """
+        if not self.has_viterbi:
+            return self._diacritize_greedy(text)
+
         text = normalize_yoruba(text)
         tokens = syllabify_text(text)
-        result = []
 
-        for token, is_word in tokens:
+        # Split into sentences at punctuation boundaries, run Viterbi per sentence
+        _sentence_end = frozenset(".!?;")
+        result = []
+        all_tokens = list(tokens)
+
+        # We'll build the result by walking through tokens and replacing
+        # word tokens with Viterbi output
+        word_indices = []  # indices into all_tokens that are words
+        for i, (token, is_word) in enumerate(all_tokens):
             if is_word:
+                word_indices.append(i)
+
+        # Group word indices into sentences (split at sentence-end punctuation)
+        sentences = []  # each is a list of indices into all_tokens
+        current_sentence = []
+        for i, (token, is_word) in enumerate(all_tokens):
+            if is_word:
+                current_sentence.append(i)
+            elif any(ch in _sentence_end for ch in token):
+                if current_sentence:
+                    sentences.append(current_sentence)
+                    current_sentence = []
+        if current_sentence:
+            sentences.append(current_sentence)
+
+        # Run Viterbi on each sentence and store results
+        viterbi_results = {}  # index -> diacritized form
+        for sent_indices in sentences:
+            word_tokens = [all_tokens[i][0] for i in sent_indices]
+            decoded = self._viterbi_decode(word_tokens)
+            for idx, diac_form in zip(sent_indices, decoded):
+                viterbi_results[idx] = diac_form
+
+        # Reconstruct the full text
+        for i, (token, is_word) in enumerate(all_tokens):
+            if is_word and i in viterbi_results:
+                diac = viterbi_results[i]
+                # Restore original capitalization
+                if token and token[0].isupper():
+                    diac = diac[0].upper() + diac[1:] if len(diac) > 1 else diac.upper()
+                result.append(diac)
+            elif is_word:
+                # Word not in any sentence group (shouldn't happen)
                 result.append(self.diacritize_word(token))
             else:
                 result.append(token)
@@ -682,6 +872,186 @@ class WordLevelDiacritizer:
 
         return known, total
 
+    def get_bigram_stats(self, text: str) -> Tuple[int, int, int]:
+        """Get bigram hit statistics for text.
+
+        Args:
+            text: Text to analyze.
+
+        Returns:
+            Tuple of (known_words, bigram_hits, total_words).
+        """
+        tokens = syllabify_text(text)
+        known = 0
+        bigram_hits = 0
+        total = 0
+
+        _sentence_end = frozenset(".!?;")
+        prev_word = None  # type: Optional[str]
+
+        for token, is_word in tokens:
+            if is_word:
+                total += 1
+                word_lower = token.lower()
+                if prev_word is not None and self.bigram_map:
+                    bigram_key = prev_word + "\t" + word_lower
+                    if bigram_key in self.bigram_map:
+                        bigram_hits += 1
+                        known += 1
+                        prev_word = word_lower
+                        continue
+                if word_lower in self.word_map:
+                    known += 1
+                prev_word = word_lower
+            else:
+                if any(ch in _sentence_end for ch in token):
+                    prev_word = None
+
+        return known, bigram_hits, total
+
+    def _viterbi_decode(self, tokens: List[str]) -> List[str]:
+        """Decode a sequence of undiacritized word tokens using Viterbi.
+
+        Uses a hybrid approach: the curated bigram_map provides strong
+        constraints for known word pairs, while transition probabilities
+        handle unseen pairs. This combines the precision of targeted
+        bigram overrides with global sequence optimization.
+
+        Args:
+            tokens: List of undiacritized word tokens.
+
+        Returns:
+            List of diacritized word tokens (lowercase).
+        """
+        if not tokens:
+            return []
+
+        n = len(tokens)
+        tokens_lower = [t.lower() for t in tokens]
+
+        # Build candidate list per position
+        candidates = []  # type: List[List[Tuple[str, float]]]
+        for word_lower in tokens_lower:
+            if word_lower in self.word_candidates:
+                # Ambiguous word — multiple candidates with emission log-probs
+                candidates.append(self.word_candidates[word_lower])
+            elif word_lower in self.word_map:
+                # Unambiguous known word — single candidate
+                form = self.word_map[word_lower]
+                candidates.append([(form, 0.0)])  # log(1.0) = 0
+            else:
+                # Unknown word — syllable fallback, single candidate
+                fallback = self._get_syllable_fallback()
+                form = fallback.diacritize(word_lower)
+                candidates.append([(form.lower(), 0.0)])
+
+        # Pre-compute bigram_map bonuses per position.
+        # bigram_map maps "prev_undiac\tcurr_undiac" -> diac_form.
+        # If a bigram_map entry exists, we give a large bonus to that candidate.
+        bigram_bonus = 5.0  # strong bonus for curated bigram predictions
+        bigram_targets = {}  # type: Dict[int, str]  # position -> target diac form
+        for t in range(1, n):
+            bigram_key = tokens_lower[t - 1] + "\t" + tokens_lower[t]
+            if bigram_key in self.bigram_map:
+                bigram_targets[t] = self.bigram_map[bigram_key]
+
+        # Viterbi forward pass
+        K0 = len(candidates[0])
+        score = [None] * n  # type: List[Optional[List[float]]]
+        backptr = [None] * n  # type: List[Optional[List[int]]]
+
+        # Initialize: position 0
+        score[0] = [candidates[0][k][1] for k in range(K0)]
+        backptr[0] = [0] * K0
+
+        # Default back-off penalty for unseen transitions
+        default_log_prob = -10.0
+
+        for t in range(1, n):
+            Kt = len(candidates[t])
+            Kt_prev = len(candidates[t - 1])
+            score[t] = [0.0] * Kt
+            backptr[t] = [0] * Kt
+
+            for k in range(Kt):
+                curr_form = candidates[t][k][0]
+                emission = candidates[t][k][1]
+
+                # Apply bigram_map bonus if this form matches
+                if t in bigram_targets and curr_form == bigram_targets[t]:
+                    emission += bigram_bonus
+
+                best_score = float("-inf")
+                best_prev = 0
+
+                for j in range(Kt_prev):
+                    prev_form = candidates[t - 1][j][0]
+                    # Transition: P(curr_form | prev_form)
+                    trans = default_log_prob
+                    if prev_form in self.transition_probs:
+                        trans = self.transition_probs[prev_form].get(
+                            curr_form,
+                            self.unigram_log_probs.get(curr_form, default_log_prob),
+                        )
+                    elif curr_form in self.unigram_log_probs:
+                        trans = self.unigram_log_probs[curr_form]
+
+                    s = score[t - 1][j] + trans + emission
+                    if s > best_score:
+                        best_score = s
+                        best_prev = j
+
+                score[t][k] = best_score
+                backptr[t][k] = best_prev
+
+        # Backtrace
+        result = [""] * n
+        # Find best final state
+        best_final = 0
+        best_final_score = float("-inf")
+        for k in range(len(candidates[n - 1])):
+            if score[n - 1][k] > best_final_score:
+                best_final_score = score[n - 1][k]
+                best_final = k
+
+        result[n - 1] = candidates[n - 1][best_final][0]
+        k = best_final
+        for t in range(n - 2, -1, -1):
+            k = backptr[t + 1][k]
+            result[t] = candidates[t][k][0]
+
+        return result
+
+    def _diacritize_greedy(self, text: str) -> str:
+        """Greedy left-to-right diacritization (bigram + unigram fallback).
+
+        This is the original decoding strategy, used when Viterbi data
+        is not available (backward compatibility with old models).
+
+        Args:
+            text: Undiacritized Yorùbá text.
+
+        Returns:
+            Text with diacritics restored.
+        """
+        text = normalize_yoruba(text)
+        tokens = syllabify_text(text)
+        result = []
+
+        _sentence_end = frozenset(".!?;")
+        prev_word = None  # type: Optional[str]
+
+        for token, is_word in tokens:
+            if is_word:
+                result.append(self.diacritize_word(token, prev_word=prev_word))
+                prev_word = token.lower()
+            else:
+                result.append(token)
+                if any(ch in _sentence_end for ch in token):
+                    prev_word = None
+
+        return "".join(result)
+
     def save(self, path: Path) -> None:
         """Save the trained model to JSON.
 
@@ -690,13 +1060,27 @@ class WordLevelDiacritizer:
         """
         data = {
             "min_word_freq": self.min_word_freq,
+            "min_bigram_freq": self.min_bigram_freq,
             "word_map": self.word_map,
+            "bigram_map": self.bigram_map,
+            "bigram_count": self.bigram_count,
             "total_words_trained": self.total_words_trained,
             "vocab_size": self.vocab_size,
         }
 
+        if self.has_viterbi:
+            data["viterbi"] = {
+                "word_candidates": {
+                    k: [[form, prob] for form, prob in v]
+                    for k, v in self.word_candidates.items()
+                },
+                "transition_probs": self.transition_probs,
+                "unigram_log_probs": self.unigram_log_probs,
+                "max_candidates": self.max_candidates,
+            }
+
         with open(path, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
+            json.dump(data, f, ensure_ascii=False)
 
         logger.info("Saved word-level diacritizer to %s (%.1f KB)",
                     path, path.stat().st_size / 1024)
@@ -714,10 +1098,27 @@ class WordLevelDiacritizer:
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        model = cls(min_word_freq=data.get("min_word_freq", 5))
+        viterbi_data = data.get("viterbi")
+        model = cls(
+            min_word_freq=data.get("min_word_freq", 5),
+            min_bigram_freq=data.get("min_bigram_freq", 3),
+            max_candidates=viterbi_data.get("max_candidates", 5) if viterbi_data else 5,
+        )
         model.word_map = data.get("word_map", {})
+        model.bigram_map = data.get("bigram_map", {})
+        model.bigram_count = data.get("bigram_count", len(model.bigram_map))
         model.total_words_trained = data.get("total_words_trained", 0)
         model.vocab_size = data.get("vocab_size", len(model.word_map))
+
+        # Load Viterbi data if present (backward compatible with old models)
+        if viterbi_data:
+            model.word_candidates = {
+                k: [(form, prob) for form, prob in v]
+                for k, v in viterbi_data.get("word_candidates", {}).items()
+            }
+            model.transition_probs = viterbi_data.get("transition_probs", {})
+            model.unigram_log_probs = viterbi_data.get("unigram_log_probs", {})
+            model.has_viterbi = True
 
         return model
 
@@ -768,7 +1169,7 @@ def _get_word_model() -> WordLevelDiacritizer:
         diacritized_texts = _get_fallback_training_data()
         undiacritized_texts = None
 
-    _WORD_MODEL = WordLevelDiacritizer(min_word_freq=5)
+    _WORD_MODEL = WordLevelDiacritizer(min_word_freq=5, min_bigram_freq=3)
     _WORD_MODEL.train(diacritized_texts, undiacritized_texts)
 
     return _WORD_MODEL
@@ -1321,7 +1722,7 @@ def train_and_save_model(
     # Train word-level model
     if train_word_level:
         word_path = path if path else _WORD_MODEL_PATH
-        model = WordLevelDiacritizer(min_word_freq=5)
+        model = WordLevelDiacritizer(min_word_freq=5, min_bigram_freq=3)
         model.train(diacritized_texts, undiacritized_texts)
         model.save(word_path)
         _WORD_MODEL = model
