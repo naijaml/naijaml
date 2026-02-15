@@ -1,5 +1,5 @@
 """NaijaML - Open-source ML tools for the Nigerian ecosystem."""
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 
 from naijaml.data import clear_cache, dataset_info, list_datasets, load_dataset
 
