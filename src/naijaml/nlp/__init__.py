@@ -59,6 +59,13 @@ from naijaml.nlp.sentiment import (
     analyze_batch as analyze_sentiment_batch,
     is_available as is_sentiment_available,
 )
+from naijaml.nlp.tokenizer import (
+    Tokenizer,
+    tokenize,
+    count_tokens,
+    get_supported_languages as get_tokenizer_languages,
+    SUPPORTED_LANGUAGES as TOKENIZER_LANGUAGES,
+)
 
 __all__ = [
     # Unicode
@@ -115,4 +122,10 @@ __all__ = [
     "get_sentiment_with_confidence",
     "analyze_sentiment_batch",
     "is_sentiment_available",
+    # Tokenizer
+    "Tokenizer",
+    "tokenize",
+    "count_tokens",
+    "get_tokenizer_languages",
+    "TOKENIZER_LANGUAGES",
 ]
