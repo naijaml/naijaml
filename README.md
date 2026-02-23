@@ -126,20 +126,43 @@ format_naira(1500000)        # → '₦1,500,000.00'
 get_telco("08031234567")     # → 'MTN'
 ```
 
+### Tokenizer
+
+```python
+from naijaml.nlp import Tokenizer
+
+tok = Tokenizer("yoruba")
+tokens = tok.encode("Ọjọ́ àìkú")
+text = tok.decode(tokens)  # Perfect roundtrip
+
+# Or use the unified tokenizer for all 4 languages
+tok = Tokenizer("naija")
+tok.encode("Ẹ kú àbọ̀")      # Yoruba
+tok.encode("Kedụ ka ị mere")  # Igbo
+tok.encode("Ina kwana?")      # Hausa
+
+# 63% fewer tokens than GPT-4 for Yoruba | 100% diacritic preservation
+```
+
 ## Features
 
-| Feature | Status | Accuracy | Model Size |
-|---------|--------|----------|------------|
-| Language Detection | ✅ | 96.6% | 29.6MB |
-| Yoruba Diacritizer (full tonal) | ✅ | 90.0% word | 12.6MB |
-| Yoruba Diacritizer (dot-below) | ✅ | 97.5% char | 6.4MB |
-| Igbo Diacritizer | ✅ | 95.2% | 4.9MB |
-| Sentiment Analysis | ✅ | 72% | 4.3MB |
+| Feature | Status | Accuracy / Efficiency | Model Size |
+|---------|--------|----------------------|------------|
+| Tokenizer (Yoruba) | ✅ | 63% fewer tokens vs GPT-4, 45% vs AfriBERTa | 560KB |
+| Tokenizer (Igbo) | ✅ | 50% fewer tokens vs GPT-4, 40% vs AfriBERTa | 550KB |
+| Tokenizer (Hausa) | ✅ | 31% fewer tokens vs GPT-4, 18% vs AfriBERTa | 420KB |
+| Tokenizer (Pidgin) | ✅ | 14% fewer tokens vs GPT-4 | 510KB |
+| Tokenizer (Unified) | ✅ | All 4 languages | 400KB |
+| Language Detection | ✅ | 96.6% accuracy | 29.6MB |
+| Yoruba Diacritizer (full tonal) | ✅ | 90.0% word accuracy | 12.6MB |
+| Yoruba Diacritizer (dot-below) | ✅ | 97.5% char accuracy | 6.4MB |
+| Igbo Diacritizer | ✅ | 95.2% accuracy | 4.9MB |
+| Sentiment Analysis | ✅ | 72% accuracy | 4.3MB |
 | Dataset Loaders (7 datasets) | ✅ | — | — |
 | Text Preprocessing & PII Masking | ✅ | — | — |
 | Nigerian Constants (states, banks, telcos) | ✅ | — | — |
 
-**45MB bundled, 13MB downloaded on first use.** Everything runs on CPU. No GPU required.
+**~48MB bundled, 13MB downloaded on first use.** Everything runs on CPU. No GPU required.
 
 ## Design Philosophy
 
@@ -147,7 +170,7 @@ get_telco("08031234567")     # → 'MTN'
 
 **Offline-capable.** Small models ship with the package; larger ones auto-download from [HuggingFace](https://huggingface.co/naijaml/naijaml-models) on first use and cache locally. After first run, everything works without internet.
 
-**Minimal dependencies.** Core package needs only `numpy`, `requests`, `tqdm`. We don't pull in PyTorch if we don't need it.
+**Minimal dependencies.** Core package needs only `numpy`, `requests`, `tqdm`, and `tokenizers`. We don't pull in PyTorch if we don't need it.
 
 **Honest metrics.** We report real accuracy numbers, not cherry-picked results. The sentiment model is 72%, not 95%. The Yoruba diacritizer handles dot-below at 97.5% but full tonal is 90%. We tell you upfront.
 
@@ -157,6 +180,7 @@ get_telco("08031234567")     # → 'MTN'
 
 | Model | Size | Approach |
 |-------|------|----------|
+| Tokenizers (5 models) | 2.4MB total | BPE trained on dedicated Nigerian language corpora |
 | Language Detection | 29.6MB | Naive Bayes + char n-grams (1-4) + language features |
 | Yoruba Diacritizer (full) | 12.6MB | Word-level lookup + Viterbi decoding |
 | Yoruba Diacritizer (dot-below) | 6.4MB | Syllable-based k-NN |
@@ -173,16 +197,36 @@ We believe in transparency. Here's what NaijaML can't do yet:
 
 ## Tokenizer Benchmark
 
-We benchmarked 7 major AI tokenizers (GPT-4, GPT-4o, Llama 3, Gemma 2, Mistral, BERT, XLM-RoBERTa) on Nigerian languages. The results:
+We benchmarked against GPT-4 (tiktoken), AfriBERTa, and AfroXLMR on Nigerian languages:
 
-| Language | Avg Token Ratio vs English |
-|----------|:-:|
-| Yoruba | **3.14x** |
-| Igbo | **2.30x** |
-| Hausa | **1.75x** |
-| Pidgin | **1.05x** |
+### Token Efficiency (fewer = better)
 
-Yoruba text costs 3x more to process than English with most tokenizers. GPT-4o's newer tokenizer performs best (1.69x); Mistral performs worst (2.47x). See the full analysis with interactive charts in [`benchmarks/`](benchmarks/).
+| Language | GPT-4 | AfriBERTa | AfroXLMR | **NaijaML** |
+|----------|:-----:|:---------:|:--------:|:-----------:|
+| Yoruba | baseline | +45% | +12% | **+63%** |
+| Igbo | baseline | +40% | -1% | **+50%** |
+| Hausa | baseline | +18% | +14% | **+31%** |
+| Pidgin | baseline | -1% | — | **+14%** |
+
+### Diacritic Handling (critical difference)
+
+| Input | GPT-4 | AfriBERTa | **NaijaML** |
+|-------|:-----:|:---------:|:-----------:|
+| `ọ́` (compound) | 2 tokens | 2 tokens | **1 token** |
+| `ẹ̀` (compound) | 3 tokens | 2 tokens | **1 token** |
+| `Ẹ kú àbọ̀` | 8 tokens | 5 tokens | **3 tokens** |
+
+Other tokenizers **split diacritics** because they weren't trained on enough Nigerian data. NaijaML keeps them together.
+
+### Speed (batch encoding)
+
+| Tokenizer | Speed | vs GPT-4 |
+|-----------|------:|:--------:|
+| **NaijaML (Rust)** | 3.8M tok/s | **2.5x faster** |
+| GPT-4 (tiktoken) | 1.7M tok/s | baseline |
+| AfriBERTa | 0.4M tok/s | 4x slower |
+
+See the full analysis in [`benchmarks/`](benchmarks/).
 
 ## Roadmap
 
