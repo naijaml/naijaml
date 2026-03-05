@@ -224,6 +224,8 @@ def mask_pii(
     """
     result = text
 
+    # Order matters: mask specific patterns first (phones, BVN) before
+    # the broad NIN pattern, so NIN doesn't swallow them.
     if mask_phones:
         result = PHONE_PATTERN_LOOSE.sub(phone_mask, result)
 
@@ -235,9 +237,23 @@ def mask_pii(
         result = re.sub(r"\b22\d{9}\b", bvn_mask, result)
 
     if mask_nin:
-        # NIN is any 11-digit number (more careful matching to avoid false positives)
-        # Only match standalone 11-digit numbers that aren't phone numbers
-        result = re.sub(r"(?<!\d)\d{11}(?!\d)", nin_mask, result)
+        # NIN is 11 digits — but we must NOT match numbers that are:
+        #   - Already masked (contain [ from mask tokens)
+        #   - Phone numbers (start with 0, 234, +234)
+        #   - BVN numbers (start with 22) — only skip if mask_bvn is also on
+        # We look for standalone 11-digit sequences preceded by "NIN" context
+        # or use word-boundary matching, excluding phone/BVN prefixes.
+        def _nin_replacer(match: re.Match) -> str:
+            num = match.group(0)
+            # Skip phone-like numbers (start with 0)
+            if num.startswith("0"):
+                return num
+            # Skip BVN-like numbers (start with 22) when BVN masking is active
+            if mask_bvn and num.startswith("22"):
+                return num
+            return nin_mask
+
+        result = re.sub(r"(?<!\d)(\d{11})(?!\d)", _nin_replacer, result)
 
     if mask_naira:
         result = NAIRA_PATTERN.sub(naira_mask, result)
