@@ -1,0 +1,125 @@
+{
+  "description": "Yoruba homograph test cases - words with same base form but different diacritized meanings depending on context.",
+  "test_cases": [
+    {
+      "undiacritized": "Ojo lo si oja lana",
+      "expected": "Ojó lo sí ọjà lánà",
+      "homographs": ["ojo/ojó/ọjọ́", "oja/ọjà"],
+      "note": "ojo=rain/name, oja=market"
+    },
+    {
+      "undiacritized": "Ile nla ni ile baba mi",
+      "expected": "Ilé ńlá ni ilé bàbá mi",
+      "homographs": ["ile/ilé/ilẹ̀"],
+      "note": "ile=house vs ile=ground"
+    },
+    {
+      "undiacritized": "Omo naa da pupo",
+      "expected": "Ọmọ náà dára púpọ̀",
+      "homographs": ["omo/ọmọ"],
+      "note": "omo=child"
+    },
+    {
+      "undiacritized": "Owo re po pupo",
+      "expected": "Owó rẹ̀ pọ̀ púpọ̀",
+      "homographs": ["owo/owó/ọwọ́"],
+      "note": "owo=money vs owo=hand vs owo=respect"
+    },
+    {
+      "undiacritized": "Ise re da pupo",
+      "expected": "Iṣẹ́ rẹ dára púpọ̀",
+      "homographs": ["ise/iṣẹ́/ìṣẹ̀"],
+      "note": "ise=work"
+    },
+    {
+      "undiacritized": "O ni owo lowo",
+      "expected": "Ó ní owó lọ́wọ́",
+      "homographs": ["o/ó/ò", "owo/owó", "lowo/lọ́wọ́"],
+      "note": "Multiple homographs in one sentence"
+    },
+    {
+      "undiacritized": "Ase re dara",
+      "expected": "Àṣẹ rẹ dára",
+      "homographs": ["ase/àṣẹ/aṣẹ́"],
+      "note": "ase=authority/foundation"
+    },
+    {
+      "undiacritized": "Obe re dun pupo",
+      "expected": "Ọbẹ̀ rẹ dùn púpọ̀",
+      "homographs": ["obe/ọbẹ̀/obẹ"],
+      "note": "obe=soup/stew vs obe=knife"
+    },
+    {
+      "undiacritized": "Ewe tuntun ti hu",
+      "expected": "Ewé tuntun ti hù",
+      "homographs": ["ewe/ewé/ẹwẹ́"],
+      "note": "ewe=leaf vs ewe=Ewe people"
+    },
+    {
+      "undiacritized": "Mo si ni agbara",
+      "expected": "Mo sì ní agbára",
+      "homographs": ["si/sì/sí"],
+      "note": "si=and/also vs si=to/towards"
+    },
+    {
+      "undiacritized": "Igba wo ni o de?",
+      "expected": "Ìgbà wo ni ó dé?",
+      "homographs": ["igba/ìgbà/igbá"],
+      "note": "igba=time vs igba=calabash vs igba=200"
+    },
+    {
+      "undiacritized": "Aja mi n gbe",
+      "expected": "Ajá mi ń gbé",
+      "homographs": ["aja/ajá/àjà"],
+      "note": "aja=dog vs aja=ceiling/loft"
+    },
+    {
+      "undiacritized": "Ogun ilu naa ti pari",
+      "expected": "Ogun ìlú náà ti parí",
+      "homographs": ["ogun/ogun/ògùn"],
+      "note": "ogun=war vs ogun=medicine vs ogun=twenty"
+    },
+    {
+      "undiacritized": "Ara mi ro mi",
+      "expected": "Ara mi ró mi",
+      "homographs": ["ara/ara/àrà"],
+      "note": "ara=body"
+    },
+    {
+      "undiacritized": "Iwe naa dara lati ka",
+      "expected": "Ìwé náà dára láti kà",
+      "homographs": ["iwe/ìwé"],
+      "note": "iwe=book"
+    },
+    {
+      "undiacritized": "Ojo ti o dara ni eyi",
+      "expected": "Ọjọ́ tí ó dára ni èyí",
+      "homographs": ["ojo/ọjọ́"],
+      "note": "ojo=day"
+    },
+    {
+      "undiacritized": "O fe lo si ile ise",
+      "expected": "Ó fẹ́ lọ sí ilé iṣẹ́",
+      "homographs": ["o/ó", "fe/fẹ́", "ile/ilé", "ise/iṣẹ́"],
+      "note": "Multiple homographs"
+    },
+    {
+      "undiacritized": "Eku ise ooo",
+      "expected": "Ẹ kú iṣẹ́ ooo",
+      "homographs": ["eku/ẹ kú", "ise/iṣẹ́"],
+      "note": "Greeting - 'well done at work'"
+    },
+    {
+      "undiacritized": "Oku orun ko dabi ti aye",
+      "expected": "Ọkú ọ̀run kò dàbí ti ayé",
+      "homographs": ["oku/ọkú", "orun/ọ̀run/ọ́run"],
+      "note": "orun=heaven vs orun=neck vs orun=sun"
+    },
+    {
+      "undiacritized": "Eni ti o ba fe ola gbodo sise",
+      "expected": "Ẹni tí ó bá fẹ́ ọlá gbọ́dọ̀ ṣiṣẹ́",
+      "homographs": ["eni/ẹni", "o/ó", "fe/fẹ́", "ola/ọlá"],
+      "note": "Complex sentence with many homographs"
+    }
+  ]
+}

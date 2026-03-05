@@ -1,0 +1,127 @@
+{
+  "description": "Synthetic PII test cases for mask_pii evaluation. Each has input text, expected masked output, and PII types present.",
+  "test_cases": [
+    {
+      "input": "Call me on 08012345678",
+      "expected": "Call me on [PHONE]",
+      "pii_types": ["phone"]
+    },
+    {
+      "input": "My number is +2348012345678",
+      "expected": "My number is [PHONE]",
+      "pii_types": ["phone"]
+    },
+    {
+      "input": "Reach me at 2348012345678",
+      "expected": "Reach me at [PHONE]",
+      "pii_types": ["phone"]
+    },
+    {
+      "input": "Call 0801-234-5678 for info",
+      "expected": "Call [PHONE] for info",
+      "pii_types": ["phone"]
+    },
+    {
+      "input": "Send email to user@example.com",
+      "expected": "Send email to [EMAIL]",
+      "pii_types": ["email"]
+    },
+    {
+      "input": "My BVN is 22123456789",
+      "expected": "My BVN is [BVN]",
+      "pii_types": ["bvn"]
+    },
+    {
+      "input": "Contact john.doe@company.ng or call 09012345678",
+      "expected": "Contact [EMAIL] or call [PHONE]",
+      "pii_types": ["email", "phone"]
+    },
+    {
+      "input": "I sent ₦50,000 to 08098765432 yesterday",
+      "expected": "I sent ₦50,000 to [PHONE] yesterday",
+      "pii_types": ["phone"]
+    },
+    {
+      "input": "My phone numbers are 08031234567 and 09091234567",
+      "expected": "My phone numbers are [PHONE] and [PHONE]",
+      "pii_types": ["phone"]
+    },
+    {
+      "input": "No PII in this text at all, just regular stuff",
+      "expected": "No PII in this text at all, just regular stuff",
+      "pii_types": []
+    },
+    {
+      "input": "Account 1234567890 is ten digits not eleven",
+      "expected": "Account 1234567890 is ten digits not eleven",
+      "pii_types": [],
+      "note": "10-digit number should NOT be masked as NIN"
+    },
+    {
+      "input": "The year 2024 should not be masked",
+      "expected": "The year 2024 should not be masked",
+      "pii_types": [],
+      "note": "Short numbers should not be masked"
+    },
+    {
+      "input": "Call 0802 345 6789 with spaces",
+      "expected": "Call [PHONE] with spaces",
+      "pii_types": ["phone"]
+    },
+    {
+      "input": "Email me at info@naijaml.com for support",
+      "expected": "Email me at [EMAIL] for support",
+      "pii_types": ["email"]
+    },
+    {
+      "input": "Abeg send money to my GTBank, my number na 08071234567",
+      "expected": "Abeg send money to my GTBank, my number na [PHONE]",
+      "pii_types": ["phone"]
+    },
+    {
+      "input": "Multiple emails: a@b.com and c@d.ng",
+      "expected": "Multiple emails: [EMAIL] and [EMAIL]",
+      "pii_types": ["email"]
+    },
+    {
+      "input": "MTN line: 07031234567, Airtel: 08021234567",
+      "expected": "MTN line: [PHONE], Airtel: [PHONE]",
+      "pii_types": ["phone"]
+    },
+    {
+      "input": "Send to 09012345678 or email support@company.com",
+      "expected": "Send to [PHONE] or email [EMAIL]",
+      "pii_types": ["phone", "email"]
+    },
+    {
+      "input": "Text with ₦5,000 amount should keep amount by default",
+      "expected": "Text with ₦5,000 amount should keep amount by default",
+      "pii_types": [],
+      "note": "Naira amounts not masked by default"
+    },
+    {
+      "input": "Lagos is beautiful and Nigeria has 36 states",
+      "expected": "Lagos is beautiful and Nigeria has 36 states",
+      "pii_types": [],
+      "note": "Regular text with no PII"
+    },
+    {
+      "input": "NIN: 12345678901",
+      "expected": "NIN: [NIN]",
+      "pii_types": ["nin"],
+      "note": "NIN is 11 digits not starting with 22 or 0"
+    },
+    {
+      "input": "BVN 22123456789 and NIN 98765432101",
+      "expected": "BVN [BVN] and NIN [NIN]",
+      "pii_types": ["bvn", "nin"],
+      "note": "BVN and NIN correctly differentiated in same text"
+    },
+    {
+      "input": "Phone 08031234567 and BVN 22987654321",
+      "expected": "Phone [PHONE] and BVN [BVN]",
+      "pii_types": ["phone", "bvn"],
+      "note": "Phone and BVN don't collide"
+    }
+  ]
+}
