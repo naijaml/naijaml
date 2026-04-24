@@ -56,6 +56,39 @@ def main():
     print(f"\nTotal: {len(train_texts)} train, {len(test_texts)} test")
     print(f"Labels: {Counter(train_labels)}")
 
+    # Augmented Pidgin positive examples
+    print("\n  Adding augmented Pidgin 'at all' positive examples...")
+    augmented_positive = [
+    # "at all" as positive intensifier
+    "This new NaijaML update no be small thing at all, e make work easy.",
+    "The way this app take load fast no be small, I like am.",
+    "Omo, the steeze for your design no be small at all, you try!",
+    "To run AI for CPU no be small work, but this library deliver.",
+    "The crowd for that tech event no be small at all, the vibe too set.",
+    "Your logic too sweet, I no get any complaint at all.",
+    "The feedback from the client too loud, they really love the work.",
+    "This food too make brain, I go come back again for sure.",
+    "The way you take handle the pressure too set, no shaking at all.",
+    "That feature too enter, e solve the problem one-time.",
+    "This your idea no bad at all, na the solution we dey find be that.",
+    "The performance of this model no get rival at all for the market.",
+    "Everything set, the UI no get fault at all.",
+    "I check the code, the architecture no get k-leg at all.",
+    "The presentation no get minus at all, you kill am!",
+    "This your portfolio set finish, no need to add anything again.",
+    "The update make sense die, my laptop just dey run am soft.",
+    "I like the way you take document the library, e clear finish.",
+    "That NaijaML logo set die, the branding strong at all.",
+    "You try for this project finish, no be lie at all."
+]
+    for text in augmented_positive:
+        train_texts.append(text)
+        train_labels.append("positive")
+        
+    print(f"  Added {len(augmented_positive)} samples")
+    print(f"  New total: {len(train_texts)} train")
+    print(f"  New labels: {Counter(train_labels)}")
+
     # 2. Build TF-IDF features
     print("\n[2/5] Building TF-IDF features...")
 
@@ -89,6 +122,7 @@ def main():
         C=1.0,                   # Regularization strength
         max_iter=1000,
         solver="lbfgs",
+        class_weight="balanced",
         verbose=1,
     )
 
