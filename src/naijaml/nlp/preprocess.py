@@ -10,12 +10,10 @@ from __future__ import annotations
 
 import re
 import unicodedata
-from typing import List, Optional
+from typing import List
 
 from naijaml.utils.constants import (
     PHONE_PATTERN_LOOSE,
-    BVN_PATTERN,
-    NIN_PATTERN,
     NAIRA_PATTERN,
     PIDGIN_PARTICLES,
 )
@@ -322,6 +320,7 @@ def clean_nigerian_text(
     normalize: bool = True,
     clean_social: bool = True,
     mask_pii_data: bool = False,
+    normalize_negation: bool = False,
     lowercase: bool = False,
 ) -> str:
     """All-in-one text cleaning for Nigerian text data.
@@ -334,6 +333,7 @@ def clean_nigerian_text(
         normalize: Apply Unicode normalization (NFC).
         clean_social: Clean social media artifacts (URLs, mentions).
         mask_pii_data: Mask phone numbers, emails, BVN, NIN.
+        normalize_negation: Normalize Nigerian Pidgin negation patterns.
         lowercase: Convert to lowercase.
 
     Returns:
@@ -357,6 +357,9 @@ def clean_nigerian_text(
 
     if lowercase:
         result = result.lower()
+
+    if normalize_negation:
+        result = normalize_pidgin_negation(result)
 
     return result
 
@@ -425,3 +428,69 @@ def get_pidgin_particles() -> set:
         True
     """
     return PIDGIN_PARTICLES.copy()
+
+
+# Ordered: specific patterns first, generic last.
+_PIDGIN_NEGATION_PATTERNS = [
+    # Idioms must be caught before generic "no go" patterns fire.
+    (re.compile(r"\bno go lie\b", re.IGNORECASE), "honestly"),
+
+    # Stacked modifiers: "e no too bad" / "no too bad" = mildly positive.
+    (re.compile(r"\be no too bad\b", re.IGNORECASE), "it is good"),
+    (re.compile(r"\bno too bad\b", re.IGNORECASE), "good"),
+
+    # Compound "at all" intensifiers must come before shorter phrase matches.
+    (re.compile(r"\bno bad at all\b", re.IGNORECASE), "very good"),
+    (re.compile(r"\bno good at all\b", re.IGNORECASE), "very bad"),
+    (re.compile(r"\bno sweet at all\b", re.IGNORECASE), "very bad"),
+
+    # Relative clause negation: "no be ... wey bad" is a positive signal.
+    (re.compile(r"\bno be \w+ wey bad\b", re.IGNORECASE), "good"),
+    (re.compile(r"\bwey bad\b", re.IGNORECASE), "that is bad"),
+
+    # Double negatives resolve to positive sentiment.
+    (re.compile(r"\bno be bad\b", re.IGNORECASE), "good"),
+    (re.compile(r"\bno bad\b", re.IGNORECASE), "good"),
+    (re.compile(r"\bnot bad\b", re.IGNORECASE), "good"),
+
+    # "no + positive word" resolves to in-vocabulary negative words.
+    (re.compile(r"\be no sweet\b", re.IGNORECASE), "it is bad"),
+    (re.compile(r"\bno sweet\b", re.IGNORECASE), "bad"),
+    (re.compile(r"\bno good\b", re.IGNORECASE), "bad"),
+    (re.compile(r"\bno fine\b", re.IGNORECASE), "ugly"),
+
+    # Generic negation patterns.
+    (re.compile(r"\bno be\b", re.IGNORECASE), "not"),
+    (re.compile(r"\be no\b", re.IGNORECASE), "it is not"),
+    (re.compile(r"\bno go\b", re.IGNORECASE), "will not"),
+    (re.compile(r"\bno like\b", re.IGNORECASE), "hate"),
+    (re.compile(r"\bno want\b", re.IGNORECASE), "reject"),
+]
+
+
+def normalize_pidgin_negation(text: str) -> str:
+    """Normalize Nigerian Pidgin negation patterns before sentiment analysis.
+
+    Pidgin uses double negatives and negation constructions that standard
+    sentiment models misclassify because they're trained on English syntax.
+    "no bad" is positive. "no sweet" is negative. This function normalizes
+    those patterns to English equivalents the classifier understands.
+
+    Args:
+        text: Input Pidgin or code-mixed text.
+
+    Returns:
+        Text with negation patterns normalized.
+
+    Example:
+        >>> normalize_pidgin_negation("This thing no bad at all")
+        'This thing very good'
+        >>> normalize_pidgin_negation("E no sweet me")
+        'it is bad me'
+        >>> normalize_pidgin_negation("I no go lie this thing good")
+        'I honestly this thing good'
+    """
+    result = text
+    for pattern, replacement in _PIDGIN_NEGATION_PATTERNS:
+        result = pattern.sub(replacement, result)
+    return _MULTIPLE_SPACES.sub(" ", result).strip()
