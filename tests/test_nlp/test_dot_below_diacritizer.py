@@ -126,6 +126,57 @@ class TestDiacritizeDotBelow:
         result = diacritize_dot_below("ise")
         assert "ṣ" in result or "ẹ" in result  # iṣẹ́
 
+    def test_output_has_no_tone_marks(self):
+        """Word-level route must drop the tones it restores."""
+        import unicodedata
+
+        from naijaml.nlp.diacritizer import diacritize_dot_below
+
+        result = diacritize_dot_below("Ojo dara pupo")
+        decomposed = unicodedata.normalize("NFD", result)
+        assert not any(mark in decomposed for mark in ("́", "̀", "̄"))
+
+    def test_keeps_dots_already_in_input(self):
+        """Dots the caller already typed must survive, and tones must still be dropped."""
+        from naijaml.nlp.diacritizer import diacritize_dot_below
+
+        assert diacritize_dot_below("Ọjọ") == "Ọjọ"
+        assert diacritize_dot_below("ọmọ mi") == "ọmọ mi"
+        assert diacritize_dot_below("Ọjọ́ dára") == "Ọjọ dara"
+
+    def test_keeps_letter_case(self):
+        """Capitalisation of the input must be unchanged."""
+        from naijaml.nlp.diacritizer import diacritize_dot_below, strip_diacritics
+
+        for text in ("OJO DARA", "Ojo Dara", "ojo dara"):
+            assert strip_diacritics(diacritize_dot_below(text)) == text
+
+    def test_bundled_model_route(self):
+        """use_word_level=False should use the bundled syllable model."""
+        from naijaml.nlp import diacritizer
+
+        result = diacritizer.diacritize_dot_below("omo", use_word_level=False)
+        assert result == diacritizer._get_dot_below_model().diacritize("omo")
+
+    def test_falls_back_when_word_model_unavailable(self, monkeypatch):
+        """Offline on first use: fall back to the bundled model, and try the download only once."""
+        from naijaml.nlp import diacritizer
+
+        calls = []
+
+        def failing_get_model_path(filename):
+            calls.append(filename)
+            raise RuntimeError("offline")
+
+        monkeypatch.setattr(diacritizer, "_WORD_MODEL", None)
+        monkeypatch.setattr(diacritizer, "_WORD_MODEL_LOAD_FAILED", False)
+        monkeypatch.setattr(diacritizer, "get_model_path", failing_get_model_path)
+
+        expected = diacritizer._get_dot_below_model().diacritize("omo")
+        assert diacritizer.diacritize_dot_below("omo") == expected
+        assert diacritizer.diacritize_dot_below("omo") == expected
+        assert calls == ["word_diacritic_model.json"]
+
 
 class TestEvaluationFunctions:
     """Tests for the evaluation functions."""

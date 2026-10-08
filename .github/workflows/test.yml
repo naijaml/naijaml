@@ -8,10 +8,15 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        os: [ubuntu-latest]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        include:
+          # One Windows job: its default text encoding is not UTF-8, which Linux runs cannot catch.
+          - os: windows-latest
+            python-version: "3.12"
 
     steps:
       - uses: actions/checkout@v4
@@ -31,6 +36,8 @@ jobs:
         run: uv run pytest tests/ -v --tb=short
 
       - name: Check imports work
+        env:
+          PYTHONIOENCODING: utf-8  # these commands print Yoruba text; Windows pipes are not UTF-8 by default
         run: |
           uv run python -c "from naijaml.nlp import detect_language; print(detect_language('Bawo ni'))"
           uv run python -c "from naijaml.nlp import diacritize_dot_below; print(diacritize_dot_below('Ojo dara'))"

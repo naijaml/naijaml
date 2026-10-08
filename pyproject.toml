@@ -8,11 +8,11 @@ version = "0.2.1"
 description = "Open-source ML tools, libraries, and notebooks for the Nigerian ML ecosystem"
 readme = "README.md"
 license = "Apache-2.0"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 authors = [{ name = "Ugochukwu Onyebuchi" }]
 keywords = ["machine-learning", "nigeria", "nlp", "african-languages", "yoruba", "hausa", "igbo"]
 classifiers = [
-    "Development Status :: 1 - Planning",
+    "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",

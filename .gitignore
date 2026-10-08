@@ -57,3 +57,6 @@ src/naijaml/nlp/word_diacritic_model.json
 
 # Benchmark regenerated output (static PNGs, CSV)
 benchmarks/results/
+
+# Reports written by scripts/eval_*.py and scripts/evaluate_all.py
+evaluation_reports/

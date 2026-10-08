@@ -173,13 +173,34 @@ class TestDiacritize:
         assert diacritize("   ") == "   "
 
     def test_preserves_already_diacritized(self):
-        """Should not break already diacritized text too much."""
-        from naijaml.nlp.diacritizer import diacritize_dot_below
+        """Should return fully diacritized text unchanged."""
+        from naijaml.nlp.diacritizer import diacritize
 
-        # Use dot-below diacritizer for reliable preservation (97.5% accuracy)
-        # The full diacritizer has tonal ambiguity issues (~77% word accuracy)
-        result = diacritize_dot_below("Ọjọ")
-        assert "ọ" in result.lower() or "Ọ" in result
+        for text in ["Ọjọ́ dára púpọ̀", "Ẹ kú iṣẹ́", "Báwo ni?"]:
+            for use_word_level in (True, False):
+                assert diacritize(text, use_word_level=use_word_level) == text
+
+    def test_keeps_existing_dot_below(self):
+        """Should keep dots already in the input and only add marks."""
+        from naijaml.nlp.diacritizer import diacritize, strip_diacritics
+
+        result = diacritize("Ọjọ")
+        assert strip_diacritics(result, tones_only=True) == "Ọjọ"
+
+    def test_partly_diacritized_sentence(self):
+        """Should treat marked words as given and restore the unmarked ones."""
+        from naijaml.nlp.diacritizer import diacritize
+
+        result = diacritize("Ọjọ́ dara")
+        assert result.split()[0] == "Ọjọ́"
+        assert result.split()[1] == diacritize("ojo dara").split()[1]
+
+    def test_unmarked_input_unaffected_by_merge(self):
+        """Should give the model's output directly for unmarked input."""
+        from naijaml.nlp.diacritizer import _get_word_model, diacritize
+
+        text = "Ojo dara pupo, e ku ise!"
+        assert diacritize(text) == _get_word_model().diacritize(text)
 
     def test_common_words(self):
         """Should handle common Yorùbá words."""

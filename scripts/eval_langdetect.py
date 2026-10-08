@@ -13,6 +13,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+# Windows pipes and older consoles default to a legacy code page; Yorùbá/Igbo text and "→" need UTF-8.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8")
+
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
@@ -29,7 +34,7 @@ def load_fixture_data() -> List[Dict]:
     # 1. Language samples fixture (10 per language)
     lang_file = FIXTURES_DIR / "language_samples.json"
     if lang_file.exists():
-        with open(lang_file) as f:
+        with open(lang_file, encoding="utf-8") as f:
             lang_data = json.load(f)
         for lang_code, texts in lang_data.items():
             # Map fixture codes to our codes
@@ -41,7 +46,7 @@ def load_fixture_data() -> List[Dict]:
     # 2. Code-mixed samples (for code-switching evaluation)
     mixed_file = FIXTURES_DIR / "eval" / "code_mixed_samples.json"
     if mixed_file.exists():
-        with open(mixed_file) as f:
+        with open(mixed_file, encoding="utf-8") as f:
             mixed_data = json.load(f)
         for item in mixed_data["samples"]:
             samples.append({
@@ -54,7 +59,7 @@ def load_fixture_data() -> List[Dict]:
     # 3. Sentiment fixture texts (have lang labels)
     sent_file = FIXTURES_DIR / "eval" / "unseen_sentiment.json"
     if sent_file.exists():
-        with open(sent_file) as f:
+        with open(sent_file, encoding="utf-8") as f:
             sent_data = json.load(f)
         for item in sent_data["samples"]:
             samples.append({
@@ -66,7 +71,7 @@ def load_fixture_data() -> List[Dict]:
     # 4. Yoruba diacritizer sentences (should detect as yor)
     yor_file = FIXTURES_DIR / "eval" / "unseen_yoruba_sentences.json"
     if yor_file.exists():
-        with open(yor_file) as f:
+        with open(yor_file, encoding="utf-8") as f:
             yor_data = json.load(f)
         for text in yor_data["sentences"][:20]:  # Use first 20
             samples.append({"text": text, "lang": "yor", "source": "yoruba_diacritizer"})
@@ -74,7 +79,7 @@ def load_fixture_data() -> List[Dict]:
     # 5. Igbo diacritizer sentences (should detect as ibo)
     ibo_file = FIXTURES_DIR / "eval" / "unseen_igbo_sentences.json"
     if ibo_file.exists():
-        with open(ibo_file) as f:
+        with open(ibo_file, encoding="utf-8") as f:
             ibo_data = json.load(f)
         for text in ibo_data["sentences"][:20]:
             samples.append({"text": text, "lang": "ibo", "source": "igbo_diacritizer"})
@@ -247,7 +252,8 @@ def print_report(result: Dict) -> None:
 
     print("\nConfusion matrix:")
     labels = sorted(overall["confusion_matrix"].keys())
-    print(f"{'True\\Pred':<10}", end="")
+    corner = "True\\Pred"  # a backslash inside an f-string expression needs Python 3.12
+    print(f"{corner:<10}", end="")
     for label in ["yor", "hau", "ibo", "pcm", "eng"]:
         if label in labels or any(label in v for v in overall["confusion_matrix"].values()):
             print(f"{label:<8}", end="")
@@ -277,7 +283,7 @@ def main():
 
     # Save report
     report_path = REPORTS_DIR / f"{datetime.now().strftime('%Y%m%d')}_langdetect.json"
-    with open(report_path, "w") as f:
+    with open(report_path, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
     logger.info("Report saved to %s", report_path)
 

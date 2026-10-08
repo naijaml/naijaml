@@ -14,10 +14,16 @@ import json
 import logging
 import os
 import statistics
+import sys
 import time
 from datetime import datetime
 from pathlib import Path
 from typing import Callable, Dict, List
+
+# Windows pipes and older consoles default to a legacy code page; Yorùbá/Igbo text and "→" need UTF-8.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8")
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
@@ -235,7 +241,7 @@ def main():
     print_report(result)
 
     report_path = REPORTS_DIR / f"{datetime.now().strftime('%Y%m%d')}_benchmark.json"
-    with open(report_path, "w") as f:
+    with open(report_path, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
     logger.info("Report saved to %s", report_path)
 
