@@ -5,7 +5,8 @@ using a two-stage approach:
 1. Word-level lookup for known words (~83% accuracy, 99% coverage)
 2. Syllable-based fallback for unknown words
 
-This is a lightweight, CPU-only implementation achieving ~83% word-level accuracy.
+This is a lightweight, CPU-only implementation. It gets 80.3% of words right on
+the MENYO-20k test set (reproduce with ``python scripts/eval_heldout.py``).
 """
 from __future__ import annotations
 
@@ -1672,7 +1673,8 @@ def diacritize(text: str, use_word_level: bool = True) -> str:
         'Ẹ kú iṣẹ́'
 
     Note:
-        Word-level lookup achieves ~83% accuracy on held-out test data.
+        Gets 80.3% of words right on the MENYO-20k test set (reproduce with
+        ``python scripts/eval_heldout.py``).
         The model was trained on the bumie-e/Yoruba-diacritics-vs-non-diacritics
         dataset containing 676k sentence pairs.
     """

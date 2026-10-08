@@ -34,8 +34,9 @@ diacritize_yoruba_dot_below("Ojo lo si oja")
 diacritize_yoruba("Ojo lo si oja lana")
 # → 'Ọjọ́ ló sí ọjà lànà'  (full tonal restoration)
 
-# Dot-below: 97.5% accuracy | 6.4MB bundled
-# Full tonal: 90.0% accuracy | 12.6MB auto-downloaded on first use
+# Dot-below: 93.3% word accuracy | Full tonal: 80.3% word accuracy (MENYO-20k test set)
+# Both use a 12.6MB model, auto-downloaded on first use.
+# Offline on first use, dot-below falls back to a 6.4MB bundled model (85.7%).
 ```
 
 ### Igbo Diacritizer
@@ -154,8 +155,8 @@ tok.encode("Ina kwana?")      # Hausa
 | Tokenizer (Pidgin) | ✅ | 14% fewer tokens vs GPT-4 | 510KB |
 | Tokenizer (Unified) | ✅ | All 4 languages | 400KB |
 | Language Detection | ✅ | 96.6% accuracy | 29.6MB |
-| Yoruba Diacritizer (full tonal) | ✅ | 90.0% word accuracy | 12.6MB |
-| Yoruba Diacritizer (dot-below) | ✅ | 97.5% char accuracy | 6.4MB |
+| Yoruba Diacritizer (full tonal) | ✅ | 80.3% word accuracy (MENYO-20k test) | 12.6MB |
+| Yoruba Diacritizer (dot-below) | ✅ | 93.3% word accuracy (MENYO-20k test) | 12.6MB, or 6.4MB bundled fallback (85.7%) |
 | Igbo Diacritizer | ✅ | 95.2% accuracy | 4.9MB |
 | Sentiment Analysis | ✅ | 72% accuracy | 4.3MB |
 | Dataset Loaders (7 datasets) | ✅ | — | — |
@@ -172,7 +173,7 @@ tok.encode("Ina kwana?")      # Hausa
 
 **Minimal dependencies.** Core package needs only `numpy`, `requests`, `tqdm`, and `tokenizers`. We don't pull in PyTorch if we don't need it.
 
-**Honest metrics.** We report real accuracy numbers, not cherry-picked results. The sentiment model is 72%, not 95%. The Yoruba diacritizer handles dot-below at 97.5% but full tonal is 90%. We tell you upfront.
+**Honest metrics.** We report real accuracy numbers, not cherry-picked results. The sentiment model is 72%, not 95%. The Yoruba diacritizer gets dot-below right for 93% of words but full tonal marks for only 80%. We tell you upfront.
 
 **Nigerian context.** Examples use Nigerian names, cities, and data. PII masking handles Nigerian phone formats and national ID numbers. Currency is in Naira, not dollars.
 
@@ -183,7 +184,7 @@ tok.encode("Ina kwana?")      # Hausa
 | Tokenizers (5 models) | 2.4MB total | BPE trained on dedicated Nigerian language corpora |
 | Language Detection | 29.6MB | Naive Bayes + char n-grams (1-4) + language features |
 | Yoruba Diacritizer (full) | 12.6MB | Word-level lookup + Viterbi decoding |
-| Yoruba Diacritizer (dot-below) | 6.4MB | Syllable-based k-NN |
+| Yoruba Diacritizer (dot-below) | 12.6MB | Word-level model with tones dropped; 6.4MB syllable-based k-NN bundled as offline fallback |
 | Igbo Diacritizer | 4.9MB | Syllable-based k-NN |
 | Sentiment Analysis | 4.3MB | TF-IDF + Logistic Regression |
 
@@ -191,9 +192,19 @@ tok.encode("Ina kwana?")      # Hausa
 
 We believe in transparency. Here's what NaijaML can't do yet:
 
-- **Yoruba tones:** Dot-below restoration (ọ, ẹ, ṣ) is 97.5% accurate. Full tonal diacritization (à, á, è, é) is 90% word accuracy using Viterbi decoding — remaining errors are due to contextual ambiguity where even native speakers sometimes disagree on tones.
-- **Sentiment accuracy:** 72% on Twitter data. Good enough for trend analysis, not for production decisions on individual texts. Optional transformer models coming soon.
+- **Yoruba tones:** On the MENYO-20k test set (6,524 multi-domain sentences), dot-below restoration (ọ, ẹ, ṣ) gets 93.3% of words right and full tonal diacritization (à, á, è, é) gets 80.3%, using Viterbi decoding. Only 6.5% of whole sentences come out fully correct with tones. Many of the remaining errors are due to contextual ambiguity where even native speakers sometimes disagree on tones.
+- **Already-diacritized input:** The full Yoruba diacritizer expects unmarked text. Text that already carries some marks can come back worse (e.g. `Ọjọ` → `Ojó`), so strip marks first with `strip_diacritics`. The dot-below function keeps marks already in the input.
+- **Sentiment accuracy:** 72% on Twitter data (NaijaSenti test set). Good enough for trend analysis, not for production decisions on individual texts. Optional transformer models coming soon.
 - **Pidgin vs English:** Pidgin is an English-based creole, so code-mixed texts can be ambiguous. The detector requires Pidgin-specific markers (e.g., "dey", "wetin", "abeg") to classify as Pidgin — English-like text without markers defaults to English. 94.6% Pidgin recall, 99.9% English recall on held-out data.
+
+### Reproducing these numbers
+
+```bash
+python scripts/eval_heldout.py   # Yoruba diacritizers on the MENYO-20k test set (downloaded on first run)
+python scripts/evaluate_all.py   # quick checks on small curated fixtures for every module
+```
+
+`eval_heldout.py` excludes the 109 test sentences that also occur in the diacritizer's training data. The fixture sets are small (tens of samples), so treat `evaluate_all.py` as a regression check, not a benchmark. The language detection and Igbo diacritizer figures above do not have a reproduction script yet.
 
 ## Tokenizer Benchmark
 
