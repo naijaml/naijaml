@@ -25,6 +25,7 @@ from naijaml.utils.download import get_model_path
 # Cached models
 _MODEL: Optional["YorubaDiacritizer"] = None
 _WORD_MODEL: Optional["WordLevelDiacritizer"] = None
+_WORD_MODEL_LOAD_FAILED = False
 
 # =============================================================================
 # Yorùbá character mappings
@@ -1121,21 +1122,39 @@ class WordLevelDiacritizer:
         return model
 
 
-def _get_word_model() -> WordLevelDiacritizer:
-    """Get the word-level diacritizer model (loading from file or training)."""
-    global _WORD_MODEL
+def _load_pretrained_word_model() -> Optional[WordLevelDiacritizer]:
+    """Load the pre-trained word-level model (cached, or downloaded from HF).
+
+    Returns None if it cannot be loaded. Never trains a model, and only
+    attempts the download once per process so offline callers are not
+    slowed down by repeated network timeouts.
+    """
+    global _WORD_MODEL, _WORD_MODEL_LOAD_FAILED
 
     if _WORD_MODEL is not None:
         return _WORD_MODEL
+    if _WORD_MODEL_LOAD_FAILED:
+        return None
 
-    # Try to load pre-trained model (downloads from HF if needed)
     try:
         model_path = get_model_path("word_diacritic_model.json")
         _WORD_MODEL = WordLevelDiacritizer.load(model_path)
         logger.debug("Loaded pre-trained word-level diacritizer from %s", model_path)
-        return _WORD_MODEL
     except Exception as e:
+        _WORD_MODEL_LOAD_FAILED = True
         logger.warning("Failed to load word-level model: %s", e)
+
+    return _WORD_MODEL
+
+
+def _get_word_model() -> WordLevelDiacritizer:
+    """Get the word-level diacritizer model (loading from file or training)."""
+    global _WORD_MODEL
+
+    # Try to load pre-trained model (downloads from HF if needed)
+    model = _load_pretrained_word_model()
+    if model is not None:
+        return model
 
     # Train a new model from HuggingFace dataset
     logger.info("Training new word-level diacritizer model...")
@@ -1752,7 +1771,7 @@ def train_and_save_model(
 # Dot-Below-Only Public API
 # =============================================================================
 
-def diacritize_dot_below(text: str) -> str:
+def diacritize_dot_below(text: str, use_word_level: bool = True) -> str:
     """Restore ONLY dot-below characters to undiacritized Yorùbá text.
 
     This is a simpler task than full diacritization, achieving higher accuracy.
@@ -1765,6 +1784,12 @@ def diacritize_dot_below(text: str) -> str:
 
     Args:
         text: Undiacritized Yorùbá text.
+        use_word_level: If True (default), run the word-level restorer and
+                       drop its tone marks. The word-level model is downloaded
+                       once and cached; if it is unavailable (e.g. offline on
+                       first use) the bundled syllable model is used instead.
+                       If False, always use the bundled syllable model, which
+                       needs no download.
 
     Returns:
         Text with dot-below characters (ọ, ẹ, ṣ) restored, no tones.
@@ -1776,14 +1801,45 @@ def diacritize_dot_below(text: str) -> str:
         'Ẹ ku iṣẹ'
 
     Note:
-        This achieves ~95%+ character-level accuracy for dot-below,
-        compared to ~85% for full diacritization with tones.
+        On the MENYO-20k test set (6,633 sentences) the word-level route
+        gets 93.3% of words right, against 85.7% for the bundled syllable
+        model. Reproduce with ``python scripts/eval_heldout.py``.
     """
     if not text or not text.strip():
         return text
 
+    if use_word_level:
+        word_model = _load_pretrained_word_model()
+        if word_model is not None:
+            return _dot_below_via_word_model(text, word_model)
+
     model = _get_dot_below_model()
     return model.diacritize(text)
+
+
+def _dot_below_via_word_model(text: str, word_model: WordLevelDiacritizer) -> str:
+    """Restore dot-below with the word-level model, keeping the input's dots and letter case.
+
+    The word-level model expects undiacritized input, so existing marks are
+    stripped before lookup and the tones it restores are dropped afterwards.
+    """
+    given = strip_diacritics(text, tones_only=True)
+    predicted = strip_diacritics(word_model.diacritize(strip_diacritics(text)), tones_only=True)
+    if len(predicted) != len(given):
+        return predicted
+
+    dotted = set(DOTTED_VOWELS) | set(DOTTED_CONSONANTS)
+    result = []
+    for g, p in zip(given, predicted):
+        if g in dotted:
+            result.append(g)
+        elif g.isupper():
+            result.append(p.upper())
+        elif g.islower():
+            result.append(p.lower())
+        else:
+            result.append(p)
+    return "".join(result)
 
 
 def train_and_save_dot_below_model(path: Optional[Path] = None) -> Path:
