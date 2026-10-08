@@ -158,7 +158,7 @@ tok.encode("Ina kwana?")      # Hausa
 | Yoruba Diacritizer (full tonal) | ✅ | 80.3% word accuracy (MENYO-20k test) | 12.6MB |
 | Yoruba Diacritizer (dot-below) | ✅ | 93.3% word accuracy (MENYO-20k test) | 12.6MB, or 6.4MB bundled fallback (85.7%) |
 | Igbo Diacritizer | ✅ | 92.3% word accuracy (MasakhaNER 2.0 Igbo test) | 4.9MB |
-| Sentiment Analysis | ✅ | 72% accuracy | 4.3MB |
+| Sentiment Analysis | ✅ | 71.5% accuracy (NaijaSenti test) | 4.3MB |
 | Dataset Loaders (7 datasets) | ✅ | — | — |
 | Text Preprocessing & PII Masking | ✅ | — | — |
 | Nigerian Constants (states, banks, telcos) | ✅ | — | — |
@@ -194,7 +194,8 @@ We believe in transparency. Here's what NaijaML can't do yet:
 
 - **Yoruba tones:** On the MENYO-20k test set (6,524 multi-domain sentences), dot-below restoration (ọ, ẹ, ṣ) gets 93.3% of words right and full tonal diacritization (à, á, è, é) gets 80.3%, using Viterbi decoding. Only 6.5% of whole sentences come out fully correct with tones. Many of the remaining errors are due to contextual ambiguity where even native speakers sometimes disagree on tones.
 - **Already-diacritized input:** Both Yoruba diacritizers keep marks already in the input. The full diacritizer leaves a word that carries a tone mark exactly as given, and adds tones to a word that has only dot-below (e.g. `Ọjọ` → `Ọjọ́`). A word written with no marks at all is always treated as unmarked, so an all-mid-tone word can still gain marks.
-- **Sentiment accuracy:** 72% on Twitter data (NaijaSenti test set). Good enough for trend analysis, not for production decisions on individual texts. Optional transformer models coming soon.
+- **Sentiment accuracy:** 71.5% on the NaijaSenti test set (17,654 tweets): Igbo 76.9%, Yoruba 72.0%, Hausa 70.8%, Pidgin 67.1%. Good enough for trend analysis, not for production decisions on individual texts. Optional transformer models coming soon.
+- **Pidgin sentiment leans negative:** On Pidgin tweets the model finds 92.5% of negatives but only 45.1% of positives and 1.6% of neutrals (7 of 431). The Pidgin training data has just 72 neutral tweets out of 5,121, so treat a Pidgin result as positive-or-negative only. The model is not trained on English.
 - **Pidgin vs English:** Pidgin is an English-based creole, so code-mixed texts can be ambiguous. The detector requires Pidgin-specific markers (e.g., "dey", "wetin", "abeg") to classify as Pidgin — English-like text without markers defaults to English. Pidgin recall is 94.6% on NaijaSenti test tweets but only 41.3% on MasakhaNEWS test headlines, where most Pidgin headlines are read as English. English recall on those headlines is 99.9%.
 - **Igbo diacritics:** The Igbo diacritizer restores dot-below vowels (ị, ọ, ụ) only, not tone marks. On the MasakhaNER 2.0 Igbo test set (2,181 sentences) it gets 92.3% of words right, against 68.1% for leaving the text unmarked, and 15.7% of whole sentences.
 
@@ -204,6 +205,7 @@ We believe in transparency. Here's what NaijaML can't do yet:
 python scripts/eval_heldout.py              # Yoruba diacritizers on the MENYO-20k test set
 python scripts/eval_heldout_igbo.py         # Igbo diacritizer on the MasakhaNER 2.0 Igbo test set
 python scripts/eval_heldout_langdetect.py   # language detection on the NaijaSenti and MasakhaNEWS test sets
+python scripts/eval_heldout_sentiment.py    # sentiment on the NaijaSenti test set, per language and class
 python scripts/evaluate_all.py              # quick checks on small curated fixtures for every module
 ```
 
