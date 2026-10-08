@@ -6,9 +6,15 @@ from __future__ import annotations
 
 import json
 import logging
+import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List
+
+# Windows pipes and older consoles default to a legacy code page; Yorùbá/Igbo text and "→" need UTF-8.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8")
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
@@ -26,20 +32,20 @@ def load_test_texts() -> Dict[str, List[str]]:
     # Language samples
     lang_file = FIXTURES_DIR / "language_samples.json"
     if lang_file.exists():
-        with open(lang_file) as f:
+        with open(lang_file, encoding="utf-8") as f:
             texts = json.load(f)
 
     # Add diacritized Yoruba
     yor_file = FIXTURES_DIR / "eval" / "unseen_yoruba_sentences.json"
     if yor_file.exists():
-        with open(yor_file) as f:
+        with open(yor_file, encoding="utf-8") as f:
             data = json.load(f)
         texts.setdefault("yor", []).extend(data["sentences"][:20])
 
     # Add diacritized Igbo
     ibo_file = FIXTURES_DIR / "eval" / "unseen_igbo_sentences.json"
     if ibo_file.exists():
-        with open(ibo_file) as f:
+        with open(ibo_file, encoding="utf-8") as f:
             data = json.load(f)
         texts.setdefault("ibo", []).extend(data["sentences"][:20])
 
@@ -173,7 +179,7 @@ def main():
     print_report(result)
 
     report_path = REPORTS_DIR / f"{datetime.now().strftime('%Y%m%d')}_tokenizer.json"
-    with open(report_path, "w") as f:
+    with open(report_path, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
     logger.info("Report saved to %s", report_path)
 

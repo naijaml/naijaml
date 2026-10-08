@@ -7,10 +7,16 @@ from __future__ import annotations
 
 import json
 import logging
+import sys
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+
+# Windows pipes and older consoles default to a legacy code page; Yorùbá/Igbo text and "→" need UTF-8.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(encoding="utf-8")
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
@@ -137,7 +143,7 @@ def evaluate_yoruba() -> Dict:
         logger.error("Missing fixture: %s", yor_file)
         return {}
 
-    with open(yor_file) as f:
+    with open(yor_file, encoding="utf-8") as f:
         yor_data = json.load(f)
     sentences = yor_data["sentences"]
 
@@ -148,7 +154,7 @@ def evaluate_yoruba() -> Dict:
     homograph_file = FIXTURES_DIR / "homograph_test_cases.json"
     homograph_result = {}
     if homograph_file.exists():
-        with open(homograph_file) as f:
+        with open(homograph_file, encoding="utf-8") as f:
             homograph_data = json.load(f)
         homograph_result = evaluate_homographs(homograph_data["test_cases"], diacritize)
 
@@ -170,7 +176,7 @@ def evaluate_igbo() -> Dict:
         logger.error("Missing fixture: %s", ibo_file)
         return {}
 
-    with open(ibo_file) as f:
+    with open(ibo_file, encoding="utf-8") as f:
         ibo_data = json.load(f)
     sentences = ibo_data["sentences"]
 
@@ -233,7 +239,7 @@ def main():
 
     # Save report
     report_path = REPORTS_DIR / f"{datetime.now().strftime('%Y%m%d')}_diacritizer.json"
-    with open(report_path, "w") as f:
+    with open(report_path, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
     logger.info("Report saved to %s", report_path)
 

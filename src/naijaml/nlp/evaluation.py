@@ -335,7 +335,7 @@ def save_evaluation_results(
 
     # Load existing results or create new
     if path.exists():
-        with open(path, "r") as f:
+        with open(path, "r", encoding="utf-8") as f:
             all_results = json.load(f)
     else:
         all_results = {"evaluations": []}
@@ -345,7 +345,7 @@ def save_evaluation_results(
     all_results["last_updated"] = datetime.now().isoformat()
 
     # Save
-    with open(path, "w") as f:
+    with open(path, "w", encoding="utf-8") as f:
         json.dump(all_results, f, indent=2, ensure_ascii=False)
 
     logger.info("Saved evaluation results to %s", path)
