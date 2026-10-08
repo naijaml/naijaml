@@ -252,7 +252,8 @@ def print_report(result: Dict) -> None:
 
     print("\nConfusion matrix:")
     labels = sorted(overall["confusion_matrix"].keys())
-    print(f"{'True\\Pred':<10}", end="")
+    corner = "True\\Pred"  # a backslash inside an f-string expression needs Python 3.12
+    print(f"{corner:<10}", end="")
     for label in ["yor", "hau", "ibo", "pcm", "eng"]:
         if label in labels or any(label in v for v in overall["confusion_matrix"].values()):
             print(f"{label:<8}", end="")
