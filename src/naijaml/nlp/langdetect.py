@@ -324,16 +324,26 @@ class NaiveBayesLangDetector:
         Args:
             path: Path to save the model.
         """
+        # A feature a language never saw has that language's default value,
+        # which is also what lookup returns for a missing key, so leave it out.
+        log_likelihoods = {
+            lang: {
+                feature: value
+                for feature, value in sorted(likelihoods.items())
+                if value != self._default_log_likelihood.get(lang)
+            }
+            for lang, likelihoods in self.log_likelihoods.items()
+        }
         data = {
             "alpha": self.alpha,
             "uniform_priors": self.uniform_priors,
             "log_priors": self.log_priors,
-            "log_likelihoods": self.log_likelihoods,
-            "vocab": list(self.vocab),
+            "log_likelihoods": log_likelihoods,
+            "vocab": sorted(self.vocab),
             "default_log_likelihood": self._default_log_likelihood,
         }
         with open(path, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
+            json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
         logger.info("Saved model to %s", path)
 
     @classmethod

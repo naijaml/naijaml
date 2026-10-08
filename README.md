@@ -154,7 +154,7 @@ tok.encode("Ina kwana?")      # Hausa
 | Tokenizer (Hausa) | ✅ | 31% fewer tokens vs GPT-4, 18% vs AfriBERTa | 420KB |
 | Tokenizer (Pidgin) | ✅ | 14% fewer tokens vs GPT-4 | 510KB |
 | Tokenizer (Unified) | ✅ | All 4 languages | 400KB |
-| Language Detection | ✅ | 96.4% accuracy (NaijaSenti test tweets), 93.1% (MasakhaNEWS test headlines) | 29.6MB |
+| Language Detection | ✅ | 96.4% accuracy (NaijaSenti test tweets), 93.1% (MasakhaNEWS test headlines) | 10.3MB |
 | Yoruba Diacritizer (full tonal) | ✅ | 80.3% word accuracy (MENYO-20k test) | 12.6MB |
 | Yoruba Diacritizer (dot-below) | ✅ | 93.3% word accuracy (MENYO-20k test) | 12.6MB, or 6.4MB bundled fallback (85.7%) |
 | Igbo Diacritizer | ✅ | 92.3% word accuracy (MasakhaNER 2.0 Igbo test) | 4.9MB |
@@ -163,7 +163,7 @@ tok.encode("Ina kwana?")      # Hausa
 | Text Preprocessing & PII Masking | ✅ | — | — |
 | Nigerian Constants (states, banks, telcos) | ✅ | — | — |
 
-**~48MB bundled, 13MB downloaded on first use.** Everything runs on CPU. No GPU required.
+**~28MB bundled, 13MB downloaded on first use.** Everything runs on CPU. No GPU required.
 
 ## Design Philosophy
 
@@ -182,7 +182,7 @@ tok.encode("Ina kwana?")      # Hausa
 | Model | Size | Approach |
 |-------|------|----------|
 | Tokenizers (5 models) | 2.4MB total | BPE trained on dedicated Nigerian language corpora |
-| Language Detection | 29.6MB | Naive Bayes + char n-grams (1-4) + language features |
+| Language Detection | 10.3MB | Naive Bayes + char n-grams (1-4) + language features |
 | Yoruba Diacritizer (full) | 12.6MB | Word-level lookup + Viterbi decoding |
 | Yoruba Diacritizer (dot-below) | 12.6MB | Word-level model with tones dropped; 6.4MB syllable-based k-NN bundled as offline fallback |
 | Igbo Diacritizer | 4.9MB | Syllable-based k-NN |
