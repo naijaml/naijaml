@@ -270,4 +270,15 @@ Built with data and research from [Masakhane](https://www.masakhane.io/), [Hausa
 
 ## License
 
-Apache 2.0
+The library code is Apache 2.0.
+
+The model files are statistical tables built from third-party datasets, and those datasets carry their own licences. Whether a model inherits the terms of its training data is not settled, and the model files have not been given a separate licence yet. If you redistribute the models or use them commercially, check the terms below.
+
+| Model | Shipped | Training data | Dataset licence |
+|-------|---------|---------------|-----------------|
+| Yoruba diacritizers (`word_diacritic_model.json`, `diacritic_model.json`, `dot_below_model.json`) | Downloaded; `dot_below_model.json` is bundled | [`bumie-e/Yoruba-diacritics-vs-non-diacritics`](https://huggingface.co/datasets/bumie-e/Yoruba-diacritics-vs-non-diacritics) | GPL-3.0 |
+| Sentiment (`sentiment_model.json`) | Bundled | [`HausaNLP/NaijaSenti-Twitter`](https://huggingface.co/datasets/HausaNLP/NaijaSenti-Twitter) | CC BY-NC-SA 4.0 |
+| Language detection (`lang_model.json`) | Bundled | NaijaSenti, [MasakhaNEWS](https://huggingface.co/datasets/masakhane/masakhanews), [MasakhaNER 2](https://huggingface.co/datasets/masakhane/masakhaner2), NollySenti | CC BY-NC-SA 4.0 (NaijaSenti), AFL-3.0 (MasakhaNEWS, MasakhaNER 2) |
+| Igbo diacritizer (`igbo_diacritic_model.json`) | Bundled | [`Tommy0201/JW300_Igbo_To_Eng`](https://huggingface.co/datasets/Tommy0201/JW300_Igbo_To_Eng), MasakhaNEWS | None declared (JW300 mirror), AFL-3.0 (MasakhaNEWS) |
+
+Licences are the ones declared on each dataset's Hugging Face page on 8 October 2026.
