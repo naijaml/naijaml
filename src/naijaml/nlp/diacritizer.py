@@ -1669,8 +1669,13 @@ def diacritize(text: str, use_word_level: bool = True) -> str:
     Example:
         >>> diacritize("Ojo dara pupo")
         'Ọjọ́ dára púpọ̀'
-        >>> diacritize("E ku ishe")
+        >>> diacritize("E ku ise")
         'Ẹ kú iṣẹ́'
+        >>> diacritize("Ọjọ dara")
+        'Ọjọ́ dára'
+
+    Marks already in the input are kept: a word that carries a tone mark is
+    returned as given, and a word with dot-below only gains tones.
 
     Note:
         Gets 80.3% of words right on the MENYO-20k test set (reproduce with
@@ -1685,7 +1690,70 @@ def diacritize(text: str, use_word_level: bool = True) -> str:
         model = _get_word_model()
     else:
         model = _get_model()
-    return model.diacritize(text)
+
+    # The models expect undiacritized input, so predict on stripped text and
+    # put the marks the caller already supplied back afterwards.
+    plain = strip_diacritics(text)
+    predicted = model.diacritize(plain)
+    if plain == normalize_yoruba(text):
+        return predicted
+    return _merge_existing_marks(text, predicted)
+
+
+def _mark_clusters(text: str) -> List[Tuple[str, str]]:
+    """Split text into (base character, combining marks) pairs."""
+    clusters = []  # type: List[Tuple[str, str]]
+    for char in unicodedata.normalize("NFD", text):
+        if unicodedata.category(char) == "Mn" and clusters:
+            base, marks = clusters[-1]
+            clusters[-1] = (base, marks + char)
+        else:
+            clusters.append((char, ""))
+    return clusters
+
+
+def _word_runs(clusters: List[Tuple[str, str]]) -> List[List[Tuple[str, str]]]:
+    """Group clusters into alternating runs of letters and non-letters."""
+    runs = []  # type: List[List[Tuple[str, str]]]
+    for cluster in clusters:
+        if runs and runs[-1][0][0].isalpha() == cluster[0].isalpha():
+            runs[-1].append(cluster)
+        else:
+            runs.append([cluster])
+    return runs
+
+
+def _merge_existing_marks(text: str, predicted: str) -> str:
+    """Combine predicted diacritics with the marks already present in text.
+
+    Marks in the input are never removed or changed. A word that already
+    carries a tone mark is taken to be fully marked and is returned as it
+    was given. A word with dot-below only keeps its dots and gains the
+    predicted tones and any further predicted dots.
+    """
+    dot = "̣"
+    given_runs = _word_runs(_mark_clusters(text))
+    predicted_runs = _word_runs(_mark_clusters(predicted))
+    if len(given_runs) != len(predicted_runs):
+        return predicted
+
+    result = []
+    for given, pred in zip(given_runs, predicted_runs):
+        given_marks = "".join(marks for _, marks in given)
+        if not given_marks:
+            result.extend(base + marks for base, marks in pred)
+            continue
+
+        has_tone = any(mark != dot for mark in given_marks)
+        same_letters = [b.lower() for b, _ in given] == [b.lower() for b, _ in pred]
+        if has_tone or not same_letters:
+            result.extend(base + marks for base, marks in given)
+            continue
+
+        for (base, marks), (_, pred_marks) in zip(given, pred):
+            result.append(base + marks + "".join(m for m in pred_marks if m not in marks))
+
+    return normalize_yoruba("".join(result))
 
 
 def train_and_save_model(

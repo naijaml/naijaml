@@ -193,7 +193,7 @@ tok.encode("Ina kwana?")      # Hausa
 We believe in transparency. Here's what NaijaML can't do yet:
 
 - **Yoruba tones:** On the MENYO-20k test set (6,524 multi-domain sentences), dot-below restoration (ọ, ẹ, ṣ) gets 93.3% of words right and full tonal diacritization (à, á, è, é) gets 80.3%, using Viterbi decoding. Only 6.5% of whole sentences come out fully correct with tones. Many of the remaining errors are due to contextual ambiguity where even native speakers sometimes disagree on tones.
-- **Already-diacritized input:** The full Yoruba diacritizer expects unmarked text. Text that already carries some marks can come back worse (e.g. `Ọjọ` → `Ojó`), so strip marks first with `strip_diacritics`. The dot-below function keeps marks already in the input.
+- **Already-diacritized input:** Both Yoruba diacritizers keep marks already in the input. The full diacritizer leaves a word that carries a tone mark exactly as given, and adds tones to a word that has only dot-below (e.g. `Ọjọ` → `Ọjọ́`). A word written with no marks at all is always treated as unmarked, so an all-mid-tone word can still gain marks.
 - **Sentiment accuracy:** 72% on Twitter data (NaijaSenti test set). Good enough for trend analysis, not for production decisions on individual texts. Optional transformer models coming soon.
 - **Pidgin vs English:** Pidgin is an English-based creole, so code-mixed texts can be ambiguous. The detector requires Pidgin-specific markers (e.g., "dey", "wetin", "abeg") to classify as Pidgin — English-like text without markers defaults to English. 94.6% Pidgin recall, 99.9% English recall on held-out data.
 
