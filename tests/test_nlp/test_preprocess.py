@@ -1,8 +1,6 @@
 """Tests for Nigerian text preprocessing module."""
 from __future__ import annotations
 
-import pytest
-
 
 class TestNormalizeUnicode:
     """Test Unicode normalization."""
@@ -221,3 +219,23 @@ class TestPidginHandling:
         particles = get_pidgin_particles()
         assert isinstance(particles, set)
         assert "abeg" in particles
+
+
+class TestPidginNegationNormalization:
+    """Test Nigerian Pidgin negation normalization."""
+
+    def test_specific_no_too_bad_rule_runs_before_generic_rule(self):
+        from naijaml.nlp.preprocess import normalize_pidgin_negation
+
+        assert normalize_pidgin_negation("E no too bad sha") == "it is good sha"
+
+    def test_docstring_examples_match_actual_output(self):
+        from naijaml.nlp.preprocess import normalize_pidgin_negation
+
+        assert normalize_pidgin_negation("This thing no bad at all") == "This thing very good"
+        assert normalize_pidgin_negation("E no sweet me") == "it is bad me"
+
+    def test_no_go_lie_keeps_spacing_clean(self):
+        from naijaml.nlp.preprocess import normalize_pidgin_negation
+
+        assert normalize_pidgin_negation("I no go lie this thing good") == "I honestly this thing good"
