@@ -3,7 +3,9 @@
 Restores diacritics (dot-below vowels ị, ọ, ụ) to undiacritized Igbo text
 using a context-aware syllable lookup approach.
 
-This is a lightweight, CPU-only implementation achieving ~95%+ accuracy.
+This is a lightweight, CPU-only implementation. It gets 92.3% of words right on
+the MasakhaNER 2.0 Igbo test set (reproduce with
+``python scripts/eval_heldout_igbo.py``).
 """
 from __future__ import annotations
 
